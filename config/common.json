@@ -1,0 +1,5 @@
+{
+    "sessionSecret": "haroo-cloud",
+    "port": "3000",
+    "domain": "haroo-cloud.com"
+}
