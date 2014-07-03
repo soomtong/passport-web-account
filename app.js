@@ -29,9 +29,6 @@ var connectAssets = require('connect-assets');
 var common = require('./config/common');
 var database = require('./config/database');
 
-// Models
-var passportModel = require('./model/passport');
-
 // Route Controller
 var accountController = require('./route/account');
 var apiController = require('./route/api');
@@ -53,7 +50,7 @@ var WEEK = DAY * 7;
 
 
 // CSRF whitelist
-var CSRFEXCLUDE = ['/url1', '/url2'];
+var CSRFEXCLUDE = ['/api/account', '/url2'];
 
 
 // Express configuration.
