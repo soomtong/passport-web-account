@@ -6,26 +6,46 @@ exports.account = {
     post: {
         validation: {
             code: 3,
-                msg: {
+            msg: {
                 en: "common validation error"
             }
         },
         duplication: {
             code: 1,
-                msg: {
+            msg: {
                 en: "already exist account"
             }
         },
         database: {
             code: 2,
-                msg: {
+            msg: {
                 en: "database error"
             }
         },
         done: {
             code: 0,
-                msg: {
+            msg: {
                 en: "account saved"
+            }
+        }
+    },
+    get: {
+        validation: {
+            code: 3,
+            msg: {
+                en: "common validation error"
+            }
+        },
+        noExist: {
+            code: 1,
+            msg: {
+                en: "no exist account"
+            }
+        },
+        done: {
+            code: 0,
+            msg: {
+                en: "account retrieved"
             }
         }
     }

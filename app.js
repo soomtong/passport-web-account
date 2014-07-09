@@ -30,6 +30,7 @@ var common = require('./config/common');
 var database = require('./config/database');
 
 // Route Controller
+var passportController = require('./route/passport');
 var accountController = require('./route/account');
 var apiController = require('./route/api');
 
@@ -50,7 +51,7 @@ var WEEK = DAY * 7;
 
 
 // CSRF whitelist
-var CSRFEXCLUDE = ['/api/account', '/url2'];
+var CSRFEXCLUDE = ['/api/account/create', '/api/account/read'];
 
 
 // Express configuration.
@@ -110,10 +111,10 @@ app.get('/', function (req, res) {
     res.send('ok');
 });
 
-app.get('/api/account', apiController.getAccount);
-app.post('/api/account', apiController.postAccount);
-app.put('/api/account', apiController.putAccount);
-app.delete('/api/account', apiController.deleteAccount);
+app.post('/api/account/create', apiController.createAccount);
+app.post('/api/account/read', apiController.readAccount);
+app.post('/api/account/update', apiController.updateAccount);
+app.post('/api/account/remove', apiController.removeAccount);
 
 // 500 Error Handler
 app.use(errorHandler());

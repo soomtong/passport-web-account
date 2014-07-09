@@ -11,11 +11,38 @@ var passportSecretsToken = require('../config/passport');
 
 var Code = require('../model/code');
 
-exports.getAccount = function (req, res) {
+exports.readAccount = function (req, res, next) {
+    req.assert('email', 'Email is not valid').isEmail();
+    req.assert('password', 'Password cannot be blank').notEmpty();
 
+    var errors = req.validationErrors();
+
+    var result = {};
+
+    if (errors) {
+        result = Code.account.get.validation;
+
+        res.send(result);
+        return next(errors);
+    }
+
+    passport.authenticate('local', function(err, user, info) {
+        if (err) return next(err);
+        if (!user) {
+            result = Code.account.get.noExist;
+
+            res.send(result);
+        } else {
+            result = Code.account.get.done;
+            result.profile = user.profile;
+            result.tokens = user.tokens;
+
+            res.send(result);
+        }
+    })(req, res, next);
 };
 
-exports.postAccount = function (req, res, next) {
+exports.createAccount = function (req, res, next) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
     req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
@@ -66,33 +93,14 @@ exports.postAccount = function (req, res, next) {
     });
 };
 
-exports.putAccount = function (req, res) {
+exports.updateAccount = function (req, res) {
 
 };
 
-exports.deleteAccount = function (req, res) {
+exports.removeAccount = function (req, res) {
 
 };
 
-
-/**
- * GET /login
- * Login page.
- */
-
-exports.getLogin = function(req, res) {
-    if (req.user) return res.redirect('/');
-    res.render('account/login', {
-        title: 'Login'
-    });
-};
-
-/**
- * POST /login
- * Sign in using email and password.
- * @param email
- * @param password
- */
 
 exports.postLogin = function(req, res, next) {
     req.assert('email', 'Email is not valid').isEmail();
@@ -119,34 +127,6 @@ exports.postLogin = function(req, res, next) {
     })(req, res, next);
 };
 
-/**
- * GET /logout
- * Log out.
- */
-
-exports.logout = function(req, res) {
-    req.logout();
-    res.redirect('/');
-};
-
-/**
- * GET /signup
- * Signup page.
- */
-
-exports.getSignup = function(req, res) {
-    if (req.user) return res.redirect('/');
-    res.render('account/signup', {
-        title: 'Create Account'
-    });
-};
-
-/**
- * POST /signup
- * Create a new local account.
- * @param email
- * @param password
- */
 
 exports.postSignup = function(req, res, next) {
     req.assert('email', 'Email is not valid').isEmail();
@@ -180,16 +160,7 @@ exports.postSignup = function(req, res, next) {
     });
 };
 
-/**
- * GET /account
- * Profile page.
- */
 
-exports.getAccount = function(req, res) {
-    res.render('account/profile', {
-        title: 'Account Management'
-    });
-};
 
 /**
  * POST /account/profile
