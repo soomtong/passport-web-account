@@ -6,7 +6,8 @@ var _ = require('lodash');
 var crypto = require('crypto');
 var passport = require('passport');
 
-var User = require('../model/account');
+var Account = require('../model/account');
+var Logging = require('../model/accountLog');
 var passportSecretsToken = require('../config/passport');
 
 var Code = require('../model/code');
@@ -20,7 +21,7 @@ exports.readAccount = function (req, res, next) {
     var result = {};
 
     if (errors) {
-        result = Code.account.get.validation;
+        result = Code.account.read.validation;
 
         res.send(result);
         return next(errors);
@@ -29,17 +30,59 @@ exports.readAccount = function (req, res, next) {
     passport.authenticate('local', function(err, user, info) {
         if (err) return next(err);
         if (!user) {
-            result = Code.account.get.noExist;
+            result = Code.account.read.noExist;
 
             res.send(result);
         } else {
-            result = Code.account.get.done;
+            result = Code.account.read.done;
             result.profile = user.profile;
             result.tokens = user.tokens;
 
             res.send(result);
+
+            var log = new Logging({
+                email: req.param('email'),
+                signedIn: new Date()
+            });
+
+            log.save();
         }
     })(req, res, next);
+};
+
+exports.dismissAccount = function (req, res) {
+    req.assert('email', 'Email is not valid').isEmail();
+
+    var errors = req.validationErrors();
+
+    var result = {};
+
+    if (errors) {
+        result = Code.account.dismiss.validation;
+
+        res.send(result);
+        return next(errors);
+    }
+
+    Logging.findOneAndUpdate({ email: req.param('email') }, { signedOut: new Date() }, { sort: { _id : -1 } },
+        function (err, lastLog) {
+            if (!lastLog) {
+                result = Code.account.dismiss.noExist;
+
+                res.send(result);
+
+                var log = new Logging({
+                    email: req.param('email'),
+                    signedOut: new Date()
+                });
+
+                log.save();
+            } else {
+                result = Code.account.dismiss.done;
+
+                res.send(result);
+            }
+        });
 };
 
 exports.createAccount = function (req, res, next) {
@@ -52,13 +95,13 @@ exports.createAccount = function (req, res, next) {
     var result = {};
 
     if (errors) {
-        result = Code.account.post.validation;
+        result = Code.account.create.validation;
 
         res.send(result);
         return next(errors);
     }
 
-    var user = new User({
+    var user = new Account({
         email: req.param('email'),
         password: req.param('password'),
         createdAt: new Date(),
@@ -67,9 +110,9 @@ exports.createAccount = function (req, res, next) {
         }
     });
 
-    User.findOne({ email: req.body.email }, function(err, existingUser) {
+    Account.findOne({ email: req.body.email }, function(err, existingUser) {
         if (existingUser) {
-            result = Code.account.post.duplication;
+            result = Code.account.create.duplication;
 
             res.send(result);
         } else {
@@ -79,12 +122,12 @@ exports.createAccount = function (req, res, next) {
 
             user.save(function(err) {
                 if (err) {
-                    result = Code.account.post.database;
+                    result = Code.account.create.database;
 
                     res.send(result);
                 }
 
-                result = Code.account.post.done;
+                result = Code.account.create.done;
                 result.tokens = localToken;
 
                 res.send(result);
@@ -140,12 +183,12 @@ exports.postSignup = function(req, res, next) {
         return res.redirect('/signup');
     }
 
-    var user = new User({
+    var user = new Account({
         email: req.body.email,
         password: req.body.password
     });
 
-    User.findOne({ email: req.body.email }, function(err, existingUser) {
+    Account.findOne({ email: req.body.email }, function(err, existingUser) {
         if (existingUser) {
             req.flash('errors', { msg: 'Account with that email address already exists.' });
             return res.redirect('/signup');
@@ -168,7 +211,7 @@ exports.postSignup = function(req, res, next) {
  */
 
 exports.postUpdateProfile = function(req, res, next) {
-    User.findById(req.user.id, function(err, user) {
+    Account.findById(req.user.id, function(err, user) {
         if (err) return next(err);
         user.email = req.body.email || '';
         user.profile.name = req.body.name || '';
@@ -201,7 +244,7 @@ exports.postUpdatePassword = function(req, res, next) {
         return res.redirect('/account');
     }
 
-    User.findById(req.user.id, function(err, user) {
+    Account.findById(req.user.id, function(err, user) {
         if (err) return next(err);
 
         user.password = req.body.password;
@@ -220,7 +263,7 @@ exports.postUpdatePassword = function(req, res, next) {
  */
 
 exports.postDeleteAccount = function(req, res, next) {
-    User.remove({ _id: req.user.id }, function(err) {
+    Account.remove({ _id: req.user.id }, function(err) {
         if (err) return next(err);
         req.logout();
         req.flash('info', { msg: 'Your account has been deleted.' });
@@ -236,7 +279,7 @@ exports.postDeleteAccount = function(req, res, next) {
 
 exports.getOauthUnlink = function(req, res, next) {
     var provider = req.params.provider;
-    User.findById(req.user.id, function(err, user) {
+    Account.findById(req.user.id, function(err, user) {
         if (err) return next(err);
 
         user[provider] = undefined;
@@ -259,7 +302,7 @@ exports.getReset = function(req, res) {
     if (req.isAuthenticated()) {
         return res.redirect('/');
     }
-    User
+    Account
         .findOne({ resetPasswordToken: req.params.token })
         .where('resetPasswordExpires').gt(Date.now())
         .exec(function(err, user) {
@@ -292,7 +335,7 @@ exports.postReset = function(req, res, next) {
 
     async.waterfall([
         function(done) {
-            User
+            Account
                 .findOne({ resetPasswordToken: req.params.token })
                 .where('resetPasswordExpires').gt(Date.now())
                 .exec(function(err, user) {
@@ -377,7 +420,7 @@ exports.postForgot = function(req, res, next) {
             });
         },
         function(token, done) {
-            User.findOne({ email: req.body.email.toLowerCase() }, function(err, user) {
+            Account.findOne({ email: req.body.email.toLowerCase() }, function(err, user) {
                 if (!user) {
                     req.flash('errors', { msg: 'No account with that email address exists.' });
                     return res.redirect('/forgot');

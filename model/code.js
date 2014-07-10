@@ -3,7 +3,7 @@
  */
 
 exports.account = {
-    post: {
+    create: {
         validation: {
             code: 3,
             msg: {
@@ -29,7 +29,7 @@ exports.account = {
             }
         }
     },
-    get: {
+    read: {
         validation: {
             code: 3,
             msg: {
@@ -46,6 +46,26 @@ exports.account = {
             code: 0,
             msg: {
                 en: "account retrieved"
+            }
+        }
+    },
+    dismiss: {
+        validation: {
+            code: 3,
+            msg: {
+                en: "common validation error"
+            }
+        },
+        noExist: {
+            code: 1,
+            msg: {
+                en: "no exist account"
+            }
+        },
+        done: {
+            code: 0,
+            msg: {
+                en: "account dismissed"
             }
         }
     }
