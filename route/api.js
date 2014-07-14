@@ -28,7 +28,11 @@ exports.readAccount = function (req, res, next) {
     }
 
     passport.authenticate('local', function(err, user, info) {
-        if (err) return next(err);
+        if (err) {
+            console.log(info);
+
+            return next(err);
+        }
         if (!user) {
             result = Code.account.read.noExist;
 
@@ -50,7 +54,7 @@ exports.readAccount = function (req, res, next) {
     })(req, res, next);
 };
 
-exports.dismissAccount = function (req, res) {
+exports.dismissAccount = function (req, res, next) {
     req.assert('email', 'Email is not valid').isEmail();
 
     var errors = req.validationErrors();
@@ -85,7 +89,7 @@ exports.dismissAccount = function (req, res) {
         });
 };
 
-exports.createAccount = function (req, res, next) {
+exports.createAccount = function (req, res) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
     req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
@@ -98,7 +102,7 @@ exports.createAccount = function (req, res, next) {
         result = Code.account.create.validation;
 
         res.send(result);
-        return next(errors);
+        return;
     }
 
     var user = new Account({
@@ -131,16 +135,124 @@ exports.createAccount = function (req, res, next) {
                 result.tokens = localToken;
 
                 res.send(result);
+
+                var log = new Logging({
+                    email: req.param('email'),
+                    createdAt: new Date()
+                });
+
+                log.save();
             });
         }
     });
 };
 
-exports.updateAccount = function (req, res) {
+exports.updateAccount = function (req, res, next) {
+    req.assert('email', 'Email is not valid').isEmail();
+    req.assert('password', 'Password must be at least 4 characters long').len(4);
+    req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
+    req.assert('nickname', 'Need a nickname').notEmpty();
+
+    var errors = req.validationErrors();
+
+    var result = {};
+
+    if (errors) {
+        result = Code.account.update.validation;
+
+        res.send(result);
+        return next;
+    }
+
+    // todo: 나중에는 토큰으로 찾아야 할 것인가?
+    passport.authenticate('local', function(err, user, info) {
+        if (err) {
+            console.log(info);
+
+            return next(err);
+        }
+        if (!user) {
+            result = Code.account.update.noExist;
+
+            res.send(result);
+        } else {
+            Account.findById(user._id, function (err, updateUser) {
+                updateUser.updatedAt = new Date();
+                updateUser.profile.name = req.param('nickname');
+
+                updateUser.save(function (err, affectedUser) {
+                    if (err) {
+                        result = Code.account.update.database;
+
+                        res.send(result);
+                    } else {
+                        result = Code.account.update.done;
+                        result.tokens = affectedUser.tokens;
+
+                        res.send(result);
+
+                        var log = new Logging({
+                            email: req.param('email'),
+                            updatedAt: new Date()
+                        });
+
+                        log.save();
+                    }
+                });
+
+            });
+        }
+    })(req, res, next);
 
 };
 
-exports.removeAccount = function (req, res) {
+exports.removeAccount = function (req, res, next) {
+    req.assert('email', 'Email is not valid').isEmail();
+    req.assert('password', 'Password must be at least 4 characters long').len(4);
+    req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
+
+    var errors = req.validationErrors();
+
+    var result = {};
+
+    if (errors) {
+        result = Code.account.remove.validation;
+
+        res.send(result);
+        return;
+    }
+
+    passport.authenticate('local', function(err, user, info) {
+        if (err) {
+            console.log(info);
+
+            return next(err);
+        }
+        if (!user) {
+            result = Code.account.remove.noExist;
+
+            res.send(result);
+        } else {
+            Account.remove({ _id: user._id }, function(err, countAffected) {
+                if (err) {
+                    result = Code.account.remove.database;
+
+                    res.send(result);
+                } else {
+                    result = Code.account.remove.done;
+
+                    res.send(result);
+
+                    var log = new Logging({
+                        email: req.param('email'),
+                        removedAt: new Date()
+                    });
+
+                    log.save();
+                }
+            });
+        }
+    })(req, res, next);
 
 };
 

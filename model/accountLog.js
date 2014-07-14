@@ -6,6 +6,9 @@ var mongoose = require('mongoose');
 
 var loggingSchema = new mongoose.Schema({
     email: { type: String, index: true, lowercase: true },
+    createdAt: Date,
+    updatedAt: Date,
+    removedAt: Date,
     signedIn: Date,
     signedOut: Date
 });

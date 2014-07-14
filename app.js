@@ -51,7 +51,7 @@ var WEEK = DAY * 7;
 
 
 // CSRF whitelist
-var CSRFEXCLUDE = ['/api/account/create', '/api/account/read', '/api/account/dismiss'];
+var CSRFEXCLUDE = ['/api/account/create', '/api/account/read', '/api/account/dismiss', '/api/account/update', '/api/account/remove'];
 
 
 // Express configuration.

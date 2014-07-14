@@ -68,5 +68,58 @@ exports.account = {
                 en: "account dismissed"
             }
         }
+    },
+    update: {
+        validation: {
+            code: 3,
+            msg: {
+                en: "common validation error"
+            }
+        },
+        database: {
+            code: 2,
+            msg: {
+                en: "database error"
+            }
+        },
+        noExist: {
+            code: 1,
+            msg: {
+                en: "no exist account or password incorrect"
+            }
+        },
+        done: {
+            code: 0,
+            msg: {
+                en: "account updated"
+            }
+        }
+    },
+    remove: {
+        validation: {
+            code: 3,
+            msg: {
+                en: "common validation error"
+            }
+        },
+        database: {
+            code: 2,
+            msg: {
+                en: "database error"
+            }
+        },
+        noExist: {
+            code: 1,
+            msg: {
+                en: "no exist account or password incorrect"
+            }
+        },
+        done: {
+            code: 0,
+            msg: {
+                en: "account removed"
+            }
+        }
     }
+
 };
