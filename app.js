@@ -108,7 +108,10 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: WEEK }));
 
 // Route Point
 app.get('/', function (req, res) {
-    res.send('ok');
+    res.send('home');
+});
+app.get('/login', function (req, res) {
+    res.send('login page');
 });
 
 app.post('/api/account/create', apiController.createAccount);
@@ -116,6 +119,9 @@ app.post('/api/account/read', apiController.readAccount);
 app.post('/api/account/dismiss', apiController.dismissAccount);
 app.post('/api/account/update', apiController.updateAccount);
 app.post('/api/account/remove', apiController.removeAccount);
+
+app.get('/auth/twitter', passport.authenticate('twitter'));
+app.get('/auth/twitter/callback', passport.authenticate('twitter', { failureRedirect: '/login' }), apiController.createTwitterAccount);
 
 // 500 Error Handler
 app.use(errorHandler());

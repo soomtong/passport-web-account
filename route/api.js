@@ -12,6 +12,24 @@ var passportSecretsToken = require('../config/passport');
 
 var Code = require('../model/code');
 
+
+exports.createTwitterAccount = function(req, res) {
+    var user = req.user;
+    var result = Code.account.external.done;
+    result.profile = user.profile;
+    result.tokens = user.tokens;
+
+    res.json(result);
+
+    var log = new Logging({
+        email: user.email,
+        signedIn: new Date()
+    });
+
+    log.save();
+
+};
+
 exports.readAccount = function (req, res, next) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password cannot be blank').notEmpty();

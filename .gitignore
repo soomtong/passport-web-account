@@ -32,4 +32,4 @@ node_modules
 
 # secrets
 config/database.json
-config/passport.json
+config/passport.js

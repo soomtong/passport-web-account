@@ -120,6 +120,14 @@ exports.account = {
                 en: "account removed"
             }
         }
+    },
+    external: {
+        done: {
+            code: 0,
+            msg: {
+                en: "process done"
+            }
+        }
     }
 
 };
