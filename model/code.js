@@ -122,10 +122,16 @@ exports.account = {
         }
     },
     external: {
-        done: {
+        link: {
             code: 0,
             msg: {
-                en: "process done"
+                en: "link process done"
+            }
+        },
+        unlink: {
+            code: 0,
+            msg: {
+                en: "unlink process done"
             }
         }
     }

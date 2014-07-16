@@ -51,7 +51,7 @@ var WEEK = DAY * 7;
 
 
 // CSRF whitelist
-var CSRFEXCLUDE = ['/api/account/create', '/api/account/read', '/api/account/dismiss', '/api/account/update', '/api/account/remove'];
+var CSRFEXCLUDE = ['/api/account/create', '/api/account/read', '/api/account/dismiss', '/api/account/update', '/api/account/remove', '/api/account/unlink'];
 
 
 // Express configuration.
@@ -84,24 +84,24 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-app.use(function(req, res, next) {
+app.use(function(req, res, callback) {
     // CSRF protection.
-    if (_.contains(CSRFEXCLUDE, req.path)) return next();
-    csrf(req, res, next);
+    if (_.contains(CSRFEXCLUDE, req.path)) return callback();
+    csrf(req, res, callback);
 });
-app.use(function(req, res, next) {
+app.use(function(req, res, callback) {
     // Make user object available in templates.
     res.locals.user = req.user;
-    next();
+    callback();
 });
-app.use(function(req, res, next) {
+app.use(function(req, res, callback) {
     // Remember original destination before login.
     var path = req.path.split('/')[1];
     if (/auth|login|logout|signup|favicon/i.test(path)) {
-        return next();
+        return callback();
     }
     req.session.returnTo = req.path;
-    next();
+    callback();
 });
 app.use(express.static(path.join(__dirname, 'public'), { maxAge: WEEK }));
 
@@ -119,6 +119,7 @@ app.post('/api/account/read', apiController.readAccount);
 app.post('/api/account/dismiss', apiController.dismissAccount);
 app.post('/api/account/update', apiController.updateAccount);
 app.post('/api/account/remove', apiController.removeAccount);
+app.post('/api/account/unlink', apiController.unlinkAuth);
 
 app.get('/auth/twitter', passport.authenticate('twitter'));
 app.get('/auth/twitter/callback', passport.authenticate('twitter', { failureRedirect: '/login' }), apiController.createTwitterAccount);

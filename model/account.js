@@ -50,10 +50,10 @@ accountSchema.pre('save', function(next) {
 });
 
 // validate password for local strategy
-accountSchema.methods.comparePassword = function(candidatePassword, cb) {
+accountSchema.methods.comparePassword = function(candidatePassword, callback) {
     bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
-        if (err) return cb(err);
-        cb(null, isMatch);
+        if (err) return callback(err);
+        callback(null, isMatch);
     });
 };
 
