@@ -51,7 +51,8 @@ var WEEK = DAY * 7;
 
 
 // CSRF whitelist
-var CSRFEXCLUDE = ['/api/account/create', '/api/account/read', '/api/account/dismiss', '/api/account/update', '/api/account/remove', '/api/account/unlink'];
+var CSRFEXCLUDE = ['/api/account/create', '/api/account/read', '/api/account/dismiss', '/api/account/update', '/api/account/remove',
+    '/api/account/unlink', '/api/account/access'];
 
 
 // Express configuration.
@@ -119,6 +120,7 @@ app.post('/api/account/read', apiController.readAccount);
 app.post('/api/account/dismiss', apiController.dismissAccount);
 app.post('/api/account/update', apiController.updateAccount);
 app.post('/api/account/remove', apiController.removeAccount);
+app.post('/api/account/access', apiController.accessAccount);
 app.post('/api/account/unlink', apiController.unlinkAuth);
 
 app.get('/auth/twitter', passport.authenticate('twitter'));

@@ -84,17 +84,17 @@ passport.use(new TwitterStrategy(passportSecretToken.twitter, function(req, acce
 }));
 
 // Login Required middleware.
-exports.isAuthenticated = function(req, res, next) {
-    if (req.isAuthenticated()) return next();
+exports.isAuthenticated = function(req, res, callback) {
+    if (req.isAuthenticated()) return callback();
     res.redirect('/login');
 };
 
 // Authorization Required middleware.
-exports.isAuthorized = function(req, res, next) {
+exports.isAuthorized = function(req, res, callback) {
     var provider = req.path.split('/').slice(-1)[0];
 
     if (_.find(req.user.tokens, { kind: provider })) {
-        next();
+        callback();
     } else {
         res.redirect('/auth/' + provider);
     }

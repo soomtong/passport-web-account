@@ -36,6 +36,12 @@ exports.account = {
                 en: "common validation error"
             }
         },
+        validationForExt: {
+            code: 4,
+            msg: {
+                en: "common validation error for external"
+            }
+        },
         noExist: {
             code: 1,
             msg: {

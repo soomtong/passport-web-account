@@ -21,11 +21,55 @@ exports.createTwitterAccount = function(req, res) {
 
     var log = new Logging({
         email: user.email,
-        signedIn: new Date()
+        linkedAt: new Date()
     });
 
     log.save();
 
+};
+
+exports.accessAccount = function (req, res, callback) {
+    req.assert('email', 'Email is not valid').isEmail();
+    req.assert('provider', 'Provider can not Empty').notEmpty();
+    req.assert('accessToken', 'AccessToken can not Empty').notEmpty();
+
+    var errors = req.validationErrors();
+
+    var result = {};
+
+    if (errors) {
+        result = Code.account.read.validationForExt;
+
+        res.send(result);
+        return callback(errors);
+    }
+
+    Account.findOne({ email: req.param('email') }, function(err, user) {
+        if (user) {
+            if (_.find(user.tokens, { kind: req.param('provider') })) {
+                result = Code.account.read.done;
+                result.profile = user.profile;
+                result.tokens = user.tokens;
+
+                res.send(result);
+
+                var log = new Logging({
+                    email: user.email,
+                    signedIn: new Date()
+                });
+
+                log.save();
+            } else {
+                result = Code.account.read.noExist;
+
+                res.send(result);
+            }
+        } else {
+            result = Code.account.read.noExist;
+
+            res.send(result);
+        }
+    });
 };
 
 exports.unlinkAuth = function(req, res, callback) {
@@ -48,7 +92,7 @@ exports.unlinkAuth = function(req, res, callback) {
 
             var log = new Logging({
                 email: user.email,
-                signedOut: new Date()
+                unlinkedAt: new Date()
             });
 
             log.save();
