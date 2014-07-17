@@ -124,7 +124,10 @@ app.post('/api/account/access', apiController.accessAccount);
 app.post('/api/account/unlink', apiController.unlinkAuth);
 
 app.get('/auth/twitter', passport.authenticate('twitter'));
-app.get('/auth/twitter/callback', passport.authenticate('twitter', { failureRedirect: '/login' }), apiController.createTwitterAccount);
+app.get('/auth/twitter/callback', passport.authenticate('twitter'), apiController.createTwitterAccount);
+
+app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
+app.get('/auth/facebook/callback', passport.authenticate('facebook'), apiController.createFacebookAccount);
 
 // 500 Error Handler
 app.use(errorHandler());

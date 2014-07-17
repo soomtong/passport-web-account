@@ -1,0 +1,14 @@
+{
+    "twitter": {
+        "consumerKey": "4JG2CsHS92aK3KEkxmchHgHoe",
+        "consumerSecret": "Q95jr2jISkkF1b78j8Rdv64k8gvQ6hhva9D2YzvYvJ3iijQYy9",
+        "callbackURL": "/auth/twitter/callback",
+        "passReqToCallback": true
+    },
+    "facebook": {
+        "clientID": "754220301289665",
+        "clientSecret": "41860e58c256a3d7ad8267d3c1939a4a",
+        "callbackURL": "/auth/facebook/callback",
+        "passReqToCallback": true
+    }
+}

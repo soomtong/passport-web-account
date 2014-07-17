@@ -14,6 +14,24 @@ var Code = require('../model/code');
 exports.createTwitterAccount = function(req, res) {
     var user = req.user;
     var result = Code.account.external.link;
+    result.email = user.email;
+    result.profile = user.profile;
+    result.tokens = user.tokens;
+
+    res.json(result);
+
+    var log = new Logging({
+        email: user.email,
+        linkedAt: new Date()
+    });
+
+    log.save();
+
+};
+exports.createFacebookAccount = function(req, res) {
+    var user = req.user;
+    var result = Code.account.external.link;
+    result.email = user.email;
     result.profile = user.profile;
     result.tokens = user.tokens;
 
@@ -48,6 +66,7 @@ exports.accessAccount = function (req, res, callback) {
         if (user) {
             if (_.find(user.tokens, { kind: req.param('provider') })) {
                 result = Code.account.read.done;
+                result.email = user.email;
                 result.profile = user.profile;
                 result.tokens = user.tokens;
 
@@ -128,6 +147,7 @@ exports.readAccount = function (req, res, callback) {
             res.send(result);
         } else {
             result = Code.account.read.done;
+            result.email = user.email;
             result.profile = user.profile;
             result.tokens = user.tokens;
 
