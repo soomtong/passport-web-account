@@ -199,6 +199,7 @@ exports.dismissAccount = function (req, res, callback) {
 };
 
 exports.createAccount = function (req, res) {
+    var uuid = require('node-uuid');
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
     req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
@@ -229,7 +230,7 @@ exports.createAccount = function (req, res) {
 
             res.send(result);
         } else {
-            var localToken = { kind: 'local', accessToken: 'haroo-cloud' };
+            var localToken = { kind: 'haroo-cloud', accessToken: uuid.v1() };
 
             user.tokens.push(localToken);
 
