@@ -60,6 +60,9 @@ app.set('port', process.env.PORT || common['port']);
 app.set('views', path.join(__dirname, 'views'));
 app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
+app.set('view cache', false);
+swig.setDefaults({ cache: false });
+
 app.use(compress());
 app.use(connectAssets({
     paths: ['public/css', 'public/js'],
@@ -109,7 +112,10 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: WEEK }));
 
 // Route Point
 app.get('/', function (req, res) {
-    res.send('home');
+    var params = {
+        site: { title: "Haroo Cloud Service Hub"}
+    };
+    res.render('index', params);
 });
 app.get('/login', function (req, res) {
     res.send('login page');
