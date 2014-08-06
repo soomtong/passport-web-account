@@ -1,18 +1,8 @@
-/* GLOBAL STYLES
--------------------------------------------------- */
-/* Padding below the footer and lighter body text */
-
 body {
     padding-bottom: 40px;
     color: #5a5a5a;
 }
 
-
-
-/* CUSTOMIZE THE NAVBAR
--------------------------------------------------- */
-
-/* Special class on .container surrounding .navbar, used for positioning it into place. */
 .navbar-wrapper {
     position: absolute;
     top: 0;
@@ -34,9 +24,6 @@ body {
     width: auto;
 }
 
-
-/* CUSTOMIZE THE CAROUSEL
--------------------------------------------------- */
 
 /* Carousel base class */
 .carousel {
@@ -63,9 +50,6 @@ body {
 
 
 
-/* MARKETING CONTENT
--------------------------------------------------- */
-
 /* Center align the text within the three columns below the carousel */
 .marketing .col-md-4 {
     margin-bottom: 20px;
@@ -79,9 +63,6 @@ body {
     margin-left: 10px;
 }
 
-
-/* Featurettes
-------------------------- */
 
 .featurette-divider {
     margin: 80px 0; /* Space out the Bootstrap <hr> more */
@@ -135,4 +116,15 @@ body {
     .featurette-heading {
         margin-top: 120px;
     }
+}
+
+
+.form-signin {
+    padding: 15px;
+    margin: 0 auto;
+}
+
+.form-signup {
+    padding-top: 140px;
+    padding-bottom: 40px;
 }

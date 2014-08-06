@@ -90,12 +90,16 @@ app.use(passport.session());
 app.use(flash());
 app.use(function(req, res, callback) {
     // CSRF protection.
+    console.log(req.path);
     if (_.contains(CSRFEXCLUDE, req.path)) return callback();
     csrf(req, res, callback);
 });
 app.use(function(req, res, callback) {
     // Make user object available in templates.
     res.locals.user = req.user;
+    res.locals.site = {
+        title: "Haroo Cloud Service Hub"
+    };
     callback();
 });
 app.use(function(req, res, callback) {
@@ -112,14 +116,16 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: WEEK }));
 
 // Route Point
 app.get('/', function (req, res) {
-    var params = {
-        site: { title: "Haroo Cloud Service Hub"}
-    };
+    var params = {};
     res.render('index', params);
 });
 app.get('/login', function (req, res) {
     res.send('login page');
 });
+
+app.get('/signup', accountController.signUpForm);
+app.post('/signup', accountController.signUp);
+app.get('/logout', accountController.logout);
 
 app.post('/api/account/create', apiController.createAccount);
 app.post('/api/account/read', apiController.readAccount);

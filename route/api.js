@@ -4,6 +4,7 @@
 
 var _ = require('lodash');
 var passport = require('passport');
+var uuid = require('node-uuid');
 
 var Account = require('../model/account');
 var Logging = require('../model/accountLog');
@@ -14,9 +15,15 @@ var Code = require('../model/code');
 exports.createTwitterAccount = function(req, res) {
     var user = req.user;
     var result = Code.account.external.link;
+    var localToken = { kind: 'haroo-cloud', accessToken: uuid.v1() };
+
+    user.tokens.push(localToken);
+
     result.email = user.email;
     result.profile = user.profile;
     result.tokens = user.tokens;
+
+
 
     res.json(result);
 
@@ -31,6 +38,10 @@ exports.createTwitterAccount = function(req, res) {
 exports.createFacebookAccount = function(req, res) {
     var user = req.user;
     var result = Code.account.external.link;
+    var localToken = { kind: 'haroo-cloud', accessToken: uuid.v1() };
+
+    user.tokens.push(localToken);
+
     result.email = user.email;
     result.profile = user.profile;
     result.tokens = user.tokens;
@@ -199,7 +210,6 @@ exports.dismissAccount = function (req, res, callback) {
 };
 
 exports.createAccount = function (req, res) {
-    var uuid = require('node-uuid');
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
     req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);

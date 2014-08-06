@@ -1,0 +1,26 @@
+<div id="flash">
+    {% if messages.errors %}
+    <div class="alert alert-danger fade-in">
+        <button class="close" type="button" data-dismiss="alert"> x </button>
+        {% for error in messages.errors %}
+        <div>{{ error.msg }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% if messages.info %}
+    <div class="alert alert-info fade-in">
+        <button class="close" type="button" data-dismiss="alert"> x </button>
+        {% for info in messages.info %}
+        <div>{{ info.msg }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% if messages.success %}
+    <div class="alert alert-success fade-in">
+        <button class="close" type="button" data-dismiss="alert"> x </button>
+        {% for success in messages.success %}
+        <div>{{ success.msg }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>

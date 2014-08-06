@@ -28,45 +28,12 @@
     <![endif]-->
 
     <!-- Custom styles for this template -->
-    <link href="/css/carousel.css" rel="stylesheet">
+    <link href="/css/haroo-cloud-common.css" rel="stylesheet">
 </head>
 <body>
 <div class="navbar-wrapper">
     <div class="container" id="top">
-
-        <div class="navbar navbar-inverse navbar-static-top" role="navigation">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="/">Haroo Cloud</a>
-                </div>
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li class=""><a href="/product">Product</a></li>
-                        <li><a href="/service">Service</a></li>
-                        <li><a href="/blog">Blog</a></li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="/sign-up">Sign Up</a></li>
-                        <li class="dropdown">
-                            <a href="/login" class="dropdown-toggle" data-toggle="dropdown">Account <span class="caret"></span></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="/login">Login</a></li>
-                                <li><a href="/logout">Logout</a></li>
-                                <li class="divider"></li>
-                                <li><a href="/find-password">Find Password</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
+        {% include 'partials/top-menu.html' %}
     </div>
 </div>
 
@@ -115,7 +82,7 @@
 
             <div class="container">
                 <div class="carousel-caption">
-                    <h1>Haroo 42 Web Presentation Application for Haroonote</h1>
+                    <h1>Haroo Kit Web Presentation Application for Haroonote</h1>
 
                     <p>Install to Your Own and Use your cloud Data of Haroonote, Show your Everything with Web browser</p>
 
