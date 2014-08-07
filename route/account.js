@@ -9,6 +9,19 @@ var Code = require('../model/code');
 
 
 exports.logout = function(req, res) {
+    var userEmail = req.user['email'];
+    Logging.findOneAndUpdate({ email: userEmail }, { signedOut: new Date() }, { sort: { _id : -1 } },
+        function (err, lastLog) {
+            if (!lastLog) {
+                var log = new Logging({
+                    email: userEmail,
+                    signedOut: new Date()
+                });
+
+                log.save();
+            }
+        });
+
     req.logout();
     res.redirect('/');
 };
@@ -39,6 +52,13 @@ exports.login = function(req, res, callback) {
             if (err) return callback(err);
             req.flash('success', { msg: 'Success! You are logged in.' });
             res.redirect(req.session.returnTo || '/');
+
+            var log = new Logging({
+                email: req.param('email'),
+                signedIn: new Date()
+            });
+
+            log.save();
         });
     })(req, res, callback);
 };
