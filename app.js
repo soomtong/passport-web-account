@@ -119,9 +119,8 @@ app.get('/', function (req, res) {
     var params = {};
     res.render('index', params);
 });
-app.get('/login', function (req, res) {
-    res.send('login page');
-});
+app.get('/login', accountController.loginForm);
+app.post('/login', accountController.login);
 
 app.get('/signup', accountController.signUpForm);
 app.post('/signup', accountController.signUp);

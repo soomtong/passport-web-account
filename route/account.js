@@ -13,6 +13,36 @@ exports.logout = function(req, res) {
     res.redirect('/');
 };
 
+exports.loginForm = function (req, res) {
+    var params = {};
+    res.render('login', params);
+};
+
+exports.login = function(req, res, callback) {
+    req.assert('email', 'Email is not valid').isEmail();
+    req.assert('password', 'Password cannot be blank').notEmpty();
+
+    var errors = req.validationErrors();
+
+    if (errors) {
+        req.flash('errors', errors);
+        return res.redirect('/login');
+    }
+
+    passport.authenticate('local', function(err, user, info) {
+        if (err) return callback(err);
+        if (!user) {
+            req.flash('errors', { msg: info.message });
+            return res.redirect('/login');
+        }
+        req.logIn(user, function(err) {
+            if (err) return callback(err);
+            req.flash('success', { msg: 'Success! You are logged in.' });
+            res.redirect(req.session.returnTo || '/');
+        });
+    })(req, res, callback);
+};
+
 exports.signUpForm = function (req, res) {
     var params = {};
     if (req.user) return res.redirect('/');
