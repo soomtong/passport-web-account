@@ -3,6 +3,8 @@
  */
 
 var _ = require('lodash');
+var uuid = require('node-uuid');
+
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
@@ -40,21 +42,34 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, function(email, passw
 
 // Sign in with Twitter.
 passport.use(new TwitterStrategy(passportSecretToken['twitter'], function(req, accessToken, tokenSecret, profile, callback) {
-    // 트위터와 연동된 계정 생성 및 저장
     Account.findOne({ twitter: profile.id }, function(err, existingUser) {
         if (existingUser) return callback(null, existingUser);
-        var user = new Account();
-        // Twitter will not provide an email address.  Period.
-        // But a person’s twitter username is guaranteed to be unique
-        // so we can "fake" a twitter email address as follows:
-        user.email = profile.username + "@twitter.com";
-        user.twitter = profile.id;
-        user.tokens.push({ kind: 'twitter', accessToken: accessToken, tokenSecret: tokenSecret });
-        user.profile.name = profile.displayName;
-        user.profile.location = profile._json.location;
-        user.profile.picture = profile._json.profile_image_url;
-        user.save(function(err) {
-            callback(err, user);
+        Account.findOne({ email: profile.username + "@twitter.com" }, function(err, existingEmailUser) {
+            if (existingEmailUser) {
+                existingEmailUser.twitter = profile.id;
+                existingEmailUser.tokens.push({ kind: 'twitter', accessToken: accessToken, tokenSecret: tokenSecret });
+                existingEmailUser.profile.name = profile.displayName;
+                existingEmailUser.profile.location = profile._json.location;
+                existingEmailUser.profile.picture = profile._json.profile_image_url;
+                existingEmailUser.save(function(err) {
+                    callback(err, existingEmailUser);
+                });
+            } else {
+                var user = new Account();
+                user.uuid = uuid.v1();
+                // Twitter will not provide an email address.  Period.
+                // But a person’s twitter username is guaranteed to be unique
+                // so we can "fake" a twitter email address as follows:
+                user.email = profile.username + "@twitter.com";
+                user.twitter = profile.id;
+                user.tokens.push({ kind: 'twitter', accessToken: accessToken, tokenSecret: tokenSecret });
+                user.profile.name = profile.displayName;
+                user.profile.location = profile._json.location;
+                user.profile.picture = profile._json.profile_image_url;
+                user.save(function(err) {
+                    callback(err, user);
+                });
+            }
         });
     });
 }));
@@ -65,10 +80,18 @@ passport.use(new FacebookStrategy(passportSecretToken['facebook'], function(req,
         if (existingUser) return callback(null, existingUser);
         Account.findOne({ email: profile._json.email }, function(err, existingEmailUser) {
             if (existingEmailUser) {
-                req.flash('errors', { msg: 'There is already an account using this email address. Sign in to that account and link it with Facebook manually from Account Settings.' });
-                callback(err);
+                existingEmailUser.facebook = profile.id;
+                existingEmailUser.tokens.push({ kind: 'facebook', accessToken: accessToken });
+                existingEmailUser.profile.name = profile.displayName;
+                existingEmailUser.profile.gender = profile._json.gender;
+                existingEmailUser.profile.picture = 'https://graph.facebook.com/' + profile.id + '/picture?type=large';
+                existingEmailUser.profile.location = (profile._json.location) ? profile._json.location.name : '';
+                existingEmailUser.save(function(err) {
+                    callback(err, existingEmailUser);
+                });
             } else {
                 var user = new Account();
+                user.uuid = uuid.v1();
                 user.email = profile._json.email;
                 user.facebook = profile.id;
                 user.tokens.push({ kind: 'facebook', accessToken: accessToken });
@@ -85,49 +108,34 @@ passport.use(new FacebookStrategy(passportSecretToken['facebook'], function(req,
 }));
 
 // Sign in with Google.
-
-passport.use(new GoogleStrategy(passportSecretToken['google'], function(req, accessToken, refreshToken, profile, done) {
-  if (req.user) {
-    Account.findOne({ google: profile.id }, function(err, existingUser) {
-      if (existingUser) {
-        req.flash('errors', { msg: 'There is already a Google account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
-        done(err);
-      } else {
-        Account.findById(req.user.id, function(err, user) {
-          user.google = profile.id;
-          user.tokens.push({ kind: 'google', accessToken: accessToken });
-          user.profile.name = user.profile.name || profile.displayName;
-          user.profile.gender = user.profile.gender || profile._json.gender;
-          user.profile.picture = user.profile.picture || profile._json.picture;
-          user.save(function(err) {
-            req.flash('info', { msg: 'Google account has been linked.' });
-            done(err, user);
-          });
+passport.use(new GoogleStrategy(passportSecretToken['google'], function(req, accessToken, refreshToken, profile, callback) {
+    Account.findOne({ google: profile.id }, function (err, existingUser) {
+        if (existingUser) return callback(null, existingUser);
+        Account.findOne({ email: profile._json.email }, function (err, existingEmailUser) {
+            if (existingEmailUser) {
+                existingEmailUser.google = profile.id;
+                existingEmailUser.tokens.push({ kind: 'google', accessToken: accessToken });
+                existingEmailUser.profile.name = profile.displayName;
+                existingEmailUser.profile.gender = profile._json.gender;
+                existingEmailUser.profile.picture = profile._json.picture;
+                existingEmailUser.save(function (err) {
+                    callback(err, existingEmailUser);
+                });
+            } else {
+                var user = new Account();
+                user.uuid = uuid.v1();
+                user.email = profile._json.email;
+                user.google = profile.id;
+                user.tokens.push({ kind: 'google', accessToken: accessToken });
+                user.profile.name = profile.displayName;
+                user.profile.gender = profile._json.gender;
+                user.profile.picture = profile._json.picture;
+                user.save(function (err) {
+                    callback(err, user);
+                });
+            }
         });
-      }
     });
-  } else {
-    Account.findOne({ google: profile.id }, function(err, existingUser) {
-      if (existingUser) return done(null, existingUser);
-      Account.findOne({ email: profile._json.email }, function(err, existingEmailUser) {
-        if (existingEmailUser) {
-          req.flash('errors', { msg: 'There is already an account using this email address. Sign in to that account and link it with Google manually from Account Settings.' });
-          done(err);
-        } else {
-          var user = new Account();
-          user.email = profile._json.email;
-          user.google = profile.id;
-          user.tokens.push({ kind: 'google', accessToken: accessToken });
-          user.profile.name = profile.displayName;
-          user.profile.gender = profile._json.gender;
-          user.profile.picture = profile._json.picture;
-          user.save(function(err) {
-            done(err, user);
-          });
-        }
-      });
-    });
-  }
 }));
 
 

@@ -1,7 +1,3 @@
-/**
- * Created by soomtong on 2014. 7. 2..
- */
-
 var _ = require('lodash');
 var passport = require('passport');
 var uuid = require('node-uuid');
@@ -15,9 +11,6 @@ var Code = require('../model/code');
 exports.createTwitterAccount = function(req, res) {
     var user = req.user;
     var result = Code.account.external.link;
-    var localToken = { kind: 'haroo-cloud', accessToken: uuid.v1() };
-
-    user.tokens.push(localToken);
 
     result.email = user.email;
     result.profile = user.profile;
@@ -42,9 +35,6 @@ exports.createTwitterAccount = function(req, res) {
 exports.createFacebookAccount = function(req, res) {
     var user = req.user;
     var result = Code.account.external.link;
-    var localToken = { kind: 'haroo-cloud', accessToken: uuid.v1() };
-
-    user.tokens.push(localToken);
 
     result.email = user.email;
     result.profile = user.profile;
@@ -69,9 +59,6 @@ exports.createFacebookAccount = function(req, res) {
 exports.createGoogleAccount = function(req, res) {
     var user = req.user;
     var result = Code.account.external.link;
-    var localToken = { kind: 'haroo-cloud', accessToken: uuid.v1() };
-
-    user.tokens.push(localToken);
 
     result.email = user.email;
     result.profile = user.profile;
@@ -114,6 +101,8 @@ exports.accessAccount = function (req, res, callback) {
         if (user) {
             if (_.find(user.tokens, { kind: req.param('provider') })) {
                 result = Code.account.read.done;
+
+                result.uuid = user.uuid;
                 result.email = user.email;
                 result.profile = user.profile;
                 result.tokens = user.tokens;
@@ -216,6 +205,8 @@ exports.readAccount = function (req, res, callback) {
             res.send(result);
         } else {
             result = Code.account.read.done;
+
+            result.uuid = user.uuid;
             result.email = user.email;
             result.profile = user.profile;
             result.tokens = user.tokens;
@@ -298,10 +289,7 @@ exports.createAccount = function (req, res) {
 
             res.send(result);
         } else {
-            var localToken = { kind: 'haroo-cloud', accessToken: uuid.v1() };
-
-            user.tokens.push(localToken);
-
+            user.uuid = uuid.v1();
             user.save(function(err) {
                 if (err) {
                     result = Code.account.create.database;

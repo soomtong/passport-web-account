@@ -9,18 +9,20 @@ var Code = require('../model/code');
 
 
 exports.logout = function(req, res) {
-    var userEmail = req.user['email'];
-    Logging.findOneAndUpdate({ email: userEmail }, { signedOut: new Date() }, { sort: { _id : -1 } },
-        function (err, lastLog) {
-            if (!lastLog) {
-                var log = new Logging({
-                    email: userEmail,
-                    signedOut: new Date()
-                });
+    if (req.user) {
+        var userEmail = req.user['email'];
+        Logging.findOneAndUpdate({ email: userEmail }, { signedOut: new Date() }, { sort: { _id : -1 } },
+            function (err, lastLog) {
+                if (!lastLog) {
+                    var log = new Logging({
+                        email: userEmail,
+                        signedOut: new Date()
+                    });
 
-                log.save();
-            }
-        });
+                    log.save();
+                }
+            });
+    }
 
     req.logout();
     res.redirect('/');
