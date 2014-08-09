@@ -12,7 +12,6 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var Account = require('./../model/account');
-var Logging = require('../model/accountLog');
 
 var passportSecretToken = require('../config/passport');
 

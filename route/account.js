@@ -1,4 +1,3 @@
-var _ = require('lodash');
 var passport = require('passport');
 var uuid = require('node-uuid');
 
@@ -7,6 +6,14 @@ var Logging = require('../model/accountLog');
 
 var Code = require('../model/code');
 
+function saveLog(type, userEmail) {
+    var log = new Logging();
+
+    log.email = userEmail;
+    log[type] = new Date();
+
+    log.save();
+}
 
 exports.logout = function(req, res) {
     if (req.user) {
@@ -14,12 +21,7 @@ exports.logout = function(req, res) {
         Logging.findOneAndUpdate({ email: userEmail }, { signedOut: new Date() }, { sort: { _id : -1 } },
             function (err, lastLog) {
                 if (!lastLog) {
-                    var log = new Logging({
-                        email: userEmail,
-                        signedOut: new Date()
-                    });
-
-                    log.save();
+                    saveLog('signedOut', userEmail);
                 }
             });
     }
@@ -55,12 +57,8 @@ exports.login = function(req, res, callback) {
             req.flash('success', { msg: 'Success! You are logged in.' });
             res.redirect(req.session.returnTo || '/');
 
-            var log = new Logging({
-                email: req.param('email'),
-                signedIn: new Date()
-            });
+            saveLog('signedIn', req.param('email'));
 
-            log.save();
         });
     })(req, res, callback);
 };
@@ -85,6 +83,7 @@ exports.signUp = function (req, res) {
     }
 
     var user = new Account({
+        uuid: uuid.v1(),
         email: req.param('email'),
         password: req.param('password'),
         createdAt: new Date(),
@@ -100,10 +99,6 @@ exports.signUp = function (req, res) {
 
             return res.redirect('/signup');
         } else {
-            var localToken = { kind: 'haroo-cloud', accessToken: uuid.v1() };
-
-            user.tokens.push(localToken);
-
             user.save(function(err) {
                 if (err) {
                     res.redirect('/signup');
@@ -112,12 +107,7 @@ exports.signUp = function (req, res) {
                     if (err) return next(err);
                     res.redirect('/');
 
-                    var log = new Logging({
-                        email: req.param('email'),
-                        createdAt: new Date()
-                    });
-
-                    log.save();
+                    saveLog('createdAt', req.param('email'));
 
                 });
             });

@@ -298,7 +298,6 @@ exports.createAccount = function (req, res) {
                 }
 
                 result = Code.account.create.done;
-                result.tokens = localToken;
 
                 res.send(result);
 

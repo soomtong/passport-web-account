@@ -30,7 +30,6 @@ var common = require('./config/common');
 var database = require('./config/database');
 
 // Route Controller
-var passportController = require('./route/passport');
 var accountController = require('./route/account');
 var apiController = require('./route/api');
 
