@@ -128,6 +128,12 @@ exports.account = {
         }
     },
     external: {
+        validation: {
+            code: 3,
+            msg: {
+                en: "common validation error"
+            }
+        },
         link: {
             code: 0,
             msg: {

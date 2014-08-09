@@ -52,7 +52,7 @@ var WEEK = DAY * 7;
 
 // CSRF whitelist
 var CSRFEXCLUDE = ['/api/account/create', '/api/account/read', '/api/account/dismiss', '/api/account/update', '/api/account/remove',
-    '/api/account/unlink', '/api/account/access'];
+    '/api/account/link', '/api/account/unlink', '/api/account/access'];
 
 
 // Express configuration.
@@ -133,12 +133,17 @@ app.post('/api/account/update', apiController.updateAccount);
 app.post('/api/account/remove', apiController.removeAccount);
 app.post('/api/account/access', apiController.accessAccount);
 app.post('/api/account/unlink', apiController.unlinkAuth);
+app.post('/api/account/link', apiController.linkAuth);
 
 app.get('/auth/twitter', passport.authenticate('twitter'));
-app.get('/auth/twitter/callback', passport.authenticate('twitter'), apiController.createTwitterAccount);
+app.get('/auth/twitter/callback', passport.authenticate('twitter', { failureRedirect: '/login' }), apiController.createTwitterAccount);
 
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
-app.get('/auth/facebook/callback', passport.authenticate('facebook'), apiController.createFacebookAccount);
+app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), apiController.createFacebookAccount);
+
+app.get('/auth/google', passport.authenticate('google', { scope: 'profile email' }));
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), apiController.createGoogleAccount);
+
 
 // 500 Error Handler
 app.use(errorHandler());

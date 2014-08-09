@@ -23,9 +23,12 @@ exports.createTwitterAccount = function(req, res) {
     result.profile = user.profile;
     result.tokens = user.tokens;
 
-
-
-    res.json(result);
+    if (req.session['clientKey'] == 'external key') {
+        result.clientKey = req.session['clientKey'];
+        res.json(result);
+    } else {
+        res.redirect(req.session.returnTo || '/');
+    }
 
     var log = new Logging({
         email: user.email,
@@ -35,6 +38,7 @@ exports.createTwitterAccount = function(req, res) {
     log.save();
 
 };
+
 exports.createFacebookAccount = function(req, res) {
     var user = req.user;
     var result = Code.account.external.link;
@@ -46,7 +50,12 @@ exports.createFacebookAccount = function(req, res) {
     result.profile = user.profile;
     result.tokens = user.tokens;
 
-    res.json(result);
+    if (req.session['clientKey'] == 'external key') {
+        result.clientKey = req.session['clientKey'];
+        res.json(result);
+    } else {
+        res.redirect(req.session.returnTo || '/');
+    }
 
     var log = new Logging({
         email: user.email,
@@ -56,6 +65,34 @@ exports.createFacebookAccount = function(req, res) {
     log.save();
 
 };
+
+exports.createGoogleAccount = function(req, res) {
+    var user = req.user;
+    var result = Code.account.external.link;
+    var localToken = { kind: 'haroo-cloud', accessToken: uuid.v1() };
+
+    user.tokens.push(localToken);
+
+    result.email = user.email;
+    result.profile = user.profile;
+    result.tokens = user.tokens;
+
+    if (req.session['clientKey'] == 'external key') {
+        result.clientKey = req.session['clientKey'];
+        res.json(result);
+    } else {
+	    res.redirect(req.session.returnTo || '/');
+    }
+
+    var log = new Logging({
+        email: user.email,
+        linkedAt: new Date()
+    });
+
+    log.save();
+
+};
+
 
 exports.accessAccount = function (req, res, callback) {
     req.assert('email', 'Email is not valid').isEmail();
@@ -100,6 +137,27 @@ exports.accessAccount = function (req, res, callback) {
             res.send(result);
         }
     });
+};
+
+
+exports.linkAuth = function (req, res, callback) {
+    req.assert('provider', 'Provider can not Empty').notEmpty();
+    req.assert('clientKey', 'clientKey can not Empty').notEmpty();
+
+    var errors = req.validationErrors();
+
+    var result = {};
+
+    if (errors) {
+        result = Code.account.external.validation;
+
+        res.send(result);
+        return callback(errors);
+    }
+
+    var uri = "/auth/" + req.param('provider');
+
+    res.redirect(uri);
 };
 
 exports.unlinkAuth = function(req, res, callback) {

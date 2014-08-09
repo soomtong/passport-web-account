@@ -7,6 +7,7 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var Account = require('./../model/account');
 var Logging = require('../model/accountLog');
@@ -82,6 +83,53 @@ passport.use(new FacebookStrategy(passportSecretToken['facebook'], function(req,
         });
     });
 }));
+
+// Sign in with Google.
+
+passport.use(new GoogleStrategy(passportSecretToken['google'], function(req, accessToken, refreshToken, profile, done) {
+  if (req.user) {
+    Account.findOne({ google: profile.id }, function(err, existingUser) {
+      if (existingUser) {
+        req.flash('errors', { msg: 'There is already a Google account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
+        done(err);
+      } else {
+        Account.findById(req.user.id, function(err, user) {
+          user.google = profile.id;
+          user.tokens.push({ kind: 'google', accessToken: accessToken });
+          user.profile.name = user.profile.name || profile.displayName;
+          user.profile.gender = user.profile.gender || profile._json.gender;
+          user.profile.picture = user.profile.picture || profile._json.picture;
+          user.save(function(err) {
+            req.flash('info', { msg: 'Google account has been linked.' });
+            done(err, user);
+          });
+        });
+      }
+    });
+  } else {
+    Account.findOne({ google: profile.id }, function(err, existingUser) {
+      if (existingUser) return done(null, existingUser);
+      Account.findOne({ email: profile._json.email }, function(err, existingEmailUser) {
+        if (existingEmailUser) {
+          req.flash('errors', { msg: 'There is already an account using this email address. Sign in to that account and link it with Google manually from Account Settings.' });
+          done(err);
+        } else {
+          var user = new Account();
+          user.email = profile._json.email;
+          user.google = profile.id;
+          user.tokens.push({ kind: 'google', accessToken: accessToken });
+          user.profile.name = profile.displayName;
+          user.profile.gender = profile._json.gender;
+          user.profile.picture = profile._json.picture;
+          user.save(function(err) {
+            done(err, user);
+          });
+        }
+      });
+    });
+  }
+}));
+
 
 // Login Required middleware.
 exports.isAuthenticated = function(req, res, callback) {

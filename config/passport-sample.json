@@ -10,5 +10,11 @@
         "clientSecret": "your secret",
         "callbackURL": "/auth/facebook/callback",
         "passReqToCallback": true
+    },
+    "google": {
+        "clientID": "your id",
+        "clientSecret": "your secret",
+        "callbackURL": "/auth/google/callback",
+        "passReqToCallback": true
     }
 }
