@@ -121,10 +121,12 @@ app.get('/', function (req, res) {
 });
 app.get('/login', accountController.loginForm);
 app.post('/login', accountController.login);
+app.get('/logout', accountController.logout);
 
 app.get('/signup', accountController.signUpForm);
 app.post('/signup', accountController.signUp);
-app.get('/logout', accountController.logout);
+
+app.get('/account', accountController.accountInfo);
 
 app.post('/api/account/create', apiController.createAccount);
 app.post('/api/account/read', apiController.readAccount);

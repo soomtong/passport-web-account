@@ -114,3 +114,11 @@ exports.signUp = function (req, res) {
         }
     });
 };
+
+exports.accountInfo = function (req, res) {
+    var params = {
+        user: req.user||''
+    };
+
+    res.render('profile', params)
+};
