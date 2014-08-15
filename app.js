@@ -127,6 +127,9 @@ app.get('/signup', accountController.signUpForm);
 app.post('/signup', accountController.signUp);
 
 app.get('/account', accountController.accountInfo);
+app.post('/account/password', accountController.updatePassword);
+app.post('/account/delete', accountController.deleteAccount);
+app.post('/account/unlink', accountController.accountInfo);
 
 app.post('/api/account/create', apiController.createAccount);
 app.post('/api/account/read', apiController.readAccount);

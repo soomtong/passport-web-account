@@ -103,17 +103,13 @@
     <form id="unlink-form" method="POST" action="/account/unlink" class="form-horizontal form-signin">
         <input type="hidden" name="_csrf" value="{{ _csrf }}">
         <legend>Unlink Account</legend>
-        <div class="form-group">
-            <label for="confirmUnlink" class="col-sm-3 control-label"></label>
-            <div class="col-sm-7">
-                <label><input type="checkbox" name="confirmUnlink" id="confirmUnlink" value="sure"> I want to unlink my account for sure</label>
-            </div>
-        </div>
+        {% for item in user.tokens %}
         <div class="form-group">
             <div class="col-sm-offset-3 col-sm-7">
-                <button class="btn btn-lg btn-danger btn-block" type="submit">Unlink my account</button>
+                <button class="btn btn-lg btn-danger btn-block" type="submit">Unlink my account for {{ item.kind|upper }}</button>
             </div>
         </div>
+        {% endfor %}
     </form>
     {% endif %}
 </div>

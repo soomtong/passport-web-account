@@ -122,3 +122,45 @@ exports.accountInfo = function (req, res) {
 
     res.render('profile', params)
 };
+
+exports.updatePassword = function (req, res, next) {
+    req.assert('password', 'Password must be at least 4 characters long').len(4);
+    req.assert('confirmPassword', 'Passwords do not match').equals(req.param('password'));
+
+    var errors = req.validationErrors();
+
+    if (errors) {
+        req.flash('errors', errors);
+        return res.redirect('/account');
+    }
+
+    Account.findById(req.user.id, function(err, user) {
+        if (err) return next(err);
+
+        user.password = req.param('password');
+
+        user.save(function(err) {
+            if (err) return next(err);
+            req.flash('success', { msg: 'Password has been changed.' });
+            res.redirect('/account');
+        });
+    });
+};
+
+exports.deleteAccount = function(req, res, next) {
+    req.assert('confirmDelete', 'Need confirm check for delete your account').equals('sure');
+
+    var errors = req.validationErrors();
+
+    if (errors) {
+        req.flash('errors', errors);
+        return res.redirect('/account');
+    }
+
+    Account.remove({ _id: req.user.id }, function(err) {
+        if (err) return next(err);
+        req.logout();
+        req.flash('info', { msg: 'Your account has been deleted.' });
+        res.redirect('/');
+    });
+};
