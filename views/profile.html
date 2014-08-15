@@ -83,7 +83,21 @@
             </div>
         </div>
     </form>
-
+    {% else %}
+    {% if user.tokens.length %}
+    <div class="form-horizontal form-signin">
+        <input type="hidden" name="_csrf" value="{{ _csrf }}">
+        <legend>Unlink Account</legend>
+        {% for item in user.tokens %}
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-7">
+                <a class="btn btn-lg btn-danger btn-block" href="/account/unlink/{{ item.kind }}">Unlink my account for {{ item.kind|upper }}</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endif %}
     <form id="delete-form" method="POST" action="/account/delete" class="form-horizontal form-signin">
         <input type="hidden" name="_csrf" value="{{ _csrf }}">
         <legend>Delete Account</legend>
@@ -99,19 +113,6 @@
             </div>
         </div>
     </form>
-    {% else %}
-    <form id="unlink-form" method="POST" action="/account/unlink" class="form-horizontal form-signin">
-        <input type="hidden" name="_csrf" value="{{ _csrf }}">
-        <legend>Unlink Account</legend>
-        {% for item in user.tokens %}
-        <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-7">
-                <button class="btn btn-lg btn-danger btn-block" type="submit">Unlink my account for {{ item.kind|upper }}</button>
-            </div>
-        </div>
-        {% endfor %}
-    </form>
-    {% endif %}
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>

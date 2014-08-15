@@ -29,8 +29,10 @@ var connectAssets = require('connect-assets');
 var common = require('./config/common');
 var database = require('./config/database');
 
+// Load passport strategy
+require('./route/passport');
+
 // Route Controller
-var passportController = require('./route/passport');   // load strategy
 var accountController = require('./route/account');
 var apiController = require('./route/api');
 
@@ -129,7 +131,10 @@ app.post('/signup', accountController.signUp);
 app.get('/account', accountController.accountInfo);
 app.post('/account/password', accountController.updatePassword);
 app.post('/account/delete', accountController.deleteAccount);
-app.post('/account/unlink', accountController.accountInfo);
+app.get('/account/unlink/:provider', accountController.unlinkAccount);
+app.get('/account/reset-password', function (req, res) {
+    res.send('reset password routine');
+});
 
 app.post('/api/account/create', apiController.createAccount);
 app.post('/api/account/read', apiController.readAccount);
