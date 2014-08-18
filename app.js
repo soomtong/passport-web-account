@@ -132,9 +132,9 @@ app.get('/account', accountController.accountInfo);
 app.post('/account/password', accountController.updatePassword);
 app.post('/account/delete', accountController.deleteAccount);
 app.get('/account/unlink/:provider', accountController.unlinkAccount);
-app.get('/account/reset-password', function (req, res) {
-    res.send('reset password routine');
-});
+app.get('/account/reset-password', accountController.resetPasswordForm);
+app.post('/account/reset-password', accountController.resetPassword);
+app.get('/account/update-password/:token', accountController.updatePasswordForm);
 
 app.post('/api/account/create', apiController.createAccount);
 app.post('/api/account/read', apiController.readAccount);

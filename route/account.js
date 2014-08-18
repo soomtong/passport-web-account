@@ -181,3 +181,51 @@ exports.unlinkAccount = function(req, res, next) {
         });
     });
 };
+
+exports.resetPasswordForm = function (req, res) {
+    var params = {};
+    if (req.user) return res.redirect('/');
+    res.render('reset-password', params);
+};
+
+exports.resetPassword = function (req, res) {
+    req.assert('email', 'Email is not valid').isEmail();
+
+    var errors = req.validationErrors();
+
+    if (errors) {
+        req.flash('errors', errors);
+        return res.redirect('/account/reset-password');
+    }
+
+    var params = {
+        email: req.param('email'),
+        sent: true
+    };
+    if (req.user) return res.redirect('/');
+
+    //todo: update for email account, add token
+    //todo: send mail with a link
+    //todo: relieve app.get for link and update password
+    res.render('reset-password', params);
+};
+
+exports.updatePasswordForm = function (req, res) {
+    req.assert('token', 'Secret token cannot be empty').notEmpty();
+
+    var errors = req.validationErrors();
+
+    if (errors) {
+        return res.redirect('login');
+    }
+
+    //todo: retrieve account by request token
+    //todo: login session for email account
+    var params = {
+        user: req.user||''
+    };
+
+    //todo: remove token field for never access
+
+    res.render('profile', params)
+};
