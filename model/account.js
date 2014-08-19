@@ -10,6 +10,7 @@ var accountSchema = new mongoose.Schema({
     uuid: { type: String, unique: true },
     email: { type: String, unique: true, lowercase: true },
     password: String,
+    resetToken: String,
     createdAt: Date,
     updatedAt: Date,
 

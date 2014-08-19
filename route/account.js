@@ -1,7 +1,9 @@
 var _ = require('lodash');
 var passport = require('passport');
+var nodemailer = require('nodemailer');
 var uuid = require('node-uuid');
-
+var emailToken = require('../config/mailer')['email-token'];
+var emailTemplates = require('swig-email-templates');
 var Account = require('../model/account');
 var Logging = require('../model/accountLog');
 
@@ -15,6 +17,36 @@ function saveLog(type, userEmail) {
 
     log.save();
 }
+
+function sendPasswordResetMail(address, context) {
+    var smtpTransport = nodemailer.createTransport(emailToken);
+
+    emailTemplates({ root: __dirname + "/templates" }, function (error, render) {
+        var email = {
+            from: emailToken['reply'], // sender address
+            to: address,
+//            bcc: emailToken.bcc,
+            subject: "Reset your password link described"
+        };
+
+        render('password_reset_email.html', context, function (error, html) {
+            console.log(html);
+            email.html = html;
+            smtpTransport.sendMail(email, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log("Message sent: " + info.response);
+                }
+
+                // if you don't want to use this transport object anymore, uncomment following line
+                smtpTransport.close(); // shut down the connection pool, no more messages
+            });
+        });
+    });
+}
+
+
 
 exports.logout = function(req, res) {
     if (req.user) {
@@ -189,6 +221,8 @@ exports.resetPasswordForm = function (req, res) {
 };
 
 exports.resetPassword = function (req, res) {
+    if (req.user) return res.redirect('/');
+
     req.assert('email', 'Email is not valid').isEmail();
 
     var errors = req.validationErrors();
@@ -202,12 +236,22 @@ exports.resetPassword = function (req, res) {
         email: req.param('email'),
         sent: true
     };
-    if (req.user) return res.redirect('/');
 
-    //todo: update for email account, add token
-    //todo: send mail with a link
-    //todo: relieve app.get for link and update password
-    res.render('reset-password', params);
+    Account.findOne({ email: req.param('email') }, function (err, existAccount) {
+        if (!existAccount) {
+            req.flash('info', { msg: 'Email is not valid' });
+            return res.redirect('/account/reset-password');
+        }
+
+        var randomToken = uuid.v4();
+        existAccount.resetToken = randomToken;
+        existAccount.save();
+        var host = req.protocol + '://' + req.host;
+
+        sendPasswordResetMail(existAccount.email, { link: host + '/account/update-password/' + randomToken });
+
+        res.render('reset-password', params);
+    });
 };
 
 exports.updatePasswordForm = function (req, res) {

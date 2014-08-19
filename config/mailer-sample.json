@@ -1,0 +1,11 @@
+{
+    "email-token": {
+        "service": "gmail for nodemailer",
+        "auth": {
+            "user": "test your email@gmail.com",
+            "pass": "password"
+        },
+        "bcc": "test coworker email@gmail.com",
+        "reply": ["public name","public replay email"]
+    }
+}
