@@ -9,6 +9,9 @@ var Logging = require('../model/accountLog');
 
 var Code = require('../model/code');
 
+var HOUR = 3600000;
+var DAY = HOUR * 24;
+
 function saveLog(type, userEmail) {
     var log = new Logging();
 
@@ -49,7 +52,7 @@ function sendPasswordResetMail(address, context) {
 
 
 exports.logout = function(req, res) {
-    if (req.user) {
+    if (req.isAuthenticated()) {
         var userEmail = req.user['email'];
         Logging.findOneAndUpdate({ email: userEmail }, { signedOut: new Date() }, { sort: { _id : -1 } },
             function (err, lastLog) {
@@ -98,7 +101,7 @@ exports.login = function(req, res, callback) {
 
 exports.signUpForm = function (req, res) {
     var params = {};
-    if (req.user) return res.redirect('/');
+    if (req.isAuthenticated()) return res.redirect('/');
     res.render('signup', params);
 };
 
@@ -216,12 +219,12 @@ exports.unlinkAccount = function(req, res, next) {
 
 exports.resetPasswordForm = function (req, res) {
     var params = {};
-    if (req.user) return res.redirect('/');
+    if (req.isAuthenticated()) return res.redirect('/');
     res.render('reset-password', params);
 };
 
 exports.resetPassword = function (req, res) {
-    if (req.user) return res.redirect('/');
+    if (req.isAuthenticated()) return res.redirect('/');
 
     req.assert('email', 'Email is not valid').isEmail();
 
@@ -244,7 +247,9 @@ exports.resetPassword = function (req, res) {
         }
 
         var randomToken = uuid.v4();
+
         existAccount.resetToken = randomToken;
+        existAccount.resetTokenExpires = Date.now() + DAY; // 1 day
         existAccount.save();
         var host = req.protocol + '://' + req.host;
 
@@ -255,21 +260,59 @@ exports.resetPassword = function (req, res) {
 };
 
 exports.updatePasswordForm = function (req, res) {
+    if (req.isAuthenticated()) return res.redirect('/');
+
     req.assert('token', 'Secret token cannot be empty').notEmpty();
 
     var errors = req.validationErrors();
 
     if (errors) {
-        return res.redirect('login');
+        req.flash('info', { msg: 'Token is not valid' });
+        return res.redirect('/login');
     }
 
-    //todo: retrieve account by request token
-    //todo: login session for email account
-    var params = {
-        user: req.user||''
-    };
+    Account.findOne({ resetToken: req.param('token')})
+        .where('resetTokenExpires').gt(Date.now())
+        .exec(function(err, user) {
+            if (!user) {
+                req.flash('errors', { msg: 'Password reset token is invalid or has expired.' });
+                return res.redirect('/account/reset-password');
+            }
+            res.render('update-password', { resetAccount: user });
+        });
+};
 
-    //todo: remove token field for never access
+exports.updatePassword = function (req, res, next) {
+    req.assert('password', 'Password must be at least 4 characters long.').len(4);
+    req.assert('confirmPassword', 'Passwords must match.').equals(req.param('password'));
 
-    res.render('profile', params)
+    var errors = req.validationErrors();
+
+    if (errors) {
+        req.flash('errors', errors);
+        return res.redirect('back');
+    }
+
+    Account
+        .findOne({ resetToken: req.param('token') })
+        .where('resetTokenExpires').gt(Date.now())
+        .exec(function(err, accountForReset) {
+            if (!accountForReset) {
+                req.flash('errors', { msg: 'Password reset token is invalid or has expired.' });
+                return res.redirect('back');
+            }
+
+            accountForReset.password = req.param('password');
+            accountForReset.resetToken = undefined;
+            accountForReset.resetTokenExpires = undefined;
+
+            // force Login process
+            accountForReset.save(function(err) {
+                if (err) return next(err);
+                req.logIn(accountForReset, function(err) {
+                    if (err) return next(err);
+                    res.redirect('/');
+                });
+            });
+        });
 };

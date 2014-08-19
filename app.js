@@ -134,7 +134,8 @@ app.post('/account/delete', accountController.deleteAccount);
 app.get('/account/unlink/:provider', accountController.unlinkAccount);
 app.get('/account/reset-password', accountController.resetPasswordForm);
 app.post('/account/reset-password', accountController.resetPassword);
-app.get('/account/update-password/:token', accountController.updatePasswordForm);
+app.get('/account/update-password/:token?', accountController.updatePasswordForm);
+app.post('/account/update-password/:token?', accountController.updatePassword);
 
 app.post('/api/account/create', apiController.createAccount);
 app.post('/api/account/read', apiController.readAccount);
