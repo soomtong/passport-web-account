@@ -102,7 +102,7 @@ exports.accessAccount = function (req, res, callback) {
             if (_.find(user.tokens, { kind: req.param('provider') })) {
                 result = Code.account.read.done;
 
-                result.uuid = user.uuid;
+                result.uid = user.uid;
                 result.email = user.email;
                 result.profile = user.profile;
                 result.tokens = user.tokens;
@@ -206,7 +206,7 @@ exports.readAccount = function (req, res, callback) {
         } else {
             result = Code.account.read.done;
 
-            result.uuid = user.uuid;
+            result.uid = user.uid;
             result.email = user.email;
             result.profile = user.profile;
             result.tokens = user.tokens;
@@ -289,7 +289,7 @@ exports.createAccount = function (req, res) {
 
             res.send(result);
         } else {
-            user.uuid = uuid.v1();
+            user.uid = uuid.v1();
             user.save(function(err) {
                 if (err) {
                     result = Code.account.create.database;
@@ -419,4 +419,32 @@ exports.removeAccount = function (req, res, callback) {
         }
     })(req, res, callback);
 
+};
+
+
+exports.harooID = function (req, res) {
+    req.assert('harooID', 'harooID must be at least 4 characters long').isAlphanumeric().len(4);
+
+    var errors = req.validationErrors();
+
+    var result = {};
+
+    if (errors) {
+        result = Code.account.harooID.validation;
+
+        res.send(result);
+        return;
+    }
+
+    Account.findOne({ harooID: req.param('harooID') }, function(err, existingUser) {
+        if (existingUser) {
+            result = Code.account.harooID.reserved;
+
+            res.send(result);
+        } else {
+            result = Code.account.harooID.available;
+
+            res.send(result);
+        }
+    });
 };

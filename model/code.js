@@ -3,6 +3,26 @@
  */
 
 exports.account = {
+    harooID: {
+        validation: {
+            code: 3,
+            msg: {
+                en: "common validation error"
+            }
+        },
+        reserved: {
+            code: 1,
+            msg: {
+                en: "already exist harooID"
+            }
+        },
+        available: {
+            code: 0,
+            msg: {
+                en: "harooID available"
+            }
+        }
+    },
     create: {
         validation: {
             code: 3,

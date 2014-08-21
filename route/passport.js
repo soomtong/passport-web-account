@@ -55,7 +55,7 @@ passport.use(new TwitterStrategy(passportSecretToken['twitter'], function(req, a
                 });
             } else {
                 var user = new Account();
-                user.uuid = uuid.v1();
+                user.uid = uuid.v1();
                 // Twitter will not provide an email address.  Period.
                 // But a person’s twitter username is guaranteed to be unique
                 // so we can "fake" a twitter email address as follows:
@@ -90,7 +90,7 @@ passport.use(new FacebookStrategy(passportSecretToken['facebook'], function(req,
                 });
             } else {
                 var user = new Account();
-                user.uuid = uuid.v1();
+                user.uid = uuid.v1();
                 user.email = profile._json.email;
                 user.facebook = profile.id;
                 user.tokens.push({ kind: 'facebook', accessToken: accessToken });
@@ -122,7 +122,7 @@ passport.use(new GoogleStrategy(passportSecretToken['google'], function(req, acc
                 });
             } else {
                 var user = new Account();
-                user.uuid = uuid.v1();
+                user.uid = uuid.v1();
                 user.email = profile._json.email;
                 user.google = profile.id;
                 user.tokens.push({ kind: 'google', accessToken: accessToken });
