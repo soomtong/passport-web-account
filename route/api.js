@@ -1,6 +1,6 @@
 var _ = require('lodash');
 var passport = require('passport');
-var uuid = require('node-uuid');
+var uid = require('shortid');
 
 var Account = require('../model/account');
 var Logging = require('../model/accountLog');
@@ -289,7 +289,7 @@ exports.createAccount = function (req, res) {
 
             res.send(result);
         } else {
-            user.uid = uuid.v1();
+            user.uid = uid.generate();
             user.save(function(err) {
                 if (err) {
                     result = Code.account.create.database;

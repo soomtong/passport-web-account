@@ -2,6 +2,7 @@ var _ = require('lodash');
 var passport = require('passport');
 var nodemailer = require('nodemailer');
 var uuid = require('node-uuid');
+var uid = require('shortid');
 var emailToken = require('../config/mailer')['email-token'];
 var emailTemplates = require('swig-email-templates');
 var Account = require('../model/account');
@@ -119,7 +120,7 @@ exports.signUp = function (req, res) {
     }
 
     var user = new Account({
-        uuid: uuid.v1(),
+        uid: uid.generate(),
         email: req.param('email'),
         password: req.param('password'),
         createdAt: new Date(),
