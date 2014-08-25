@@ -27,7 +27,11 @@
                         {% if user.email %}
                         <li><a href="/account">Account Info</a></li>
                         <li class="divider"></li>
-                        <li><a href="/account">{{ user.email }}</a></li>
+                        {% if user.harooID %}
+                        <li><a href="/dashboard">Dashboard{# user.email #}</a></li>
+                        {% else %}
+                        <li><a href="/account">Need HarooID for dashboard</a></li>
+                        {% endif %}
                         {% else %}
                         <li><a href="/signup">Sign Up</a></li>
                         <li class="divider"></li>

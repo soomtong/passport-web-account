@@ -30,7 +30,7 @@ var common = require('./config/common');
 var database = require('./config/database');
 
 // Load passport strategy
-require('./route/passport');
+var passportMiddleware = require('./route/passport');
 
 // Route Controller
 var accountController = require('./route/account');
@@ -128,14 +128,20 @@ app.get('/logout', accountController.logout);
 app.get('/signup', accountController.signUpForm);
 app.post('/signup', accountController.signUp);
 
-app.get('/account', accountController.accountInfo);
-app.post('/account/password', accountController.updatePassword);
-app.post('/account/delete', accountController.deleteAccount);
-app.get('/account/unlink/:provider', accountController.unlinkAccount);
+app.get('/account', passportMiddleware.isAuthenticated, accountController.accountInfo);
+app.post('/account/profile', passportMiddleware.isAuthenticated, accountController.udpateProfile);
+app.post('/account/password', passportMiddleware.isAuthenticated, accountController.updatePassword);
+app.post('/account/delete', passportMiddleware.isAuthenticated, accountController.deleteAccount);
+app.get('/account/unlink/:provider', passportMiddleware.isAuthenticated, accountController.unlinkAccount);
+
 app.get('/account/reset-password', accountController.resetPasswordForm);
 app.post('/account/reset-password', accountController.resetPassword);
 app.get('/account/update-password/:token?', accountController.updatePasswordForm);
 app.post('/account/update-password/:token?', accountController.updatePassword);
+
+app.get('/dashboard', passportMiddleware.isAuthenticated, function (req, res) {
+    res.render('dashboard');
+});
 
 app.get('/api/haroo-id/:harooID', apiController.harooID);
 app.post('/api/haroo-id', apiController.harooID);

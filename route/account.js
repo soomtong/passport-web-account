@@ -160,6 +160,29 @@ exports.accountInfo = function (req, res) {
     res.render('profile', params)
 };
 
+exports.udpateProfile = function (req, res) {
+    req.assert('harooID', 'harooID must be at least 4 characters long').len(4);
+
+    var errors = req.validationErrors();
+
+    if (errors) {
+        req.flash('errors', errors);
+        return res.redirect('/account');
+    }
+
+    Account.findById(req.user.id, function(err, user) {
+        if (err) return next(err);
+
+        user.harooID = req.param('harooID');
+
+        user.save(function(err) {
+            if (err) return next(err);
+            req.flash('success', { msg: 'harooID has been changed.' });
+            res.redirect('/account');
+        });
+    });
+};
+
 exports.updatePassword = function (req, res, next) {
     req.assert('password', 'Password must be at least 4 characters long').len(4);
     req.assert('confirmPassword', 'Passwords do not match').equals(req.param('password'));
