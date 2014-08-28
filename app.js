@@ -33,6 +33,7 @@ var database = require('./config/database');
 var passportMiddleware = require('./route/passport');
 
 // Route Controller
+var dashboardController = require('./route/dashboard');
 var accountController = require('./route/account');
 var apiController = require('./route/api');
 
@@ -139,9 +140,7 @@ app.post('/account/reset-password', accountController.resetPassword);
 app.get('/account/update-password/:token?', accountController.updatePasswordForm);
 app.post('/account/update-password/:token?', accountController.updatePassword);
 
-app.get('/dashboard', passportMiddleware.isAuthenticated, function (req, res) {
-    res.render('dashboard');
-});
+app.get('/dashboard', passportMiddleware.isAuthenticated, dashboardController.index);
 
 app.get('/api/haroo-id/:harooID', apiController.harooID);
 app.post('/api/haroo-id', apiController.harooID);
