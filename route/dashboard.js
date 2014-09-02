@@ -71,3 +71,20 @@ exports.documentView = function (req, res) {
         }
     });
 };
+
+exports.documentPublicView = function (req, res) {
+    var params = {
+        view_id: req.param('view_id')
+    };
+
+    var couch = nano.db.use('db1');
+
+    couch.get(params.view_id, function (err, doc) {
+        params.doc = doc;
+        if (!err) {
+            res.render('document_public_view', params);
+        } else {
+            res.status(500).send('Something broke!');
+        }
+    });
+};
