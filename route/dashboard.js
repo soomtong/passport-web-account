@@ -3,54 +3,43 @@ var async = require('async');
 
 var nano = require('nano')(database.couch.url);
 
+function getPageParams (totalCount, nowPage, pageSize, pageGutter) {
+    var params = {};
+
+    params.totalCount = totalCount;
+    params.lineCounter = totalCount - ( pageSize * (nowPage - 1));
+    params.totalPages = parseInt(totalCount / pageSize) + (totalCount % pageSize ? 1 : 0);
+
+    params.startPage = params.totalPages > pageGutter * 2 && nowPage - pageGutter > 0 ? nowPage - pageGutter - (pageGutter + nowPage - params.totalPages > 0 ? pageGutter + nowPage - params.totalPages : 0) : 1;
+    params.endPage = params.totalPages > pageGutter * 2 && nowPage + pageGutter < params.totalPages ? nowPage + pageGutter + (pageGutter - nowPage > 0 ? pageGutter - nowPage : 0) : params.totalPages;
+
+    return params;
+}
+
 exports.index = function (req, res) {
     var params = {
         user_id: req.user.uid,
-        list: []
+        list: [],
+        page: req.param('p') || 1,
+        pageSize: 20,
+        pageGutter: 10
     };
     var couch = nano.db.use('db1');
 
-    couch.view('total_list', 'list', function (err, body) {
+    couch.view('dashboard', 'total_list', function (err, result) {
         if (!err) {
-            body.rows.forEach(function (doc) {
-                console.log(doc.value);
+            result.rows.forEach(function (doc) {
+                console.log(doc.key, doc.value);
             });
+            params.list = result.rows;
+            params.page_param = getPageParams(Number(result.rows.length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
+
+            res.render('dashboard', params);
         } else {
             console.log(err);
+            res.render('dashboard', params);
         }
     });
-    res.render('dashboard', params);
-
-/*
-    async.waterfall([
-        function (callback) {
-            couch.list(function (err, result) {
-                if (!err) {
-                    callback(err, result);
-                }
-            })
-        },
-        function (list, callback) {
-            var titles = [];
-            async.eachSeries(list.rows, function (item, next) {
-                    couch.get(item.key, { revs_info: false }, function (err, doc) {
-                        if (err) {
-                            next(err);
-                        } else {
-                            titles.push(doc.title);
-                            next();
-                        }
-                    });
-                },
-                function (err) {
-                    callback(err, titles);
-                });
-        }
-    ], function (err, result) {
-        params.list = result;
-        res.render('dashboard', params);
-    });
-*/
 };
 
 exports.documentView = function (req, res) {

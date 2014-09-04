@@ -212,14 +212,14 @@
                             <i class="fa fa-tasks"></i> Documents
                             <a href="#" class="pull-right">Manage</a>
                         </div>
-                        <div class="widget-body medium no-padding">
+                        <div class="widget-body large no-padding">
                             <div class="table-responsive">
                                 <table class="table">
                                     <tbody>
                                     {% for item in list %}
                                     <tr>
-                                        <td>{{ loop.index }}</td>
-                                        <td>{{ item }}</td>
+                                        <td>{{ page_param.lineCounter - loop.index0 }}</td>
+                                        <td><a href="/dashboard/{{ item.key | safe }}">{{ item.value }}</a></td>
                                         <td><span class="text-success"><i class="fa fa-check"></i></span></td>
                                     </tr>
                                     {% endfor %}
@@ -237,7 +237,7 @@
 
                             <div class="clearfix"></div>
                         </div>
-                        <div class="widget-body medium no-padding">
+                        <div class="widget-body large no-padding">
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
