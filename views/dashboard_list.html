@@ -160,9 +160,15 @@
                                     <tbody>
                                     {% for item in list %}
                                     <tr>
-                                        <td>{{ page_param.lineCounter - loop.index0 }}</td>
-                                        <td><a href="/dashboard/{{ item.key | safe }}">{{ item.value }}</a></td>
-                                        <td><span class="text-success"><i class="fa fa-check"></i></span></td>
+                                        <td style="width: 5em;">{{ page_param.lineCounter - loop.index0 }}</td>
+                                        <td><a href="/dashboard/{{ item.key | safe }}">{{ item.value[0] }}</a></td>
+                                        <td style="width: 3em;">
+                                            {% if item.value[1] %}
+                                            <span class="text-success"><i class="fa fa-trash-o"></i></span>
+                                            {% else %}
+                                            <span class="text-success"><i class="fa fa-check"></i></span>
+                                            {% endif %}
+                                        </td>
                                     </tr>
                                     {% endfor %}
                                     </tbody>

@@ -26,7 +26,7 @@ exports.index = function (req, res) {
     };
     var couch = nano.db.use('db1');
 
-    couch.view('dashboard', 'total_list', function (err, result) {
+    couch.view('dashboard', 'recent_list', function (err, result) {
         if (!err) {
             params.list = result.rows;
             params.page_param = getPageParams(Number(result.rows.length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
