@@ -141,6 +141,7 @@ app.get('/account/update-password/:token?', accountController.updatePasswordForm
 app.post('/account/update-password/:token?', accountController.updatePassword);
 
 app.get('/dashboard', passportMiddleware.isAuthenticated, dashboardController.index);
+app.get('/dashboard/list', passportMiddleware.isAuthenticated, dashboardController.list);
 app.get('/dashboard/:view_id', passportMiddleware.isAuthenticated, dashboardController.documentView);
 app.get('/p/:view_id', dashboardController.documentPublicView);
 

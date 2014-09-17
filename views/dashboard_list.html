@@ -29,6 +29,7 @@
     <![endif]-->
 
     <link rel="stylesheet" href="/css/haroo-cloud-common.css">
+    <link rel="stylesheet" href="/css/haroo-cloud-patch.css">
     <link rel="stylesheet" type="text/css" href="/css/font-awesome.css">
     <link rel="stylesheet" type="text/css" href="/css/dashboard/main.css">
     <link rel="stylesheet" type="text/css" href="/css/dashboard/loading.css">
@@ -51,22 +52,22 @@
             </li>
             <li class="sidebar-title"><span>Category</span></li>
             <li class="sidebar-list">
-                <a href="/dashboard/list">Total <span class="menu-icon fa fa-globe"></span></a>
+                <a href="/dashboard/list" class="{% if type == '' %}selected-list{% endif %}">Total <span class="menu-icon fa fa-globe"></span></a>
             </li>
             <li class="sidebar-list">
-                <a href="/dashboard/list?t=note">Note <span class="menu-icon fa fa-file-text"></span></a>
+                <a href="/dashboard/list?t=note" class="{% if type == 'note' %}selected-list{% endif %}">Note <span class="menu-icon fa fa-file-text"></span></a>
             </li>
             <li class="sidebar-list">
-                <a href="/dashboard/list?t=presentation">Presentation <span class="menu-icon fa fa-video-camera"></span></a>
+                <a href="/dashboard/list?t=presentation" class="{% if type == 'presentation' %}selected-list{% endif %}">Presentation <span class="menu-icon fa fa-video-camera"></span></a>
             </li>
             <li class="sidebar-list">
-                <a href="/dashboard/list?t=mail">Mail <span class="menu-icon fa fa-envelope"></span></a>
+                <a href="/dashboard/list?t=mail" class="{% if type == 'mail' %}selected-list{% endif %}">Mail <span class="menu-icon fa fa-envelope"></span></a>
             </li>
             <li class="sidebar-list">
-                <a href="/dashboard/list?t=todo">Todo <span class="menu-icon fa fa-eye"></span></a>
+                <a href="/dashboard/list?t=todo" class="{% if type == 'todo' %}selected-list{% endif %}">Todo <span class="menu-icon fa fa-eye"></span></a>
             </li>
             <li class="sidebar-list">
-                <a href="/dashboard/list?t=check">Check <span class="menu-icon fa fa-check-square"></span></a>
+                <a href="/dashboard/list?t=check" class="{% if type == 'check' %}selected-list{% endif %}">Check <span class="menu-icon fa fa-check-square"></span></a>
             </li>
             <li class="sidebar-title separator"><span>QUICK LINKS</span></li>
             <li class="sidebar-list">
@@ -97,7 +98,7 @@
                             Dashboard
                         </div>
                         <div class="breadcrumb-links">
-                            <a href="/">Home</a> / Dashboard
+                            <a href="/">Home</a> / <a href="/dashboard">Dashboard</a> / List
                         </div>
                     </div>
                     <div class="user pull-right">
@@ -147,66 +148,7 @@
             </div>
 
             <div class="row">
-                <div class="col-lg-3 col-md-6 col-xs-12">
-                    <div class="widget">
-                        <div class="widget-body">
-                            <div class="widget-icon green pull-left">
-                                <i class="fa fa-users"></i>
-                            </div>
-                            <div class="widget-content pull-left">
-                                <div class="title">80</div>
-                                <div class="comment">Follower</div>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-xs-12">
-                    <div class="widget">
-                        <div class="widget-body">
-                            <div class="widget-icon red pull-left">
-                                <i class="fa fa-tasks"></i>
-                            </div>
-                            <div class="widget-content pull-left">
-                                <div class="title">16</div>
-                                <div class="comment">Favorite</div>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-xs-12">
-                    <div class="widget">
-                        <div class="widget-body">
-                            <div class="widget-icon orange pull-left">
-                                <i class="fa fa-sitemap"></i>
-                            </div>
-                            <div class="widget-content pull-left">
-                                <div class="title">225</div>
-                                <div class="comment">Documents</div>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="spacer visible-xs"></div>
-                <div class="col-lg-3 col-md-6 col-xs-12">
-                    <div class="widget">
-                        <div class="widget-body">
-                            <div class="widget-icon blue pull-left">
-                                <i class="fa fa-support"></i>
-                            </div>
-                            <div class="widget-content pull-left">
-                                <div class="title">62</div>
-                                <div class="comment">Token</div>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg-12">
                     <div class="widget">
                         <div class="widget-title">
                             <i class="fa fa-tasks"></i> Documents
@@ -223,50 +165,6 @@
                                         <td><span class="text-success"><i class="fa fa-check"></i></span></td>
                                     </tr>
                                     {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="widget">
-                        <div class="widget-title">
-                            <i class="fa fa-users"></i> Users
-                            <input type="text" placeholder="Search" class="form-control input-sm pull-right"/>
-
-                            <div class="clearfix"></div>
-                        </div>
-                        <div class="widget-body no-padding">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th class="text-center">ID</th>
-                                        <th>Username</th>
-                                        <th>Role</th>
-                                        <th>Account</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td class="text-center">1</td>
-                                        <td>Joe Bloggs</td>
-                                        <td>Super Admin</td>
-                                        <td>AZ23045</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">2</td>
-                                        <td>Timothy Hernandez</td>
-                                        <td>Admin</td>
-                                        <td>AU24783</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-center">3</td>
-                                        <td>Joe Bickham</td>
-                                        <td>User</td>
-                                        <td>AM23781</td>
-                                    </tr>
                                     </tbody>
                                 </table>
                             </div>

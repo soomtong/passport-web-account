@@ -1,0 +1,48 @@
+## couch db function list
+
+```
+"recent_list": {
+           "map": "function (doc) {\n    if (doc.trash != true) {\n      var d = new Date(doc.updated_at);\n      var keys = [ d.getFullYear(), d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds() ];\n\n      emit(keys, doc);\n    }\n  }"
+       }
+```
+
+```
+"total_list": {
+           "map": "function (doc) {\n    emit(doc._id, doc.title)\n    }"
+       }
+```
+
+```
+"note_list": {
+       "map": "function (doc) {\n    if (doc.type == 'note') {\n      emit(doc._id, doc.title)\n      }\n    }"
+   }
+```
+
+```
+{
+   "recent_list": {
+       "map": "function (doc) {\n    if (doc.trash != true) {\n      var d = new Date(doc.updated_at);\n      var keys = [ d.getFullYear(), d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds() ];\n\n      emit(keys, doc);\n    }\n  }"
+   },
+   "total_list": {
+       "map": "function (doc) {\n    emit(doc._id, doc.title)\n    }"
+   },
+   "note_list": {
+       "map": "function (doc) {\n    if (doc.type == 'note') {\n      emit(doc._id, doc.title)\n      }\n    }"
+   },
+   "presentation_list": {
+       "map": "function (doc) {\n    if (doc.type == 'presentation') {\n      emit(doc._id, doc.title)\n      }\n    }"
+   },
+   "mail_list": {
+       "map": "function (doc) {\n    if (doc.type == 'mail') {\n      emit(doc._id, doc.title)\n      }\n    }"
+   },
+   "todo_list": {
+       "map": "function (doc) {\n    if (doc.type == 'todo') {\n      emit(doc._id, doc.title)\n      }\n    }"
+   },
+   "check_list": {
+       "map": "function (doc) {\n    if (doc.type == 'check') {\n      emit(doc._id, doc.title)\n      }\n    }"
+   },
+   "trash_list": {
+       "map": "function (doc) {\n    if (doc.type == 'trash') {\n      emit(doc._id, doc.title)\n      }\n    }"
+   }
+}
+```

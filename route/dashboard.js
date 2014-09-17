@@ -28,9 +28,6 @@ exports.index = function (req, res) {
 
     couch.view('dashboard', 'total_list', function (err, result) {
         if (!err) {
-            result.rows.forEach(function (doc) {
-                console.log(doc.key, doc.value);
-            });
             params.list = result.rows;
             params.page_param = getPageParams(Number(result.rows.length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
 
@@ -38,6 +35,35 @@ exports.index = function (req, res) {
         } else {
             console.log(err);
             res.render('dashboard', params);
+        }
+    });
+};
+
+exports.list = function (req, res) {
+    var params = {
+        type: req.param('t'),
+        user_id: req.user.uid,
+        list: [],
+        page: req.param('p') || 1,
+        pageSize: 20,
+        pageGutter: 10
+    };
+
+    var couch = nano.db.use('db1');
+    var listType = (params.type || 'total') + '_list';
+
+    couch.view('dashboard', listType, function (err, result) {
+        if (!err) {
+//            result.rows.forEach(function (doc) {
+//                console.log(doc.key, doc.value);
+//            });
+            params.list = result.rows;
+            params.page_param = getPageParams(Number(result.rows.length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
+
+            res.render('dashboard_list', params);
+        } else {
+            console.log(err);
+            res.render('dashboard_list', params);
         }
     });
 };
