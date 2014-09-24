@@ -26,17 +26,33 @@ exports.index = function (req, res) {
     };
     var couch = nano.db.use('db1');
 
-    couch.view('dashboard', 'recent_list', function (err, result) {
-        if (!err) {
-            params.list = result.rows;
-            params.page_param = getPageParams(Number(result.rows.length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
+    async.parallel([
+            function (callback) {
+                couch.view('dashboard', 'recent_list', function (err, result) {
+                    if (!err) {
+                        callback(null, result.rows);
+                    } else {
+                        callback(err);
+                    }
+                });
+            },
+            function (callback) {
+                couch.view('dashboard', 'tag_count', function (err, result) {
+                    if (!err) {
+                        callback(null, result.rows[0]);
+                    } else {
+                        callback(err);
+                    }
+                });
+            }],
+        function (err, results) {
+            params.list = results[0];
+            params.page_param = getPageParams(Number(results[0].length), Number(params.page), Number(params.pageSize), Number(params.pageGutter));
+
+            params.tagCount = results[1].value;
 
             res.render('dashboard', params);
-        } else {
-            console.log(err);
-            res.render('dashboard', params);
-        }
-    });
+        });
 };
 
 exports.list = function (req, res) {

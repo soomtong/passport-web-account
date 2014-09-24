@@ -1,6 +1,6 @@
 {
     "recent_list": {
-        "map": "function (doc) {\n    if (doc.trash != true) {\n      var d = new Date(doc.updated_at);\n      var keys = [ d.getFullYear(), d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds() ];\n\n      emit(keys, [doc.title]);\n    }\n  }"
+        "map": "function (doc) {\n    if (doc.trash != true) {\n      var d = new Date(doc.updated_at);\n      emit(doc._id, [doc.title, d]);\n    }\n  }"
     },
     "total_list": {
         "map": "function (doc) {\n    emit(doc._id, [doc.title, doc.trash])\n    }"
@@ -22,5 +22,9 @@
     },
     "trash_list": {
         "map": "function (doc) {\n    if (doc.type == 'trash') {\n      emit(doc._id, [doc.title])\n      }\n    }"
+    },
+    "tag_count": {
+        "map": "function (doc) {\n    if (doc.type && !doc.trash && doc.tags.length > 0) {\n        if (doc.tags.length > 1) {\n            for (var i in doc.tags) {\n                emit(i, 1);\n            }\n        } else {\n            emit(doc.tags, 1);\n        }\n    }\n}\n",
+        "reduce": "function(tag, counts) {\n    var sum = 0;\n    for (var i = 0; i < counts.length; i++) {\n        sum += 1;\n    };\n    return sum;\n}"
     }
 }

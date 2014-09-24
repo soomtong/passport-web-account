@@ -197,8 +197,8 @@
                                 <i class="fa fa-support"></i>
                             </div>
                             <div class="widget-content pull-left">
-                                <div class="title">62</div>
-                                <div class="comment">Token</div>
+                                <div class="title">{{ tagCount }}</div>
+                                <div class="comment">Tags</div>
                             </div>
                             <div class="clearfix"></div>
                         </div>
@@ -220,13 +220,7 @@
                                     <tr>
                                         <td style="width: 5em;">{{ page_param.lineCounter - loop.index0 }}</td>
                                         <td><a href="/dashboard/{{ item.key | safe }}">{{ item.value[0] }}</a></td>
-                                        <td style="width: 3em;">
-                                            {% if item.value[1] %}
-                                            <span class="text-success"><i class="fa fa-trash-o"></i></span>
-                                            {% else %}
-                                            <span class="text-success"><i class="fa fa-check"></i></span>
-                                            {% endif %}
-                                        </td>
+                                        <td style="width: 8em;">{{ item.value[1]|date('Y-m-d') }}</td>
                                     </tr>
                                     {% endfor %}
                                     </tbody>
