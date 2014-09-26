@@ -30,7 +30,7 @@
 
     <link rel="stylesheet" href="/css/haroo-cloud-common.css">
     <link rel="stylesheet" href="/css/haroo-cloud-patch.css">
-    <link rel="stylesheet" type="text/css" href="/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="/components/fontawesome/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="/css/dashboard/main.css">
     <link rel="stylesheet" type="text/css" href="/css/dashboard/loading.css">
     <link rel="stylesheet" type="text/css" href="/css/dashboard/content.css">
@@ -162,11 +162,18 @@
                                     <tr>
                                         <td style="width: 5em;">{{ page_param.lineCounter - loop.index0 }}</td>
                                         <td><a href="/dashboard/{{ item.key | safe }}">{{ item.value[0] }}</a></td>
-                                        <td style="width: 3em;">
+                                        <td style="width: 2em;">
                                             {% if item.value[1] %}
-                                            <span class="text-success"><i class="fa fa-trash-o"></i></span>
+                                            <span class="text-success" title="REMOVED"><i class="fa fa-trash-o"></i></span>
                                             {% else %}
-                                            <span class="text-success"><i class="fa fa-check"></i></span>
+                                            <span class="text-success" title=""><i class="fa fa-check"></i></span>
+                                            {% endif %}
+                                        </td>
+                                        <td style="width: 3em;">
+                                            {% if item.meta.share %}
+                                            <span class="text-success" title="PUBLIC"><i class="fa fa-toggle-on"></i></span>
+                                            {% else %}
+                                            <span class="text-success" title="PRIVATE"><i class="fa fa-toggle-off"></i></span>
                                             {% endif %}
                                         </td>
                                     </tr>

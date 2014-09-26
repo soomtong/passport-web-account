@@ -1,0 +1,20 @@
+{
+  "name": "haroo-cloud-core",
+  "version": "0.0.0",
+  "homepage": "https://github.com/soomtong/haroo-cloud-core",
+  "authors": [
+    "soomtong <soomtong@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "fontawesome": "~4.2.0"
+  }
+}
