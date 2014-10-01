@@ -93,7 +93,6 @@ exports.documentView = function (req, res) {
     var couch = nano.db.use('db1');
 
     couch.get(params.view_id, function (err, doc) {
-        console.log(doc);
         params.doc = doc;
         if (!err) {
             res.render('document_view', params);
@@ -101,6 +100,41 @@ exports.documentView = function (req, res) {
             res.status(500).send('Something broke!');
         }
     });
+};
+
+exports.documentUpdate = function (req, res) {
+    var params = {
+        user_id: req.user.uid,
+        view_id: req.param('view_id'),
+        publicUrl: req.param('publicUrl') || ''
+    };
+
+    if (!params.view_id) return res.send({ ok: false });
+
+    var couch = nano.db.use('db1');
+
+    couch.get(params.view_id, function (err, doc) {
+        if (err) {
+            console.log(err);
+            return res.send({ ok: false });
+        } else {
+            var meta = doc.meta || {};
+            meta.share = meta.share ? null : params.publicUrl;
+            doc.meta = meta;
+
+            couch.insert(doc, params.view_id, function (err, body) {
+                    if (!err) {
+                        console.log(body);
+                    } else {
+                        console.log(err);
+                    }
+
+                    res.send(body);
+                }
+            );
+        }
+    });
+
 };
 
 exports.documentPublicView = function (req, res) {

@@ -41,52 +41,7 @@
 <body>
 <div id="page-wrapper" class="active">
 
-    <!-- Sidebar -->
-    <div id="sidebar-wrapper">
-        <ul class="sidebar">
-            <li id="toggle-sidebar" class="sidebar-main">
-                <a href="#toggle-sidebar">
-                    Dashboard
-                    <span class="menu-icon glyphicon glyphicon-transfer"></span>
-                </a>
-            </li>
-            <li class="sidebar-title"><span>Category</span></li>
-            <li class="sidebar-list">
-                <a href="/dashboard/list" class="{% if type == '' %}selected-list{% endif %}">Total <span class="menu-icon fa fa-globe"></span></a>
-            </li>
-            <li class="sidebar-list">
-                <a href="/dashboard/list?t=note" class="{% if type == 'note' %}selected-list{% endif %}">Note <span class="menu-icon fa fa-file-text"></span></a>
-            </li>
-            <li class="sidebar-list">
-                <a href="/dashboard/list?t=presentation" class="{% if type == 'presentation' %}selected-list{% endif %}">Presentation <span class="menu-icon fa fa-video-camera"></span></a>
-            </li>
-            <li class="sidebar-list">
-                <a href="/dashboard/list?t=mail" class="{% if type == 'mail' %}selected-list{% endif %}">Mail <span class="menu-icon fa fa-envelope"></span></a>
-            </li>
-            <li class="sidebar-list">
-                <a href="/dashboard/list?t=todo" class="{% if type == 'todo' %}selected-list{% endif %}">Todo <span class="menu-icon fa fa-eye"></span></a>
-            </li>
-            <li class="sidebar-list">
-                <a href="/dashboard/list?t=check" class="{% if type == 'check' %}selected-list{% endif %}">Check <span class="menu-icon fa fa-check-square"></span></a>
-            </li>
-            <li class="sidebar-title separator"><span>QUICK LINKS</span></li>
-            <li class="sidebar-list">
-                <a href="#" target="_blank">HarooKit <span class="menu-icon fa fa-external-link"></span></a>
-            </li>
-        </ul>
-        <div class="sidebar-footer">
-            <div class="col-xs-4">
-                <a href="/">Home</a>
-            </div>
-            <div class="col-xs-4">
-                <a href="/about">About</a>
-            </div>
-            <div class="col-xs-4">
-                <a href="/support">Support</a>
-            </div>
-        </div>
-    </div>
-    <!-- End Sidebar -->
+    {% include 'partials/dashboard_sidemenu.html' %}
 
     <div id="content-wrapper">
         <div class="page-content">
@@ -101,40 +56,7 @@
                             <a href="/">Home</a> / <a href="/dashboard">Dashboard</a> / List
                         </div>
                     </div>
-                    <div class="user pull-right">
-                        <div class="item dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                {% if user.profile.picture %}
-                                <img src="{{ user.profile.picture }}">
-                                {% else %}
-                                <img src="/img/avatar.jpg">
-                                {% endif %}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-right">
-                                <li class="dropdown-header">{{ user.profile.name }}</li>
-                                <li class="divider"></li>
-                                <li class="link">
-                                    <a href="/account">Profile</a>
-                                </li>
-                                <li class="divider"></li>
-                                <li class="link">
-                                    <a href="/logout">Logout</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="item dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-bell-o"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-right">
-                                <li class="dropdown-header">Notifications</li>
-                                <li class="divider"></li>
-                                <li>
-                                    <a href="#">Something new event</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                    {% include 'partials/dashboard_account_info.html' %}
                 </div>
             </div>
 
@@ -157,23 +79,17 @@
                         <div class="widget-body no-padding">
                             <div class="table-responsive">
                                 <table class="table">
-                                    <tbody>
+                                    <tbody data-id="{{ _csrf }}">
                                     {% for item in list %}
-                                    <tr>
+                                    <tr class="list-ctrl" data-id="{{ item.value._id | safe }}">
                                         <td style="width: 5em;">{{ page_param.lineCounter - loop.index0 }}</td>
-                                        <td><a href="/dashboard/{{ item.key | safe }}">{{ item.value[0] }}</a></td>
-                                        <td style="width: 2em;">
-                                            {% if item.value[1] %}
-                                            <span class="text-success" title="REMOVED"><i class="fa fa-trash-o"></i></span>
-                                            {% else %}
-                                            <span class="text-success" title=""><i class="fa fa-check"></i></span>
-                                            {% endif %}
-                                        </td>
+                                        <td><a href="/dashboard/{{ item.value._id | safe }}">{{ item.value.title }}</a></td>
+                                        <td style="width: 7.2em;">{{ item.value.updated_at|date('Y-m-d') || item.value.created_at|date('Y-m-d') }}</td>
                                         <td style="width: 3em;">
-                                            {% if item.meta.share %}
-                                            <span class="text-success" title="PUBLIC"><i class="fa fa-toggle-on"></i></span>
+                                            {% if item.value.meta.share %}
+                                            <span class="text-success toggle-public" title="PUBLIC"><i class="fa fa-toggle-on"></i></span>
                                             {% else %}
-                                            <span class="text-success" title="PRIVATE"><i class="fa fa-toggle-off"></i></span>
+                                            <span class="text-success toggle-public" title="PRIVATE"><i class="fa fa-toggle-off"></i></span>
                                             {% endif %}
                                         </td>
                                     </tr>
@@ -193,5 +109,28 @@
 <script src="/js/bootstrap.min.js"></script>
 <script src="/js/jquery.cookie-1.4.1.min.js"></script>
 <script src="/js/dashboard.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.toggle-public').css('cursor', 'pointer').on('click', function () {
+            var that = $(this);
+            var id = that.parent().parent().attr('data-id') || '';
+            var token = that.parent().parent().parent().attr('data-id');
+            $.post('/dashboard/' + id + '/update', { publicUrl: id, _csrf: token }, function (result) {
+                if (result.ok) {
+                    togglePublic(that);
+                }
+            });
+        });
+    });
+
+    function togglePublic($el) {
+        var icon = $el.children('i.fa');
+        if (icon.hasClass('fa-toggle-off')) {
+            icon.removeClass('fa-toggle-off').addClass('fa-toggle-on');
+        } else {
+            icon.addClass('fa-toggle-off').removeClass('fa-toggle-on');
+        }
+    }
+</script>
 </body>
 </html>

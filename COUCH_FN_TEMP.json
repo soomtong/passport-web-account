@@ -3,25 +3,25 @@
         "map": "function (doc) {\n    if (doc.trash != true) {\n      var d = new Date(doc.updated_at);\n      emit(doc._id, [doc.title, d]);\n    }\n  }"
     },
     "total_list": {
-        "map": "function (doc) {\n    emit(doc._id, [doc.title, doc.trash])\n    }"
+        "map": "function (doc) {\n    if (doc.trash != true) {\n      emit([ -Date.parse(doc.updated_at) ], doc)\n      }\n    }"
     },
     "note_list": {
-        "map": "function (doc) {\n    if (doc.type == 'note') {\n      emit(doc._id, [doc.title])\n      }\n    }"
+        "map": "function (doc) {\n    if (doc.type == 'note' && !doc.trash) {\n      emit([ -Date.parse(doc.updated_at) ], doc)\n      }\n    }"
     },
     "presentation_list": {
-        "map": "function (doc) {\n    if (doc.type == 'presentation') {\n      emit(doc._id, [doc.title])\n      }\n    }"
+        "map": "function (doc) {\n    if (doc.type == 'presentation' && !doc.trash) {\n      emit([ -Date.parse(doc.updated_at) ], doc)\n      }\n    }"
     },
     "mail_list": {
-        "map": "function (doc) {\n    if (doc.type == 'mail') {\n      emit(doc._id, [doc.title])\n      }\n    }"
+        "map": "function (doc) {\n    if (doc.type == 'mail' && !doc.trash) {\n      emit([ -Date.parse(doc.updated_at) ], doc)\n      }\n    }"
     },
     "todo_list": {
-        "map": "function (doc) {\n    if (doc.type == 'todo') {\n      emit(doc._id, [doc.title])\n      }\n    }"
+        "map": "function (doc) {\n    if (doc.type == 'todo' && !doc.trash) {\n      emit([ -Date.parse(doc.updated_at) ], doc)\n      }\n    }"
     },
     "check_list": {
-        "map": "function (doc) {\n    if (doc.type == 'check') {\n      emit(doc._id, [doc.title])\n      }\n    }"
+        "map": "function (doc) {\n    if (doc.type == 'check' && !doc.trash) {\n      emit([ -Date.parse(doc.updated_at) ], doc)\n      }\n    }"
     },
     "trash_list": {
-        "map": "function (doc) {\n    if (doc.type == 'trash') {\n      emit(doc._id, [doc.title])\n      }\n    }"
+        "map": "function (doc) {\n    if (doc.type == 'trash') {\n      emit([ -Date.parse(doc.updated_at) ], doc)\n      }\n    }"
     },
     "tag_count": {
         "map": "function (doc) {\n    if (doc.type && !doc.trash && doc.tags.length > 0) {\n        if (doc.tags.length > 1) {\n            for (var i in doc.tags) {\n                emit(i, 1);\n            }\n        } else {\n            emit(doc.tags, 1);\n        }\n    }\n}\n",

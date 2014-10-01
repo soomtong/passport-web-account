@@ -143,7 +143,21 @@ app.post('/account/update-password/:token?', accountController.updatePassword);
 app.get('/dashboard', passportMiddleware.isAuthenticated, dashboardController.index);
 app.get('/dashboard/list', passportMiddleware.isAuthenticated, dashboardController.list);
 app.get('/dashboard/:view_id', passportMiddleware.isAuthenticated, dashboardController.documentView);
-app.get('/p/:view_id', dashboardController.documentPublicView);
+app.post('/dashboard/:view_id/update', passportMiddleware.isAuthenticated, dashboardController.documentUpdate);
+app.get('/p/:view_id', passportMiddleware.isAuthenticated, dashboardController.documentPublicView);
+
+app.get('/:user_id/:publicUrl', function (req, res) {
+    var params = {
+        userID: req.param('user_id'),
+        publicUrl: req.param('publicUrl')
+    };
+
+    // check that doc is public?
+    // retrieve meta.share value from publicUrl
+
+    console.log(params);
+    res.send(params);
+});
 
 app.get('/api/haroo-id/:harooID', apiController.harooID);
 app.post('/api/haroo-id', apiController.harooID);
