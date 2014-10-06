@@ -69,6 +69,7 @@ exports.logout = function(req, res) {
 
 exports.loginForm = function (req, res) {
     var params = {};
+    if (req.isAuthenticated()) return res.redirect('/account');
     res.render('login', params);
 };
 
@@ -138,14 +139,16 @@ exports.signUp = function (req, res) {
         } else {
             user.save(function(err) {
                 if (err) {
-                    res.redirect('/signup');
+                    console.log(err);
+                    return res.redirect('/signup');
                 }
                 req.logIn(user, function (err) {
-                    if (err) return next(err);
-                    res.redirect('/');
-
+                    if (err) {
+                        console.log(err);
+                    }
                     saveLog('createdAt', req.param('email'));
 
+                    return res.redirect('/');
                 });
             });
         }

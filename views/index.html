@@ -20,7 +20,16 @@
         <app-bar theme="dark" class="bar fixed" unresolved>
             <a href="/product" class="paper-button " borderless sink>Product</a>
             <a href="/service" class="paper-button " borderless sink>Service</a>
+            {% if user.email %}
+            {% if user.harooID %}
+            <a href="/dashboard" class="paper-button " borderless sink>Dashboard</a>
+            {% else %}
+            <a href="/account" class="paper-button " borderless sink>Update HarooID</a>
+            {% endif %}
+            <a href="/logout" class="paper-button " borderless sink>Logout</a>
+            {% else %}
             <a href="/login" class="paper-button " borderless sink>Login</a>
+            {% endif %}
         </app-bar>
 
         <core-icon id="dropdown-toggle" icon="arrow-drop-down"></core-icon>
@@ -132,7 +141,9 @@
                 <div class="columns" layout="" horizontal="" wrap="">
                     <summary flex="">
                         <div class="box">
-                            <img src="/images/paper-calculator.png" />
+                            <img class="img-circle"
+                                 src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                                 alt="Generic placeholder image" style="width: 317px; height: 317px;">
                         </div>
                         <h2 class="elements-using">Write Your All About It</h2>
 
@@ -142,8 +153,9 @@
                     </summary>
                     <summary flex="">
                         <div class="box">
-                            <img src="/images/paper-calculator.png" />
-                        </div>
+                            <img class="img-circle"
+                                 src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                                 alt="Generic placeholder image" style="width: 317px; height: 317px;">                        </div>
                         <h2 class="elements-creating">Share To the Web</h2>
 
                         <p class="lead">Easily make own blog system, no more wordpress
@@ -152,8 +164,9 @@
                     </summary>
                     <summary flex="">
                         <div class="box">
-                            <img src="/images/paper-calculator.png" />
-                        </div>
+                            <img class="img-circle"
+                                 src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                                 alt="Generic placeholder image" style="width: 317px; height: 317px;">                        </div>
 
                         <h2 class="platform">Productive Your Business</h2>
 

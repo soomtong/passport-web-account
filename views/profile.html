@@ -10,122 +10,130 @@
 
     <title>{{ site.title }}</title>
 
+    <script src="/components/platform/platform.js"></script>
+    <link rel="import" href="/components/core-header-panel/core-header-panel.html">
+    <link rel="import" href="/components/core-toolbar/core-toolbar.html">
+    <link rel="import" href="/components/core-icons/core-icons.html">
+    <link rel="import" href="/components/core-item/core-item.html">
+    <link rel="import" href="/components/core-input/core-input.html">
+
     <!-- Bootstrap core CSS -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]>
-    <script src="http://getbootstrap.com/assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="http://getbootstrap.com/assets/js/ie-emulation-modes-warning.js"></script>
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="http://getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"></script>
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
     <!-- Custom styles for this template -->
     <link href="/css/haroo-cloud-common.css" rel="stylesheet">
+    <style>
+        .content > div > core-item:first-child {
+            margin-right: 2em;
+        }
+    </style>
 </head>
-<body>
-<div class="navbar-wrapper">
-    <div class="container" id="top">
-        {% include 'partials/top-menu.html' %}
+<body fullbleed layout vertical unresolved>
+<core-header-panel flex mode="waterfall">
+    <core-toolbar>
+        <div>
+            <core-item icon="cloud" label="Haroo Cloud"><a href="/" target="_self"></a></core-item>
+        </div>
+    </core-toolbar>
+    <div class="content">
+        <div flex horizontal end-justified layout style="font-size: 12px;padding-right: 2em;">
+            {% if user.email %}
+            <core-item icon="account-box" label="Log Out"><a href="/logout" target="_self"></a></core-item>
+            <core-item icon="settings" label="Account Info"><a href="/account" target="_self"></a></core-item>
+            {% else %}
+            <core-item icon="account-box" label="Log In"><a href="/login" target="_self"></a></core-item>
+            <core-item icon="lock" label="Reset Password"><a href="/account/reset-password" target="_self"></a></core-item>
+            {% endif %}
+        </div>
+
+        <div class="container form-signup">
+            {% include 'partials/flash-message.html' %}
+
+            <form id="basic-form" method="POST" action="/account/profile" class="form-horizontal form-signin">
+                <input type="hidden" name="_csrf" value="{{ _csrf }}">
+                <legend>Account Info</legend>
+                <div class="form-group">
+                    <label for="email" class="col-sm-3 control-label">Email</label>
+                    <div class="col-sm-7">
+                        <input type="email" name="email" id="email" placeholder="Email" class="form-control" disabled value="{{ user.email }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email" class="col-sm-3 control-label">Profile</label>
+                    <div class="col-sm-7">
+                        {% if user.profile.picture %}
+                        <p><img src="{{ user.profile.picture }}" alt="Picture"/></p>
+                        {% endif %}
+                        {% if user.profile.location %}
+                        <p>{{ user.profile.location }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="harooID" class="col-sm-3 control-label">HarooID</label>
+                    <div class="col-sm-7">
+                        <input type="harooID" name="harooID" id="harooID" placeholder="Add HarooID for Dashboard" autofocus="" class="form-control" value="{{ user.harooID }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-7">
+                        <button class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </form>
+
+            {% if user.password && !(user.google || user.facebook || user.twitter) %}
+            <form id="password-form" method="POST" action="/account/password" class="form-horizontal form-signin">
+                <input type="hidden" name="_csrf" value="{{ _csrf }}">
+                <legend>Change Password</legend>
+                <div class="form-group"><label for="password" class="col-sm-3 control-label">Password</label>
+                    <div class="col-sm-7">
+                        <input type="password" name="password" id="password" placeholder="Password" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword" class="col-sm-3 control-label">Confirm Password</label>
+                    <div class="col-sm-7">
+                        <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-7">
+                        <button class="btn btn-lg btn-primary btn-block" type="submit">Change</button>
+                    </div>
+                </div>
+            </form>
+            {% else %}
+            {% if user.tokens.length %}
+            <div class="form-horizontal form-signin">
+                <input type="hidden" name="_csrf" value="{{ _csrf }}">
+                <legend>Unlink Account</legend>
+                {% for item in user.tokens %}
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-7">
+                        <a class="btn btn-lg btn-danger btn-block" href="/account/unlink/{{ item.kind }}">Unlink my account for {{ item.kind|upper }}</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endif %}
+            <form id="delete-form" method="POST" action="/account/delete" class="form-horizontal form-signin">
+                <input type="hidden" name="_csrf" value="{{ _csrf }}">
+                <legend>Delete Account</legend>
+                <div class="form-group">
+                    <label for="confirmDelete" class="col-sm-3 control-label"></label>
+                    <div class="col-sm-7">
+                        <label><input type="checkbox" name="confirmDelete" id="confirmDelete" value="sure"> I want to delete my account for sure</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-7">
+                        <button class="btn btn-lg btn-danger btn-block" type="submit">Delete my account</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
-<div class="container form-signup">
-    {% include 'partials/flash-message.html' %}
-
-    <form id="basic-form" method="POST" action="/account/profile" class="form-horizontal form-signin">
-        <input type="hidden" name="_csrf" value="{{ _csrf }}">
-        <legend>Account Info</legend>
-        <div class="form-group">
-            <label for="email" class="col-sm-3 control-label">Email</label>
-            <div class="col-sm-7">
-                <input type="email" name="email" id="email" placeholder="Email" class="form-control" disabled value="{{ user.email }}">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="email" class="col-sm-3 control-label">Profile</label>
-            <div class="col-sm-7">
-                {% if user.profile.picture %}
-                <p><img src="{{ user.profile.picture }}" alt="Picture"/></p>
-                {% endif %}
-                {% if user.profile.location %}
-                <p>{{ user.profile.location }}</p>
-                {% endif %}
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="harooID" class="col-sm-3 control-label">HarooID</label>
-            <div class="col-sm-7">
-                <input type="harooID" name="harooID" id="harooID" placeholder="Add HarooID for Dashboard" autofocus="" class="form-control" value="{{ user.harooID }}">
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-7">
-                <button class="btn btn-primary">Update</button>
-            </div>
-        </div>
-    </form>
-
-    {% if user.password && !(user.google || user.facebook || user.twitter) %}
-    <form id="password-form" method="POST" action="/account/password" class="form-horizontal form-signin">
-        <input type="hidden" name="_csrf" value="{{ _csrf }}">
-        <legend>Change Password</legend>
-        <div class="form-group"><label for="password" class="col-sm-3 control-label">Password</label>
-            <div class="col-sm-7">
-                <input type="password" name="password" id="password" placeholder="Password" class="form-control">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="confirmPassword" class="col-sm-3 control-label">Confirm Password</label>
-            <div class="col-sm-7">
-                <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password" class="form-control">
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-7">
-                <button class="btn btn-lg btn-primary btn-block" type="submit">Change</button>
-            </div>
-        </div>
-    </form>
-    {% else %}
-    {% if user.tokens.length %}
-    <div class="form-horizontal form-signin">
-        <input type="hidden" name="_csrf" value="{{ _csrf }}">
-        <legend>Unlink Account</legend>
-        {% for item in user.tokens %}
-        <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-7">
-                <a class="btn btn-lg btn-danger btn-block" href="/account/unlink/{{ item.kind }}">Unlink my account for {{ item.kind|upper }}</a>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% endif %}
-    <form id="delete-form" method="POST" action="/account/delete" class="form-horizontal form-signin">
-        <input type="hidden" name="_csrf" value="{{ _csrf }}">
-        <legend>Delete Account</legend>
-        <div class="form-group">
-            <label for="confirmDelete" class="col-sm-3 control-label"></label>
-            <div class="col-sm-7">
-                <label><input type="checkbox" name="confirmDelete" id="confirmDelete" value="sure"> I want to delete my account for sure</label>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-7">
-                <button class="btn btn-lg btn-danger btn-block" type="submit">Delete my account</button>
-            </div>
-        </div>
-    </form>
-</div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
+</core-header-panel>
 </body>
 </html>

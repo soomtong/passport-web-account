@@ -140,6 +140,27 @@ app.post('/account/reset-password', accountController.resetPassword);
 app.get('/account/update-password/:token?', accountController.updatePasswordForm);
 app.post('/account/update-password/:token?', accountController.updatePassword);
 
+app.get('/api/haroo-id/:harooID', apiController.harooID);
+app.post('/api/haroo-id', apiController.harooID);
+app.post('/api/account/create', apiController.createAccount);
+app.post('/api/account/read', apiController.readAccount);
+app.post('/api/account/dismiss', apiController.dismissAccount);
+app.post('/api/account/update', apiController.updateAccount);
+app.post('/api/account/remove', apiController.removeAccount);
+app.post('/api/account/access', apiController.accessAccount);
+app.post('/api/account/unlink', apiController.unlinkAuth);
+app.post('/api/account/link', apiController.linkAuth);
+
+app.get('/auth/twitter', passport.authenticate('twitter'));
+app.get('/auth/twitter/callback', passport.authenticate('twitter', { successRedirect: '/', failureRedirect: '/login' }), apiController.createTwitterAccount);
+
+app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
+app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), apiController.createFacebookAccount);
+
+app.get('/auth/google', passport.authenticate('google', { scope: 'profile email' }));
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), apiController.createGoogleAccount);
+
+// dashboard and user custom urls should below above all routes
 app.get('/dashboard', passportMiddleware.isAuthenticated, dashboardController.index);
 app.get('/dashboard/list', passportMiddleware.isAuthenticated, dashboardController.list);
 app.get('/dashboard/:view_id', passportMiddleware.isAuthenticated, dashboardController.documentView);
@@ -158,27 +179,6 @@ app.get('/:user_id/:publicUrl', function (req, res) {
     console.log(params);
     res.send(params);
 });
-
-app.get('/api/haroo-id/:harooID', apiController.harooID);
-app.post('/api/haroo-id', apiController.harooID);
-app.post('/api/account/create', apiController.createAccount);
-app.post('/api/account/read', apiController.readAccount);
-app.post('/api/account/dismiss', apiController.dismissAccount);
-app.post('/api/account/update', apiController.updateAccount);
-app.post('/api/account/remove', apiController.removeAccount);
-app.post('/api/account/access', apiController.accessAccount);
-app.post('/api/account/unlink', apiController.unlinkAuth);
-app.post('/api/account/link', apiController.linkAuth);
-
-app.get('/auth/twitter', passport.authenticate('twitter'));
-app.get('/auth/twitter/callback', passport.authenticate('twitter', { failureRedirect: '/login' }), apiController.createTwitterAccount);
-
-app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
-app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), apiController.createFacebookAccount);
-
-app.get('/auth/google', passport.authenticate('google', { scope: 'profile email' }));
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), apiController.createGoogleAccount);
-
 
 // 500 Error Handler
 app.use(errorHandler());
