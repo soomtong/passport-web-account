@@ -8,7 +8,7 @@ var crypto = require('crypto');
 
 var accountSchema = new mongoose.Schema({
     uid: { type: String, unique: true },
-    harooID: { type: String, unique: true },
+    harooID: { type: String, index: true },
     email: { type: String, unique: true, lowercase: true },
     password: String,
     resetToken: String,

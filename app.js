@@ -166,8 +166,8 @@ app.get('/dashboard/list', passportMiddleware.isAuthenticated, dashboardControll
 app.get('/dashboard/:view_id', passportMiddleware.isAuthenticated, dashboardController.documentView);
 app.post('/dashboard/:view_id/update', passportMiddleware.isAuthenticated, dashboardController.documentUpdate);
 app.get('/p/:view_id', passportMiddleware.isAuthenticated, dashboardController.documentPublicView);
-
-app.get('/:user_id/:publicUrl', function (req, res) {
+// todo: public address
+app.get('/p/:user_id/:publicUrl', function (req, res) {
     var params = {
         userID: req.param('user_id'),
         publicUrl: req.param('publicUrl')

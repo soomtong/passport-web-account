@@ -176,12 +176,24 @@ exports.udpateProfile = function (req, res) {
     Account.findById(req.user.id, function(err, user) {
         if (err) return next(err);
 
-        user.harooID = req.param('harooID');
+        Account.findOne({ _id: { $ne: req.user.id }, harooID: req.param('harooID') }, function (err, existHarooID) {
+            if (existHarooID) {
+                console.log('HarooID with that already exists.');
+                req.flash('errors', { msg: 'HarooID with that already exists.' });
 
-        user.save(function(err) {
-            if (err) return next(err);
-            req.flash('success', { msg: 'harooID has been changed.' });
-            res.redirect('/account');
+                return res.redirect('/account');
+            } else {
+                user.harooID = req.param('harooID');
+
+                user.save(function(err) {
+                    if (err) {
+                        req.flash('errors', { msg: 'Database update error' });
+                        return res.redirect('/account');
+                    }
+                    req.flash('success', { msg: 'harooID has been changed.' });
+                    res.redirect('/account');
+                });
+            }
         });
     });
 };
