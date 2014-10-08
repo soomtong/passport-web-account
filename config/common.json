@@ -2,5 +2,5 @@
     "sessionSecret": "haroo-cloud",
     "port": "3030",
     "domain": "cloud.haroopress.com",
-    "clientAuthUrl": "//localhost:3030"
+    "clientAuthUrl": "//cloud.haroopress.com"
 }
