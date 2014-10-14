@@ -5,6 +5,15 @@
     <title>Login</title>
     <link href="{{ hostUrl }}/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ hostUrl }}/css/haroo-cloud-common.css" rel="stylesheet">
+    <script>
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+        var sec = new Date().getTime();
+        var tabNo = getRandomInt(0, 1).toString();
+        callback2app('rhio.kim@gmail.com', 'dbname-' + tabNo, 'acc-token-'+sec , sec + (1000*60*10));
+        // email, table name, token, expire
+    </script>
 </head>
 <body>
 <div class="container form-signup only-client">
