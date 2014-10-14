@@ -51,6 +51,23 @@ function sendPasswordResetMail(address, context) {
 }
 
 
+// Login Required middleware.
+exports.isAuthenticated = function(req, res, callback) {
+    if (req.isAuthenticated()) return callback();
+    res.redirect('/login');
+};
+
+// Authorization Required middleware.
+exports.isAuthorized = function(req, res, callback) {
+    var provider = req.path.split('/').slice(-1)[0];
+
+    if (_.find(req.user.tokens, { kind: provider })) {
+        callback();
+    } else {
+        res.redirect('/auth/' + provider);
+    }
+};
+
 
 exports.logout = function(req, res) {
     if (req.isAuthenticated()) {

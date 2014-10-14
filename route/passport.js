@@ -13,7 +13,12 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var Account = require('../model/account');
 
-var passportSecretToken = require('../config/passport');
+var hostEnv = process.env.NODE_ENV || 'development';
+var passportSecretToken = require('../config/passport')[hostEnv];
+if (!passportSecretToken) {
+    console.error('=== use dev mode oauth token ===');
+    passportSecretToken = require('../config/passport')['development'];
+}
 
 passport.serializeUser(function(user, callback) {
     callback(null, user.id);
@@ -136,21 +141,3 @@ passport.use(new GoogleStrategy(passportSecretToken['google'], function(req, acc
         });
     });
 }));
-
-
-// Login Required middleware.
-exports.isAuthenticated = function(req, res, callback) {
-    if (req.isAuthenticated()) return callback();
-    res.redirect('/login');
-};
-
-// Authorization Required middleware.
-exports.isAuthorized = function(req, res, callback) {
-    var provider = req.path.split('/').slice(-1)[0];
-
-    if (_.find(req.user.tokens, { kind: provider })) {
-        callback();
-    } else {
-        res.redirect('/auth/' + provider);
-    }
-};

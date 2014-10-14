@@ -1,6 +1,10 @@
 /**
  * Created by soomtong on 2014. 7. 2..
  */
+
+// set global env
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
 // Core Utility
 var path = require('path');
 
@@ -30,7 +34,7 @@ var common = require('./config/common');
 var database = require('./config/database');
 
 // Load passport strategy
-var passportMiddleware = require('./route/passport');
+require('./route/passport');
 
 // Route Controller
 var dashboardController = require('./route/dashboard');
@@ -129,11 +133,11 @@ app.get('/logout', accountController.logout);
 app.get('/signup', accountController.signUpForm);
 app.post('/signup', accountController.signUp);
 
-app.get('/account', passportMiddleware.isAuthenticated, accountController.accountInfo);
-app.post('/account/profile', passportMiddleware.isAuthenticated, accountController.udpateProfile);
-app.post('/account/password', passportMiddleware.isAuthenticated, accountController.updatePassword);
-app.post('/account/delete', passportMiddleware.isAuthenticated, accountController.deleteAccount);
-app.get('/account/unlink/:provider', passportMiddleware.isAuthenticated, accountController.unlinkAccount);
+app.get('/account', accountController.isAuthenticated, accountController.accountInfo);
+app.post('/account/profile', accountController.isAuthenticated, accountController.udpateProfile);
+app.post('/account/password', accountController.isAuthenticated, accountController.updatePassword);
+app.post('/account/delete', accountController.isAuthenticated, accountController.deleteAccount);
+app.get('/account/unlink/:provider', accountController.isAuthenticated, accountController.unlinkAccount);
 
 app.get('/account/reset-password', accountController.resetPasswordForm);
 app.post('/account/reset-password', accountController.resetPassword);
@@ -161,11 +165,11 @@ app.get('/auth/google', passport.authenticate('google', { scope: 'profile email'
 app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), apiController.createGoogleAccount);
 
 // dashboard and user custom urls should below above all routes
-app.get('/dashboard', passportMiddleware.isAuthenticated, dashboardController.index);
-app.get('/dashboard/list', passportMiddleware.isAuthenticated, dashboardController.list);
-app.get('/dashboard/:view_id', passportMiddleware.isAuthenticated, dashboardController.documentView);
-app.post('/dashboard/:view_id/update', passportMiddleware.isAuthenticated, dashboardController.documentUpdate);
-app.get('/p/:view_id', passportMiddleware.isAuthenticated, dashboardController.documentPublicView);
+app.get('/dashboard', accountController.isAuthenticated, dashboardController.index);
+app.get('/dashboard/list', accountController.isAuthenticated, dashboardController.list);
+app.get('/dashboard/:view_id', accountController.isAuthenticated, dashboardController.documentView);
+app.post('/dashboard/:view_id/update', accountController.isAuthenticated, dashboardController.documentUpdate);
+app.get('/p/:view_id', accountController.isAuthenticated, dashboardController.documentPublicView);
 // todo: public address
 app.get('/p/:user_id/:publicUrl', function (req, res) {
     var params = {
@@ -186,7 +190,7 @@ app.use(errorHandler());
 
 // Start Express server
 app.listen(app.get('port'), function() {
-    console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('env'));
+    console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('hostEnv'));
 });
 
 module.exports = app;
