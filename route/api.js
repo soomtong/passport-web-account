@@ -6,7 +6,51 @@ var Account = require('../model/account');
 var Logging = require('../model/accountLog');
 
 var Code = require('../model/code');
+var commonVar = require('../config/common');
 
+function saveLog(type, userEmail) {
+    var log = new Logging();
+
+    log.email = userEmail;
+    log[type] = new Date();
+
+    log.save();
+}
+
+exports.linkExternalAccount = function (req, res, next) {
+    var provider = req.path.split('/')[2];
+
+    var redirect = {
+        success: req.session.clientRoute? '/api/loginDone' : '/',
+        fail: req.session.clientRoute ? '/api/login' : '/login'
+    };
+
+    passport.authenticate(provider, function (err, user, info) {
+        if (err) {
+            return next(err);
+        }
+        if (!user) {
+            return res.redirect(redirect.fail);
+        }
+        req.logIn(user, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            var log = new Logging({
+                email: user.email,
+                linkedAt: new Date()
+            });
+
+            log.save();
+
+            // clear client session
+            req.session.clientRoute = null;
+            return res.redirect(redirect.success);
+        });
+    })(req, res, next);
+
+};
 
 exports.createTwitterAccount = function(req, res) {
     var user = req.user;
@@ -68,7 +112,7 @@ exports.createGoogleAccount = function(req, res) {
         result.clientKey = req.session['clientKey'];
         res.json(result);
     } else {
-	    res.redirect(req.session.returnTo || '/');
+        res.redirect(req.session.returnTo || '/');
     }
 
     var log = new Logging({
@@ -445,6 +489,126 @@ exports.harooID = function (req, res) {
             result = Code.account.harooID.available;
 
             res.send(result);
+        }
+    });
+};
+
+exports.loginForm = function (req, res) {
+    var params = {
+        hostUrl: commonVar['clientAuthUrl']
+    };
+    if (req.isAuthenticated()) return res.redirect(commonVar['clientAuthUrl'] + '/api/loginDone');
+
+    req.session.clientRoute = true;
+    res.render('client/login', params);
+};
+
+exports.login = function(req, res, callback) {
+    req.assert('email', 'Email is not valid').isEmail();
+    req.assert('password', 'Password cannot be blank').notEmpty();
+
+    var errors = req.validationErrors();
+
+    if (errors) {
+        req.flash('errors', errors);
+        return res.redirect(commonVar['clientAuthUrl'] + '/api/login');
+    }
+
+    passport.authenticate('local', function(err, user, info) {
+        if (err) return callback(err);
+        if (!user) {
+            req.flash('errors', { msg: info.message });
+            return res.redirect(commonVar['clientAuthUrl'] + '/api/login');
+        }
+        req.logIn(user, function(err) {
+            if (err) return callback(err);
+            req.flash('success', { msg: 'Success! You are logged in.' });
+            res.redirect(commonVar['clientAuthUrl'] + '/api/loginDone');
+
+            saveLog('signedIn', req.param('email'));
+
+        });
+    })(req, res, callback);
+};
+
+exports.loginDone = function (req, res) {
+    var params = {
+        userInfo: req.user,
+        hostUrl: commonVar['clientAuthUrl']
+    };
+
+    req.session.clientRoute = null;
+
+    res.render('client/loginDone', params);
+};
+
+exports.logout = function(req, res) {
+    if (req.isAuthenticated()) {
+        var userEmail = req.user['email'];
+        Logging.findOneAndUpdate({ email: userEmail }, { signedOut: new Date() }, { sort: { _id : -1 } },
+            function (err, lastLog) {
+                if (!lastLog) {
+                    saveLog('signedOut', userEmail);
+                }
+            });
+    }
+
+    req.logout();
+    res.redirect(commonVar['clientAuthUrl'] + '/api/login');
+};
+
+exports.signUpForm = function (req, res) {
+    var params = {
+        hostUrl: commonVar['clientAuthUrl']
+    };
+    if (req.isAuthenticated()) return res.redirect(commonVar['clientAuthUrl'] + '/api/loginDone');
+    res.render('client/signup', params);
+};
+
+exports.signUp = function (req, res) {
+    req.assert('email', 'Email is not valid').isEmail();
+    req.assert('password', 'Password must be at least 4 characters long').len(4);
+    req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
+
+    var errors = req.validationErrors();
+
+    if (errors) {
+        console.log(errors);
+        req.flash('errors', errors);
+        return res.redirect(commonVar['clientAuthUrl'] + '/api/signup');
+    }
+
+    var user = new Account({
+        uid: uid.generate(),
+        email: req.param('email'),
+        password: req.param('password'),
+        createdAt: new Date(),
+        profile: {
+            name: req.param('nickname')
+        }
+    });
+
+    Account.findOne({ email: req.param('email') }, function(err, existingUser) {
+        if (existingUser) {
+            console.log('Account with that email address already exists.');
+            req.flash('errors', { msg: 'Account with that email address already exists.' });
+
+            return res.redirect(commonVar['clientAuthUrl'] + '/api/signup');
+        } else {
+            user.save(function(err) {
+                if (err) {
+                    console.log(err);
+                    return res.redirect(commonVar['clientAuthUrl'] + '/api/signup');
+                }
+                req.logIn(user, function (err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    saveLog('createdAt', req.param('email'));
+
+                    return res.redirect(commonVar['clientAuthUrl'] + '/api/loginDone');
+                });
+            });
         }
     });
 };

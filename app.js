@@ -124,12 +124,13 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: WEEK }));
 // Route Point
 app.get('/', function (req, res) {
     var params = {};
+
+    req.session.clientRoute = null;
     res.render('index', params);
 });
 app.get('/login', accountController.loginForm);
 app.post('/login', accountController.login);
 app.get('/logout', accountController.logout);
-
 app.get('/signup', accountController.signUpForm);
 app.post('/signup', accountController.signUp);
 
@@ -144,6 +145,13 @@ app.post('/account/reset-password', accountController.resetPassword);
 app.get('/account/update-password/:token?', accountController.updatePasswordForm);
 app.post('/account/update-password/:token?', accountController.updatePassword);
 
+app.get('/api/login', apiController.loginForm);
+app.post('/api/login', apiController.login);
+app.post('/api/logout', apiController.logout);
+app.get('/api/loginDone', apiController.loginDone);
+app.get('/api/signup', apiController.signUpForm);
+app.post('/api/signup', apiController.signUp);
+
 app.get('/api/haroo-id/:harooID', apiController.harooID);
 app.post('/api/haroo-id', apiController.harooID);
 app.post('/api/account/create', apiController.createAccount);
@@ -155,14 +163,19 @@ app.post('/api/account/access', apiController.accessAccount);
 app.post('/api/account/unlink', apiController.unlinkAuth);
 app.post('/api/account/link', apiController.linkAuth);
 
+app.get('/auth/token', function (req, res) {
+    //check token expired?
+    return res.end();
+});
+
 app.get('/auth/twitter', passport.authenticate('twitter'));
-app.get('/auth/twitter/callback', passport.authenticate('twitter', { successRedirect: '/', failureRedirect: '/login' }), apiController.createTwitterAccount);
+app.get('/auth/twitter/callback', apiController.linkExternalAccount);
 
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
-app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), apiController.createFacebookAccount);
+app.get('/auth/facebook/callback', apiController.linkExternalAccount);
 
 app.get('/auth/google', passport.authenticate('google', { scope: 'profile email' }));
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), apiController.createGoogleAccount);
+app.get('/auth/google/callback', apiController.linkExternalAccount);
 
 // dashboard and user custom urls should below above all routes
 app.get('/dashboard', accountController.isAuthenticated, dashboardController.index);
