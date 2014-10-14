@@ -26,7 +26,7 @@ var flash = require('express-flash');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var expressValidator = require('express-validator');
-var connectAssets = require('connect-assets');
+//var connectAssets = require('connect-assets');
 
 
 // Secret Token
@@ -63,6 +63,7 @@ var CSRFEXCLUDE = ['/api/account/create', '/api/account/read', '/api/account/dis
 
 
 // Express configuration.
+app.set('hostEnv', process.env.NODE_ENV);
 app.set('port', process.env.PORT || common['port']);
 app.set('views', path.join(__dirname, 'views'));
 app.engine('html', swig.renderFile);
@@ -71,10 +72,10 @@ app.set('view cache', false);
 swig.setDefaults({ cache: false });
 
 app.use(compress());
-app.use(connectAssets({
-    paths: ['public/css', 'public/js'],
-    helperContext: app.locals
-}));
+//app.use(connectAssets({
+//    paths: ['public/css', 'public/js'],
+//    helperContext: app.locals
+//}));
 
 app.use(logger('dev'));
 app.use(bodyParser.json());

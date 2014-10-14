@@ -18,6 +18,8 @@ var passportSecretToken = require('../config/passport')[hostEnv];
 if (!passportSecretToken) {
     console.error('=== use dev mode oauth token ===');
     passportSecretToken = require('../config/passport')['development'];
+} else {
+    console.log('use %s mode auth token', hostEnv);
 }
 
 passport.serializeUser(function(user, callback) {
