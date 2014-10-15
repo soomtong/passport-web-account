@@ -72,10 +72,12 @@ app.set('view cache', false);
 swig.setDefaults({ cache: false });
 
 app.use(compress());
-//app.use(connectAssets({
-//    paths: ['public/css', 'public/js'],
-//    helperContext: app.locals
-//}));
+/*
+app.use(connectAssets({
+    paths: ['public/css', 'public/js'],
+    helperContext: app.locals
+}));
+*/
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -155,6 +157,7 @@ app.post('/api/signup', apiController.signUp);
 
 app.get('/api/haroo-id/:harooID', apiController.harooID);
 app.post('/api/haroo-id', apiController.harooID);
+
 app.post('/api/account/create', apiController.createAccount);
 app.post('/api/account/read', apiController.readAccount);
 app.post('/api/account/dismiss', apiController.dismissAccount);
