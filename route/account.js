@@ -103,7 +103,6 @@ exports.login = function(req, res, callback) {
             res.redirect(req.session.returnTo || '/');
 
             common.saveAccountAccessLog('signedIn', req.param('email'));
-
         });
     })(req, res, callback);
 };
@@ -114,7 +113,7 @@ exports.signUpForm = function (req, res) {
     res.render('signup', params);
 };
 
-exports.signUp = function (req, res) {
+exports.signUp = function (req, res, next) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
     req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
@@ -149,15 +148,16 @@ exports.signUp = function (req, res) {
             user.save(function(err) {
                 if (err) {
                     console.log(err);
-                    return res.redirect('/signup');
+                    return next(err);
                 }
                 req.logIn(user, function (err) {
                     if (err) {
                         console.log(err);
+                        return next(err);
                     }
                     common.saveAccountAccessLog('createdAt', req.param('email'));
 
-                    return res.redirect('/');
+                    res.redirect('/');
                 });
             });
         }
