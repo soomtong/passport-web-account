@@ -2,7 +2,6 @@ var _ = require('lodash');
 var passport = require('passport');
 var nodemailer = require('nodemailer');
 var uuid = require('node-uuid');
-var uid = require('shortid');
 var emailToken = require('../config/mailer')['email-token'];
 var emailTemplates = require('swig-email-templates');
 var Account = require('../model/account');
@@ -10,8 +9,8 @@ var Logging = require('../model/accountLog');
 
 var Code = require('../model/code');
 
-var HOUR = 3600000;
-var DAY = HOUR * 24;
+var common = require('./common');
+
 
 function saveLog(type, userEmail) {
     var log = new Logging();
@@ -138,10 +137,12 @@ exports.signUp = function (req, res) {
     }
 
     var user = new Account({
-        uid: uid.generate(),
+        harooID: common.getHarooID(),
+        loginExpire: common.getLoginExpireDate(),
         email: req.param('email'),
         password: req.param('password'),
         createdAt: new Date(),
+        fromWeb: 'public homepage',
         profile: {
             name: req.param('nickname')
         }
@@ -181,7 +182,7 @@ exports.accountInfo = function (req, res) {
 };
 
 exports.udpateProfile = function (req, res) {
-    req.assert('harooID', 'harooID must be at least 4 characters long').len(4);
+    //req.assert('harooID', 'harooID must be at least 4 characters long').len(4);
 
     var errors = req.validationErrors();
 
@@ -193,24 +194,17 @@ exports.udpateProfile = function (req, res) {
     Account.findById(req.user.id, function(err, user) {
         if (err) return next(err);
 
-        Account.findOne({ _id: { $ne: req.user.id }, harooID: req.param('harooID') }, function (err, existHarooID) {
-            if (existHarooID) {
-                console.log('HarooID with that already exists.');
-                req.flash('errors', { msg: 'HarooID with that already exists.' });
+        //user.harooID = req.param('harooID');  // deprecated
+        // model for update, something like
+        //user.profile = req.body;
 
+        user.save(function(err) {
+            if (err) {
+                req.flash('errors', { msg: 'Database update error' });
                 return res.redirect('/account');
-            } else {
-                user.harooID = req.param('harooID');
-
-                user.save(function(err) {
-                    if (err) {
-                        req.flash('errors', { msg: 'Database update error' });
-                        return res.redirect('/account');
-                    }
-                    req.flash('success', { msg: 'harooID has been changed.' });
-                    res.redirect('/account');
-                });
             }
+            req.flash('success', { msg: 'Profile has been changed.' });
+            res.redirect('/account');
         });
     });
 };
@@ -304,8 +298,8 @@ exports.resetPassword = function (req, res) {
 
         var randomToken = uuid.v4();
 
-        existAccount.resetToken = randomToken;
-        existAccount.resetTokenExpires = Date.now() + DAY; // 1 day
+        existAccount.resetPasswordToken = randomToken;
+        existAccount.resetPasswordTokenExpires = Date.now() + DAY; // 1 day
         existAccount.save();
         var host = req.protocol + '://' + req.host;
 
@@ -327,8 +321,8 @@ exports.updatePasswordForm = function (req, res) {
         return res.redirect('/login');
     }
 
-    Account.findOne({ resetToken: req.param('token')})
-        .where('resetTokenExpires').gt(Date.now())
+    Account.findOne({ resetPasswordToken: req.param('token')})
+        .where('resetPasswordTokenExpires').gt(Date.now())
         .exec(function(err, user) {
             if (!user) {
                 req.flash('errors', { msg: 'Password reset token is invalid or has expired.' });
@@ -350,8 +344,8 @@ exports.updatePassword = function (req, res, next) {
     }
 
     Account
-        .findOne({ resetToken: req.param('token') })
-        .where('resetTokenExpires').gt(Date.now())
+        .findOne({ resetPasswordToken: req.param('token') })
+        .where('resetPasswordTokenExpires').gt(Date.now())
         .exec(function(err, accountForReset) {
             if (!accountForReset) {
                 req.flash('errors', { msg: 'Password reset token is invalid or has expired.' });
@@ -359,8 +353,8 @@ exports.updatePassword = function (req, res, next) {
             }
 
             accountForReset.password = req.param('password');
-            accountForReset.resetToken = undefined;
-            accountForReset.resetTokenExpires = undefined;
+            accountForReset.resetPasswordToken = undefined;
+            accountForReset.resetPasswordTokenExpires = undefined;
 
             // force Login process
             accountForReset.save(function(err) {

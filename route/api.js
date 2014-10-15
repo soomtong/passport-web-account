@@ -1,12 +1,12 @@
 var _ = require('lodash');
 var passport = require('passport');
-var uid = require('shortid');
 
 var Account = require('../model/account');
 var Logging = require('../model/accountLog');
 
 var Code = require('../model/code');
 var commonVar = require('../config/common');
+var common = require('./common');
 
 function saveLog(type, userEmail) {
     var log = new Logging();
@@ -146,7 +146,7 @@ exports.accessAccount = function (req, res, callback) {
             if (_.find(user.tokens, { kind: req.param('provider') })) {
                 result = Code.account.read.done;
 
-                result.uid = user.uid;
+                result.harooID = user.harooID;
                 result.email = user.email;
                 result.profile = user.profile;
                 result.tokens = user.tokens;
@@ -250,7 +250,7 @@ exports.readAccount = function (req, res, callback) {
         } else {
             result = Code.account.read.done;
 
-            result.uid = user.uid;
+            result.harooID = user.harooID;
             result.email = user.email;
             result.profile = user.profile;
             result.tokens = user.tokens;
@@ -333,7 +333,7 @@ exports.createAccount = function (req, res) {
 
             res.send(result);
         } else {
-            user.uid = uid.generate();
+            user.harooID = common.getHarooID();
             user.save(function(err) {
                 if (err) {
                     result = Code.account.create.database;
@@ -579,7 +579,8 @@ exports.signUp = function (req, res) {
     }
 
     var user = new Account({
-        uid: uid.generate(),
+        harooID: common.getHarooID(),
+        loginExpire: common.getLoginExpireDate(),
         email: req.param('email'),
         password: req.param('password'),
         createdAt: new Date(),

@@ -3,7 +3,6 @@
  */
 
 var _ = require('lodash');
-var uid = require('shortid');
 
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -13,10 +12,12 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var Account = require('../model/account');
 
+var common = require('./common');
+
 var hostEnv = process.env.NODE_ENV || 'development';
 var passportSecretToken = require('../config/passport')[hostEnv];
 if (!passportSecretToken) {
-    console.error('=== use dev mode oauth token ===');
+    console.error('=== use dev mode oauth token by default ===');
     passportSecretToken = require('../config/passport')['development'];
 } else {
     console.log('use %s mode auth token', hostEnv);
@@ -62,7 +63,8 @@ passport.use(new TwitterStrategy(passportSecretToken['twitter'], function(req, a
                 });
             } else {
                 var user = new Account();
-                user.uid = uid.generate();
+                user.harooID = common.getHarooID();
+                user.loginExpire = common.getLoginExpireDate();
                 // Twitter will not provide an email address.  Period.
                 // But a person’s twitter username is guaranteed to be unique
                 // so we can "fake" a twitter email address as follows:
@@ -97,7 +99,8 @@ passport.use(new FacebookStrategy(passportSecretToken['facebook'], function(req,
                 });
             } else {
                 var user = new Account();
-                user.uid = uid.generate();
+                user.harooID = common.getHarooID();
+                user.loginExpire = common.getLoginExpireDate();
                 user.email = profile._json.email;
                 user.facebook = profile.id;
                 user.tokens.push({ kind: 'facebook', accessToken: accessToken });
@@ -129,7 +132,8 @@ passport.use(new GoogleStrategy(passportSecretToken['google'], function(req, acc
                 });
             } else {
                 var user = new Account();
-                user.uid = uid.generate();
+                user.harooID = common.getHarooID();
+                user.loginExpire = common.getLoginExpireDate();
                 user.email = profile._json.email;
                 user.google = profile.id;
                 user.tokens.push({ kind: 'google', accessToken: accessToken });
