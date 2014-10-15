@@ -12,15 +12,6 @@ var Code = require('../model/code');
 var common = require('./common');
 
 
-function saveLog(type, userEmail) {
-    var log = new Logging();
-
-    log.email = userEmail;
-    log[type] = new Date();
-
-    log.save();
-}
-
 function sendPasswordResetMail(address, context) {
     var smtpTransport = nodemailer.createTransport(emailToken);
 
@@ -74,7 +65,7 @@ exports.logout = function(req, res) {
         Logging.findOneAndUpdate({ email: userEmail }, { signedOut: new Date() }, { sort: { _id : -1 } },
             function (err, lastLog) {
                 if (!lastLog) {
-                    saveLog('signedOut', userEmail);
+                    common.saveAccountAccessLog('signedOut', userEmail);
                 }
             });
     }
@@ -111,7 +102,7 @@ exports.login = function(req, res, callback) {
             req.flash('success', { msg: 'Success! You are logged in.' });
             res.redirect(req.session.returnTo || '/');
 
-            saveLog('signedIn', req.param('email'));
+            common.saveAccountAccessLog('signedIn', req.param('email'));
 
         });
     })(req, res, callback);
@@ -164,7 +155,7 @@ exports.signUp = function (req, res) {
                     if (err) {
                         console.log(err);
                     }
-                    saveLog('createdAt', req.param('email'));
+                    common.saveAccountAccessLog('createdAt', req.param('email'));
 
                     return res.redirect('/');
                 });

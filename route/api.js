@@ -8,15 +8,6 @@ var Code = require('../model/code');
 var commonVar = require('../config/common');
 var common = require('./common');
 
-function saveLog(type, userEmail) {
-    var log = new Logging();
-
-    log.email = userEmail;
-    log[type] = new Date();
-
-    log.save();
-}
-
 exports.linkExternalAccount = function (req, res, next) {
     var provider = req.path.split('/')[2];
 
@@ -37,12 +28,7 @@ exports.linkExternalAccount = function (req, res, next) {
                 return next(err);
             }
 
-            var log = new Logging({
-                email: user.email,
-                linkedAt: new Date()
-            });
-
-            log.save();
+            common.saveAccountLinkLog(provider, user.email);
 
             // clear client session
             req.session.clientRoute = null;
@@ -67,12 +53,7 @@ exports.createTwitterAccount = function(req, res) {
         res.redirect(req.session.returnTo || '/');
     }
 
-    var log = new Logging({
-        email: user.email,
-        linkedAt: new Date()
-    });
-
-    log.save();
+    common.saveAccountLinkLog('twitter', user.email);
 
 };
 
@@ -91,12 +72,7 @@ exports.createFacebookAccount = function(req, res) {
         res.redirect(req.session.returnTo || '/');
     }
 
-    var log = new Logging({
-        email: user.email,
-        linkedAt: new Date()
-    });
-
-    log.save();
+    common.saveAccountLinkLog('facebook', user.email);
 
 };
 
@@ -115,12 +91,7 @@ exports.createGoogleAccount = function(req, res) {
         res.redirect(req.session.returnTo || '/');
     }
 
-    var log = new Logging({
-        email: user.email,
-        linkedAt: new Date()
-    });
-
-    log.save();
+    common.saveAccountLinkLog('google', user.email);
 
 };
 
@@ -153,12 +124,7 @@ exports.accessAccount = function (req, res, callback) {
 
                 res.send(result);
 
-                var log = new Logging({
-                    email: user.email,
-                    signedIn: new Date()
-                });
-
-                log.save();
+                common.saveSignInLog(user.email);
             } else {
                 result = Code.account.read.noExist;
 
@@ -211,12 +177,7 @@ exports.unlinkAuth = function(req, res, callback) {
 
             res.json(result);
 
-            var log = new Logging({
-                email: user.email,
-                unlinkedAt: new Date()
-            });
-
-            log.save();
+            common.saveUnlinkLog(user.email);
 
         });
     });
@@ -257,12 +218,7 @@ exports.readAccount = function (req, res, callback) {
 
             res.send(result);
 
-            var log = new Logging({
-                email: req.param('email'),
-                signedIn: new Date()
-            });
-
-            log.save();
+            common.saveSignInLog(req.param('email'));
         }
     })(req, res, callback);
 };
@@ -288,12 +244,7 @@ exports.dismissAccount = function (req, res, callback) {
 
                 res.send(result);
 
-                var log = new Logging({
-                    email: req.param('email'),
-                    signedOut: new Date()
-                });
-
-                log.save();
+                common.saveSignOutLog(req.param('email'));
             } else {
                 result = Code.account.dismiss.done;
 
@@ -345,12 +296,7 @@ exports.createAccount = function (req, res) {
 
                 res.send(result);
 
-                var log = new Logging({
-                    email: req.param('email'),
-                    createdAt: new Date()
-                });
-
-                log.save();
+                common.saveSignUpLog(req.param('email'));
             });
         }
     });
@@ -400,12 +346,7 @@ exports.updateAccount = function (req, res, callback) {
 
                         res.send(result);
 
-                        var log = new Logging({
-                            email: req.param('email'),
-                            updatedAt: new Date()
-                        });
-
-                        log.save();
+                        common.saveAccountUpdateLog(req.param('email'))
                     }
                 });
 
@@ -452,12 +393,7 @@ exports.removeAccount = function (req, res, callback) {
 
                     res.send(result);
 
-                    var log = new Logging({
-                        email: req.param('email'),
-                        removedAt: new Date()
-                    });
-
-                    log.save();
+                    common.saveAccountRemoveLog(req.param('email'));
                 }
             });
         }
@@ -525,7 +461,7 @@ exports.login = function(req, res, callback) {
             req.flash('success', { msg: 'Success! You are logged in.' });
             res.redirect(commonVar['clientAuthUrl'] + '/api/loginDone');
 
-            saveLog('signedIn', req.param('email'));
+            common.saveAccountAccessLog('signedIn', req.param('email'));
 
         });
     })(req, res, callback);
@@ -548,7 +484,7 @@ exports.logout = function(req, res) {
         Logging.findOneAndUpdate({ email: userEmail }, { signedOut: new Date() }, { sort: { _id : -1 } },
             function (err, lastLog) {
                 if (!lastLog) {
-                    saveLog('signedOut', userEmail);
+                    common.saveAccountAccessLog('signedOut', userEmail);
                 }
             });
     }
@@ -605,7 +541,7 @@ exports.signUp = function (req, res) {
                     if (err) {
                         console.log(err);
                     }
-                    saveLog('createdAt', req.param('email'));
+                    common.saveAccountAccessLog('createdAt', req.param('email'));
 
                     return res.redirect(commonVar['clientAuthUrl'] + '/api/loginDone');
                 });
