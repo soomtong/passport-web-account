@@ -12,6 +12,11 @@ cloud service stack for haroopad
 
 ## List of Packages
 
-| Package                         | Description   |
-| ------------------------------- |:-------------:|
-| express                         | web and rest framework|
+| Package                         | Description               |
+| ------------------------------- |:-------------------------:|
+| express                         | web and rest framework    |
+| Responsive-Dashboard            | dashboard theme           |
+
+## Link
+
+dashboard design: http://ehesp.github.io/Responsive-Dashboard/
