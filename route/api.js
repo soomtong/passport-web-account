@@ -403,7 +403,7 @@ exports.removeAccount = function (req, res, callback) {
 
 
 exports.harooID = function (req, res) {
-    req.assert('harooID', 'harooID must be at least 4 characters long').isAlphanumeric().len(4);
+    req.assert('harooID', 'harooID must be at least 4 characters long').len(4);
 
     var errors = req.validationErrors();
 
@@ -420,7 +420,17 @@ exports.harooID = function (req, res) {
         if (existingUser) {
             result = Code.account.harooID.reserved;
 
-            res.send(result);
+            // expired?
+            var now = new Date();
+            if (existingUser.loginExpire > now) {
+                result = Code.account.harooID.success;
+
+                res.send(result);
+            } else {
+                result = Code.account.harooID.expired;
+
+                res.send(result);
+            }
         } else {
             result = Code.account.harooID.available;
 

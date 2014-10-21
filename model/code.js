@@ -21,6 +21,18 @@ exports.account = {
             msg: {
                 en: "harooID available"
             }
+        },
+        success: {
+            code: 2,
+            msg: {
+                en: "good to go"
+            }
+        },
+        expired: {
+            code: 4,
+            msg: {
+                en: "session expired"
+            }
         }
     },
     create: {
