@@ -159,6 +159,7 @@ app.post('/account/update-password/:token?', accountController.updatePassword);
 
 app.get('/api/login', apiController.loginForm);
 app.post('/api/login', apiController.login);
+app.get('/api/logout', apiController.logout);
 app.post('/api/logout', apiController.logout);
 app.get('/api/loginDone', apiController.loginDone);
 app.get('/api/signup', apiController.signUpForm);
