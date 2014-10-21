@@ -7,83 +7,53 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="http://pad.haroopress.com/assets/haroopad.ico">
-
     <title>{{ site.title }}</title>
-
-    <script src="/components/platform/platform.js"></script>
-    <link rel="import" href="/components/core-header-panel/core-header-panel.html">
-    <link rel="import" href="/components/core-toolbar/core-toolbar.html">
-    <link rel="import" href="/components/core-icons/core-icons.html">
-    <link rel="import" href="/components/core-item/core-item.html">
-    <link rel="import" href="/components/core-input/core-input.html">
-
-    <!-- Bootstrap core CSS -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom styles for this template -->
+    <link href="/components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/haroo-cloud-common.css" rel="stylesheet">
-    <style>
-        .content > div > core-item:first-child {
-            margin-right: 2em;
-        }
-    </style>
 </head>
-<body fullbleed layout vertical unresolved>
-<core-header-panel flex mode="waterfall">
-    <core-toolbar>
-        <div>
-            <core-item icon="cloud" label="Haroo Cloud"><a href="/" target="_self"></a></core-item>
-        </div>
-    </core-toolbar>
-    <div class="content">
-        <div flex horizontal end-justified layout style="font-size: 12px;padding-right: 2em;">
-            {% if user.email %}
-            <core-item icon="account-box" label="Log Out"><a href="/logout" target="_self"></a></core-item>
-            <core-item icon="settings" label="Account Info"><a href="/account" target="_self"></a></core-item>
-            {% else %}
-            <core-item icon="account-box" label="Sign Up"><a href="/signup" target="_self"></a></core-item>
-            <core-item icon="lock" label="Reset Password"><a href="/account/reset-password" target="_self"></a></core-item>
-            {% endif %}
-        </div>
-
-        <div>
-        </div>
-
-        <div class="container form-signup">
-            {% include 'partials/flash-message.html' %}
-
-            <form id="login-form" method="POST" class="form-horizontal form-signin">
-                <input type="hidden" name="_csrf" value="{{ _csrf }}">
-                <legend>Sign in</legend>
-
-                <div class="form-group">
-                    <label for="email" class="col-sm-3 control-label">Email</label>
-                    <div class="col-sm-7">
-                        <input type="text" name="email" id="email" placeholder="Email" autofocus="" class="form-control">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="password" class="col-sm-3 control-label">Password</label>
-                    <div class="col-sm-7">
-                        <input type="password" name="password" id="password" placeholder="Password" class="form-control">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-offset-3 col-sm-7">
-                        <button type="submit" class="btn btn-primary">Login</button>
-                        <a href="/account/reset-password" class="btn btn-link">Forgot your password?</a>
-                    </div>
-                </div>
-                <hr>
-
-                <div class="col-sm-offset-3 col-sm-7">
-                    <a href="/auth/facebook" class="btn btn-block btn-facebook btn-social">Sign in with Facebook</a>
-                    <a href="/auth/twitter" class="btn btn-block btn-twitter btn-social">Sign in with Twitter</a>
-                    <a href="/auth/google" class="btn btn-block btn-google-plus btn-social">Sign in with Google</a>
-                </div>
-            </form>
-
-        </div>
+<body>
+<div class="navbar-wrapper">
+    <div class="container" id="top">
+        {% include 'partials/top-menu.html' %}
     </div>
-</core-header-panel>
+</div>
+
+<div class="container form-signup">
+    {% include 'partials/flash-message.html' %}
+
+    <form id="login-form" method="POST" class="form-horizontal form-signin">
+        <input type="hidden" name="_csrf" value="{{ _csrf }}">
+        <legend>Sign in</legend>
+
+        <div class="form-group">
+            <label for="email" class="col-sm-3 control-label">Email</label>
+            <div class="col-sm-7">
+                <input type="text" name="email" id="email" placeholder="Email" autofocus="" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="password" class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-7">
+                <input type="password" name="password" id="password" placeholder="Password" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-7">
+                <button type="submit" class="btn btn-primary">Login</button>
+                <a href="/forgot" class="btn btn-link">Forgot your password?</a>
+            </div>
+        </div>
+        <hr>
+
+        <div class="col-sm-offset-3 col-sm-7">
+            <a href="/auth/facebook" class="btn btn-block btn-facebook btn-social">Sign in with Facebook</a>
+            <a href="/auth/twitter" class="btn btn-block btn-twitter btn-social">Sign in with Twitter</a>
+            <a href="/auth/google" class="btn btn-block btn-google-plus btn-social">Sign in with Google</a>
+        </div>
+    </form>
+
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

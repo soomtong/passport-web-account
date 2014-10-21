@@ -1,250 +1,189 @@
 <!DOCTYPE html>
-<html itemscope itemtype="http://schema.org/Organization">
+<html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta itemprop="name" content="haroo cloud">
-    <meta itemprop="description" content="Haroopad Open source Markdown Editor">
-    <title>Haroo Cloud</title>
-    <script type="text/javascript" src="/components/angular-material/angular-material.min.js"></script>
-    <link rel="stylesheet" href="/components/angular-material/angular-material.min.css"/>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 1em;
-        }
-        img.material-icon {
-            width: 24px;
-            height: 24px;
-        }
-    </style>
-
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="http://pad.haroopress.com/assets/haroopad.ico">
+    <title>{{ site.title }}</title>
+    <link href="/components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/haroo-cloud-common.css" rel="stylesheet">
 </head>
-<body id="welcome">
-<div id="page-header" class="clearfix">
-    <a href="/business" title="Haroo Cloud for Business에 대해 자세히 알아보기">
-    <div class="dfb-link sprite-div">
-        <div><img class="material-icon" src='/components/material-design-icons/communication/svg/ic_ring_volume_24px.svg'></div>
-        <div class="sprite-text">
-            <div class="sprite-text-inner">Haroo Cloud for Business에 대해 자세히 알아보기</div>
-        </div>
-    </div>
-    </a>
-    <a href="/download" class="downloading-link">다운로드</a>
-</div>
-<div id="page-content">
-    <div class="top">
-        <div class="logo">
-            <img src="/img/logo-v1.png"/>
-        </div>
-        <div class="info ">
-            <div class="subtitle">HarooNote Open source Markdown Editor</div>
-            <div id="register-container">
-                <div id="register-form">
-                    <div class="register-spacer"></div>
-                    <div id="email-field" class="sick-input clearfix populated">
-                        <input autocomplete="off" tabindex="7" type="email" name="email" id="email">
-                        <label id="email-label" for="email">이메일</label>
-                    </div>
-                    <div id="password-field" class="sick-input populated">
-                        <input autocomplete="off" tabindex="8" type="password" name="password" id="password">
-                        <label id="password-label" for="password">비밀번호</label>
-                    </div>
-                    <div class="db-password-meter">
-                        <div class="db-password-dot" style="background-color: rgb(204, 230, 249);"></div>
-                        <div class="db-password-dot" style="background-color: rgb(64, 147, 224);"></div>
-                        <div class="db-password-dot" style="background-color: rgb(64, 147, 224);"></div>
-                        <div class="db-password-dot" style="background-color: rgb(64, 147, 224);"></div>
-                    </div>
-                    <div class="password_strength_desc" style="color: rgb(138, 160, 80);">좋음</div>
-                    <div class="clearfix"></div>
-                </div>
-            </div>
-            <div id="register-footer">
-                <div id="tos-agree-field">
-                    <label for="tos_agree">
-                        <input type="checkbox" id="tos_agree" name="tos_agree" tabindex="9">
-                        <a href="/terms" target="_blank">Haroopress 이용약관</a>에 동의합니다.
-                    </label>
-                </div>
-                <input name="register-submit-dummy" value="가입" class="big-border" type="submit" id="register-submit" tabindex="10">
-            </div>
-        </div>
+<body>
+<div class="navbar-wrapper">
+    <div class="container" id="top">
+        {% include 'partials/top-menu.html' %}
     </div>
 </div>
 
-    <site-banner class="main-bg bar sticky" layout horizontal center start unresolved>
-        <app-bar theme="dark" class="bar fixed" unresolved>
-            <a href="/product" class="paper-button " borderless sink>Product</a>
-            <a href="/service" class="paper-button " borderless sink>Service</a>
-            {% if user.email %}
-            {% if user.harooID %}
-            <a href="/dashboard" class="paper-button " borderless sink>Dashboard</a>
-            {% else %}
-            <a href="/account" class="paper-button " borderless sink>Update HarooID</a>
-            {% endif %}
-            <a href="/logout" class="paper-button " borderless sink>Logout</a>
-            {% else %}
-            <a href="/login" class="paper-button " borderless sink>Login</a>
-            {% endif %}
-        </app-bar>
 
-        <core-icon id="dropdown-toggle" icon="arrow-drop-down"></core-icon>
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class=""></li>
+        <li data-target="#myCarousel" data-slide-to="1" class=""></li>
+        <li data-target="#myCarousel" data-slide-to="2" class="active"></li>
+    </ol>
+    <div class="carousel-inner">
+        <div class="item">
+            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                 alt="First slide">
 
-        <dropdown-panel>
-            <core-item icon="book" label="Product" >
-                <a href="/product"></a>
-            </core-item>
-            <core-item icon="drive-document" label="Service" >
-                <a href="/service"></a>
-            </core-item>
-            <core-item icon="list" label="Login" >
-                <a href="/login"></a>
-            </core-item>
-        </dropdown-panel>
-    </site-banner>
-
-    <main>
-        <section id="future" class="main-bg">
-            <div class="panel left">
-                <summary>
+            <div class="container">
+                <div class="carousel-caption">
                     <h1>Haroopad Open source Markdown Editor</h1>
 
                     <p>Haroopad gives you the same editing experience regardless of the platform you are working on.
                         It runs on all three major operating systems—Windows, Mac OS X, and Linux.</p>
-                    <a href="#">
-                        <paper-button icon="archive" label="Download latest version" raisedbutton="" unresolved=""></paper-button>
-                    </a>
-                    <a href="https://github.com/rhiokim/haroopad">
-                        <paper-button class="github" icon="social:post-github" label="View on Github" unresolved=""></paper-button>
-                    </a>
-                </summary>
-            </div>
-        </section>
 
-        <section id="featured">
-            <div class="panel right">
-                <summary>
-                    <feature-carousel interval="5000" flex="" unresolved="">
-                        <div>
-                            <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" style="width: 525px; height: 280273;">
-                            <summary>
-                                <h1>Haroonote Professional Writing Platform</h1>
-                                <p>You can author professional-looking documents of various formats:
-                                    blog posts, slides, presentations, reports, email and more.
-                                    <br /><br />
-                                    <a href="#video">
-                                        <paper-button icon="drive-video" label="Watch"></paper-button>
-                                    </a>
-                                </p>
-                            </summary>
-                        </div>
-                        <div>
-                            <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" style="width: 525px; height: 280273;">
-                            <summary>
-                                <h1>Haroo Kit Web Presentation Application for Haroonote</h1>
-                                <p>Install to Your Own and Use your cloud Data of Haroonote, Show your Everything with Web browser
-                                    <br /><br />
-                                    <a href="//github.com/soomtong/harookit">
-                                        <paper-button icon="arrow-forward" label="Learn more"></paper-button>
-                                    </a>
-                                </p>
-                            </summary>
-                        </div>
-                    </feature-carousel>
-                </summary>
-            </div>
-        </section>
-
-        <section id="designer" class="main-purple">
-            <div class="panel">
-                <summary style="transform: translateZ(0);">
-                    <img class="img-circle"
-                         src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
-                         alt="Generic placeholder image" style="width: 140px; height: 140px;">
-
-                    <h2>Writing</h2>
-
-                    <p>Haroopad not only supports Markdown, but also has ability to build extensions for making your own features.
-                        YouTube, Twitter, and more you can easily embed those contents into your documents.
-                    </p>
-
-                    <img class="img-circle"
-                         src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
-                         alt="Generic placeholder image" style="width: 140px; height: 140px;">
-
-                    <h2>Cross Platform</h2>
-
-                    <p>We support (Ubuntu, 32/64 bit) Windows 7/8, Mac OS X, of Linux.
-                        and working on IOS, Android
-                    </p>
-
-                    <img class="img-circle"
-                         src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
-                         alt="Generic placeholder image" style="width: 140px; height: 140px;">
-
-                    <h2>Beautiful Theme and Component</h2>
-
-                    <p>Supports modern themes in editing area, skins for transformed documents, UI components for interactive
-                        experiences. You can produce more legible documents.</p>
-
-                </summary>
-            </div>
-        </section>
-
-        <section id="apps">
-            <div class="panel">
-                <div class="columns" layout="" horizontal="" wrap="">
-                    <summary flex="">
-                        <div class="box">
-                            <img class="img-circle"
-                                 src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
-                                 alt="Generic placeholder image" style="width: 317px; height: 317px;">
-                        </div>
-                        <h2 class="elements-using">Write Your All About It</h2>
-
-                        <p class="lead">Simply write a text for your report or homework, daily review or blog post.
-                            Simply write a text for your report or homework, daily review or blog post.
-                            Simply write a text for your report or homework, daily review or blog post.</p>
-                    </summary>
-                    <summary flex="">
-                        <div class="box">
-                            <img class="img-circle"
-                                 src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
-                                 alt="Generic placeholder image" style="width: 317px; height: 317px;">                        </div>
-                        <h2 class="elements-creating">Share To the Web</h2>
-
-                        <p class="lead">Easily make own blog system, no more wordpress
-                            Easily make own blog system, no more wordpress
-                            Easily make own blog system, no more wordpress</p>
-                    </summary>
-                    <summary flex="">
-                        <div class="box">
-                            <img class="img-circle"
-                                 src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
-                                 alt="Generic placeholder image" style="width: 317px; height: 317px;">                        </div>
-
-                        <h2 class="platform">Productive Your Business</h2>
-
-                        <p class="lead">Co-working solution for small business team
-                            Co-working solution for small business team
-                            Co-working solution for small business team</p>
-                    </summary>
+                    <p><a class="btn btn-lg btn-primary" href="#" role="button">Download latest version</a></p>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+        <div class="item">
+            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAGZmZgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                 alt="Second slide">
+
+            <div class="container">
+                <div class="carousel-caption">
+                    <h1>Haroonote Professional Writing Platform</h1>
+
+                    <p>You can author professional-looking documents of various formats:
+                        blog posts, slides, presentations, reports, email and more.</p>
+
+                    <p><a class="btn btn-lg btn-primary" href="/product/haroonote" role="button">Learn more</a></p>
+                </div>
+            </div>
+        </div>
+        <div class="item active">
+            <img src="data:image/gif;base64,R0lGODlhAQABAIAAAFVVVQAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                 alt="Third slide">
+
+            <div class="container">
+                <div class="carousel-caption">
+                    <h1>Haroo Kit Web Presentation Application for Haroonote</h1>
+
+                    <p>Install to Your Own and Use your cloud Data of Haroonote, Show your Everything with Web browser</p>
+
+                    <p><a class="btn btn-lg btn-primary" href="#" role="button">Get the source code</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+</div>
+
+<div class="container marketing">
+
+    <div class="row">
+        <div class="col-md-4">
+            <img class="img-circle"
+                 src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                 alt="Generic placeholder image" style="width: 140px; height: 140px;">
+
+            <h2>Writing</h2>
+
+            <p>Haroopad not only supports Markdown, but also has ability to build extensions for making your own features.
+                YouTube, Twitter, and more you can easily embed those contents into your documents.
+            </p>
+
+            <p><a class="btn btn-default" href="/product/haroonote/feature" role="button">View details »</a></p>
+        </div>
+        <!-- /.col-lg-4 -->
+        <div class="col-md-4">
+            <img class="img-circle"
+                 src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                 alt="Generic placeholder image" style="width: 140px; height: 140px;">
+
+            <h2>Cross Platform</h2>
+
+            <p>We support (Ubuntu, 32/64 bit) Windows 7/8, Mac OS X, of Linux.
+                and working on IOS, Android
+            </p>
+
+            <p><a class="btn btn-default" href="/product/haroonote/feature" role="button">View details »</a></p>
+        </div>
+        <!-- /.col-lg-4 -->
+        <div class="col-md-4">
+            <img class="img-circle"
+                 src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                 alt="Generic placeholder image" style="width: 140px; height: 140px;">
+
+            <h2>Beautiful Theme and Component</h2>
+
+            <p>Supports modern themes in editing area, skins for transformed documents, UI components for interactive
+                experiences. You can produce more legible documents.</p>
+
+            <p><a class="btn btn-default" href="/product/haroonote/feature" role="button">View details »</a></p>
+        </div>
+        <!-- /.col-lg-4 -->
+    </div>
+    <!-- /.row -->
+
+
+    <hr class="featurette-divider">
+
+    <div class="row featurette">
+        <div class="col-md-7">
+            <h2 class="featurette-heading">Write Your All About It <span class="text-muted">Just write down</span></h2>
+
+            <p class="lead">Simply write a text for your report or homework, daily review or blog post.
+                Simply write a text for your report or homework, daily review or blog post.
+                Simply write a text for your report or homework, daily review or blog post.</p>
+        </div>
+        <div class="col-md-5">
+            <img class="featurette-image img-responsive" data-src="holder.js/500x500/auto" alt="500x500"
+                 src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjI1MCIgeT0iMjUwIiBzdHlsZT0iZmlsbDojYWFhO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjMxcHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NTAweDUwMDwvdGV4dD48L3N2Zz4=">
+        </div>
+    </div>
+
+    <hr class="featurette-divider">
+
+    <div class="row featurette">
+        <div class="col-md-5">
+            <img class="featurette-image img-responsive" data-src="holder.js/500x500/auto" alt="500x500"
+                 src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjI1MCIgeT0iMjUwIiBzdHlsZT0iZmlsbDojYWFhO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjMxcHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NTAweDUwMDwvdGV4dD48L3N2Zz4=">
+        </div>
+        <div class="col-md-7">
+            <h2 class="featurette-heading">Browse Your Homepage <span class="text-muted">Share To the Web</span>
+            </h2>
+
+            <p class="lead">Easily make own blog system, no more wordpress
+                Easily make own blog system, no more wordpress
+                Easily make own blog system, no more wordpress</p>
+        </div>
+    </div>
+
+    <hr class="featurette-divider">
+
+    <div class="row featurette">
+        <div class="col-md-7">
+            <h2 class="featurette-heading">Productive Your Business <span class="text-muted">For The Win.</span></h2>
+
+            <p class="lead">Co-working solution for small business team
+                Co-working solution for small business team
+                Co-working solution for small business team</p>
+        </div>
+        <div class="col-md-5">
+            <img class="featurette-image img-responsive" data-src="holder.js/500x500/auto" alt="500x500"
+                 src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjI1MCIgeT0iMjUwIiBzdHlsZT0iZmlsbDojYWFhO2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjMxcHg7Zm9udC1mYW1pbHk6QXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWY7ZG9taW5hbnQtYmFzZWxpbmU6Y2VudHJhbCI+NTAweDUwMDwvdGV4dD48L3N2Zz4=">
+        </div>
+    </div>
+
+    <hr class="featurette-divider">
+
 
     <footer>
-        <div>
-            <p id="copyright">&copy; 2014 Haroopress Company, Inc. · <a href="/customer/privacy">Privacy</a> · <a href="/customer/legal">Legal</a></p>
-        </div>
+        <p class="pull-right"><a href="#top">Back to top</a></p>
+
+        <p>© 2014 Haroopress Company, Inc. · <a href="/customer/privacy">Privacy</a> · <a href="/customer/legal">Legal</a></p>
     </footer>
 
-    <script>var POLYMER_VERSION = '0.4.1';</script>
-    <script src="/js/app.js"></script>
-
-
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
