@@ -93,6 +93,20 @@ function getExpireDate() {
     return Date.now() + ( 15 * DAY );
 }
 
+function setAccountToClient(codeStub, userData) {
+    var result = codeStub;
+    result.email = userData.email;
+    result.harooID = userData.harooID;
+    result.loginExpire = userData.loginExpire;
+    result.profile = userData.profile;
+    if (userData.provider) {
+        result.provider = userData.provider;
+        result.tokens = userData.tokens;
+    }
+
+    return result;
+}
+
 
 module.exports = {
     getToday: getToday,
@@ -105,5 +119,6 @@ module.exports = {
     saveSignOutLog: saveSignOutLog,
     saveUnlinkLog: saveUnlinkLog,
     saveAccountUpdateLog: saveAccountUpdateLog,
-    saveAccountRemoveLog: saveAccountRemoveLog
+    saveAccountRemoveLog: saveAccountRemoveLog,
+    setAccountToClient: setAccountToClient
 };

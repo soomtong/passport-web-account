@@ -114,12 +114,8 @@ exports.accessAccount = function (req, res, callback) {
     Account.findOne({ email: req.param('email') }, function(err, user) {
         if (user) {
             if (_.find(user.tokens, { kind: req.param('provider') })) {
-                result = Code.account.read.done;
 
-                result.harooID = user.harooID;
-                result.email = user.email;
-                result.profile = user.profile;
-                result.tokens = user.tokens;
+                result = common.setAccountToClient(Code.account.read.done, user);
 
                 res.send(result);
 
@@ -208,12 +204,7 @@ exports.readAccount = function (req, res, callback) {
 
             res.send(result);
         } else {
-            result = Code.account.read.done;
-
-            result.harooID = user.harooID;
-            result.email = user.email;
-            result.profile = user.profile;
-            result.tokens = user.tokens;
+            result = common.setAccountToClient(Code.account.read.done, user);
 
             res.send(result);
 
@@ -269,6 +260,8 @@ exports.createAccount = function (req, res) {
     }
 
     var user = new Account({
+        harooID: common.getHarooID(),
+        loginExpire: common.getLoginExpireDate(),
         email: req.param('email'),
         password: req.param('password'),
         createdAt: new Date(),
@@ -287,11 +280,12 @@ exports.createAccount = function (req, res) {
             user.save(function(err) {
                 if (err) {
                     result = Code.account.create.database;
+                    result.info = err;
 
                     res.send(result);
                 }
 
-                result = Code.account.create.done;
+                result = common.setAccountToClient(Code.account.create.done, user);
 
                 res.send(result);
 
@@ -400,7 +394,6 @@ exports.removeAccount = function (req, res, callback) {
 
 };
 
-
 exports.harooID = function (req, res) {
     req.assert('harooID', 'harooID must be at least 4 characters long').len(4);
 
@@ -420,7 +413,8 @@ exports.harooID = function (req, res) {
             result = Code.account.harooID.reserved;
 
             // expired?
-            var now = new Date();
+            var now = new Date().getTime();
+            console.log(existingUser.loginExpire, now);
             if (existingUser.loginExpire > now) {
                 // login session
                 req.logIn(existingUser, function(err) {
@@ -432,11 +426,7 @@ exports.harooID = function (req, res) {
                     } else {
                         common.saveAccountAccessLog('signedIn', req.param('email'));
 
-                        result = Code.account.harooID.success;
-                        result.email = existingUser.email;
-                        result.harooID = existingUser.harooID;
-                        result.loginExpire = existingUser.loginExpire;
-                        result.profile = existingUser.profile;
+                        result = common.setAccountToClient(Code.account.harooID.success, existingUser);
 
                         res.send(result);
                     }

@@ -59,7 +59,7 @@ var WEEK = DAY * 7;
 
 // CSRF whitelist
 var CSRFEXCLUDE = ['/api/account/create', '/api/account/read', '/api/account/dismiss', '/api/account/update', '/api/account/remove',
-    '/api/account/link', '/api/account/unlink', '/api/account/access', '/api/haroo-id'];
+    '/api/account/link', '/api/account/unlink', '/api/account/access', '/api/account/haroo-id'];
 
 
 // Express configuration.
@@ -168,8 +168,8 @@ app.get('/api/signup', apiController.signUpForm);
 app.post('/api/signup', apiController.signUp);
 
 app.get('/api/haroo-id/:harooID', apiController.harooID);
-app.post('/api/haroo-id', apiController.harooID);
 
+app.post('/api/account/haroo-id', apiController.harooID);
 app.post('/api/account/create', apiController.createAccount);
 app.post('/api/account/read', apiController.readAccount);
 app.post('/api/account/dismiss', apiController.dismissAccount);
