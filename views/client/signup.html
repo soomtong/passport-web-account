@@ -2,9 +2,9 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Sign Up</title>
-    <link href="{{ hostUrl }}/components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ hostUrl }}/css/haroo-cloud-common.css" rel="stylesheet">
+    <title>{{ site.title }}</title>
+    <link href="{{ site.url }}/components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ site.url }}/css/haroo-cloud-common.css" rel="stylesheet">
 </head>
 <body>
 <div class="container form-signup only-client">
@@ -33,7 +33,7 @@
         <div class="form-group">
             <div class="col-sm-offset-3 col-sm-7">
                 <button class="btn btn-primary" type="submit">Sign Up</button>
-                <a href="{{ hostUrl }}/api/login" class="btn btn-link">Already Has Account</a>
+                <a href="{{ site.url }}/api/login" class="btn btn-link">Already Has Account</a>
             </div>
         </div>
     </form>

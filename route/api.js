@@ -456,10 +456,8 @@ exports.harooID = function (req, res) {
 };
 
 exports.loginForm = function (req, res) {
-    var params = {
-        hostUrl: commonVar['clientAuthUrl']
-    };
-    if (req.isAuthenticated()) return res.redirect(commonVar['clientAuthUrl'] + '/api/loginDone');
+    var params = {};
+    if (req.isAuthenticated()) return res.redirect(res.locals.site.url + '/api/loginDone');
 
     req.session.clientRoute = true;
     res.render('client/login', params);
@@ -473,19 +471,19 @@ exports.login = function(req, res, callback) {
 
     if (errors) {
         req.flash('errors', errors);
-        return res.redirect(commonVar['clientAuthUrl'] + '/api/login');
+        return res.redirect(res.locals.site.url + '/api/login');
     }
 
     passport.authenticate('local', function(err, user, info) {
         if (err) return callback(err);
         if (!user) {
             req.flash('errors', { msg: info.message });
-            return res.redirect(commonVar['clientAuthUrl'] + '/api/login');
+            return res.redirect(res.locals.site.url + '/api/login');
         }
         req.logIn(user, function(err) {
             if (err) return callback(err);
             req.flash('success', { msg: 'Success! You are logged in.' });
-            res.redirect(commonVar['clientAuthUrl'] + '/api/loginDone');
+            res.redirect(res.locals.site.url + '/api/loginDone');
 
             common.saveAccountAccessLog('signedIn', req.param('email'));
 
@@ -494,10 +492,7 @@ exports.login = function(req, res, callback) {
 };
 
 exports.loginDone = function (req, res) {
-    var params = {
-        userInfo: req.user,
-        hostUrl: commonVar['clientAuthUrl']
-    };
+    var params = {};
 
     req.session.clientRoute = null;
 
@@ -516,14 +511,12 @@ exports.logout = function(req, res) {
     }
 
     req.logout();
-    res.redirect(commonVar['clientAuthUrl'] + '/api/login');
+    res.redirect(res.locals.site.url + '/api/login');
 };
 
 exports.signUpForm = function (req, res) {
-    var params = {
-        hostUrl: commonVar['clientAuthUrl']
-    };
-    if (req.isAuthenticated()) return res.redirect(commonVar['clientAuthUrl'] + '/api/loginDone');
+    var params = {};
+    if (req.isAuthenticated()) return res.redirect(res.locals.site.url + '/api/loginDone');
     res.render('client/signup', params);
 };
 
@@ -537,7 +530,7 @@ exports.signUp = function (req, res) {
     if (errors) {
         console.log(errors);
         req.flash('errors', errors);
-        return res.redirect(commonVar['clientAuthUrl'] + '/api/signup');
+        return res.redirect(res.locals.site.url + '/api/signup');
     }
 
     var user = new Account({
@@ -556,12 +549,12 @@ exports.signUp = function (req, res) {
             console.log('Account with that email address already exists.');
             req.flash('errors', { msg: 'Account with that email address already exists.' });
 
-            return res.redirect(commonVar['clientAuthUrl'] + '/api/signup');
+            return res.redirect(res.locals.site.url + '/api/signup');
         } else {
             user.save(function(err) {
                 if (err) {
                     console.log(err);
-                    return res.redirect(commonVar['clientAuthUrl'] + '/api/signup');
+                    return res.redirect(res.locals.site.url + '/api/signup');
                 }
                 req.logIn(user, function (err) {
                     if (err) {
@@ -569,7 +562,7 @@ exports.signUp = function (req, res) {
                     }
                     common.saveAccountAccessLog('createdAt', req.param('email'));
 
-                    return res.redirect(commonVar['clientAuthUrl'] + '/api/loginDone');
+                    return res.redirect(res.locals.site.url + '/api/loginDone');
                 });
             });
         }

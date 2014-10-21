@@ -2,9 +2,9 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Login</title>
-    <link href="{{ hostUrl }}/components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{{ hostUrl }}/css/haroo-cloud-common.css" rel="stylesheet">
+    <title>{{ site.title }}</title>
+    <link href="{{ site.url }}/components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ site.url }}/css/haroo-cloud-common.css" rel="stylesheet">
     <script>
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min)) + min;
@@ -17,14 +17,14 @@
 </head>
 <body>
 <div class="container form-signup only-client">
-    <form id="signup-form" method="POST" class="form-horizontal form-signin" action="{{ hostUrl }}/api/logout">
+    <form id="signup-form" method="POST" class="form-horizontal form-signin" action="{{ site.url }}/api/logout">
         <input type="hidden" name="_csrf" value="{{ _csrf }}">
         <legend>Account Info</legend>
         <div class="form-group">
             <label for="email" class="col-sm-3 control-label">Email</label>
 
             <div class="col-sm-7">
-                <input type="text" name="email" id="email" placeholder="Email" autofocus="" class="form-control" readonly value="{{ userInfo.email|default('Noname') }}">
+                <input type="text" name="email" id="email" placeholder="Email" autofocus="" class="form-control" readonly value="{{ user.email|default('Noname') }}">
             </div>
         </div>
         <div class="form-group">
