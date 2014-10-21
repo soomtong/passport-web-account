@@ -97,7 +97,11 @@ exports.login = function(req, res, callback) {
             req.flash('errors', { msg: info.message });
             return res.redirect('/login');
         }
-        //todo: update expireDate
+        Account.findOne({ harooID: user.harooID }, function (err, updateUser) {
+            updateUser.loginExpire = common.getLoginExpireDate();
+            updateUser.save();
+        });
+
         req.logIn(user, function(err) {
             if (err) return callback(err);
             req.flash('success', { msg: 'Success! You are logged in.' });

@@ -5,8 +5,8 @@
     <title>{{ site.title }}</title>
     <link href="{{ site.url }}/components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ site.url }}/css/haroo-cloud-common.css" rel="stylesheet">
-    <script>
-        callback2app('{{ user.email}}', '{{ site.dbHost }}', '{{ user.harooID }}' , '{{ user.loginExpire }}');
+    <script type="text/javascript">
+        callback2app('{{ user.email}}', '{{ site.dbHost }}', '{{ user.harooID }}', '{{ user.loginExpire }}');
     </script>
 </head>
 <body>

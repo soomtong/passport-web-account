@@ -5,7 +5,6 @@ var Account = require('../model/account');
 var Logging = require('../model/accountLog');
 
 var Code = require('../model/code');
-var commonVar = require('../config/common');
 var common = require('./common');
 
 exports.linkExternalAccount = function (req, res, next) {
@@ -480,7 +479,11 @@ exports.login = function(req, res, callback) {
             req.flash('errors', { msg: info.message });
             return res.redirect(res.locals.site.url + '/api/login');
         }
-        //todo: update expireDate
+        Account.findOne({ harooID: user.harooID }, function (err, updateUser) {
+            updateUser.loginExpire = common.getLoginExpireDate();
+            updateUser.save();
+        });
+
         req.logIn(user, function(err) {
             if (err) return callback(err);
             req.flash('success', { msg: 'Success! You are logged in.' });
