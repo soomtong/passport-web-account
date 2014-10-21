@@ -170,13 +170,14 @@ app.post('/api/signup', apiController.signUp);
 app.get('/api/haroo-id/:harooID', apiController.harooID);
 
 app.post('/api/account/haroo-id', apiController.harooID);
+app.post('/api/account/access', apiController.accessToken);
 app.post('/api/account/create', apiController.createAccount);
 app.post('/api/account/read', apiController.readAccount);
 app.post('/api/account/dismiss', apiController.dismissAccount);
 app.post('/api/account/update', apiController.updateAccount);
 app.post('/api/account/remove', apiController.removeAccount);
-app.post('/api/account/access', apiController.accessAccount);
 app.post('/api/account/unlink', apiController.unlinkAuth);
+app.post('/api/account/check', apiController.checkLinkAuth);
 app.post('/api/account/link', apiController.linkAuth);
 
 app.get('/auth/token', function (req, res) {

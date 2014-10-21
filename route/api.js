@@ -94,8 +94,7 @@ exports.createGoogleAccount = function(req, res) {
 
 };
 
-
-exports.accessAccount = function (req, res, callback) {
+exports.checkLinkAuth = function (req, res, callback) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('provider', 'Provider can not Empty').notEmpty();
     req.assert('accessToken', 'AccessToken can not Empty').notEmpty();
@@ -114,7 +113,6 @@ exports.accessAccount = function (req, res, callback) {
     Account.findOne({ email: req.param('email') }, function(err, user) {
         if (user) {
             if (_.find(user.tokens, { kind: req.param('provider') })) {
-
                 result = common.setAccountToClient(Code.account.read.done, user);
 
                 res.send(result);
@@ -132,7 +130,6 @@ exports.accessAccount = function (req, res, callback) {
         }
     });
 };
-
 
 exports.linkAuth = function (req, res, callback) {
     req.assert('provider', 'Provider can not Empty').notEmpty();
@@ -204,9 +201,15 @@ exports.readAccount = function (req, res, callback) {
 
             res.send(result);
         } else {
-            result = common.setAccountToClient(Code.account.read.done, user);
+            Account.findOne({ harooID: user.harooID }, function (err, updateUser) {
+                updateUser.accessToken = common.getAccessToken();
+                updateUser.loginExpire = common.getLoginExpireDate();
+                updateUser.save();
 
-            res.send(result);
+                result = common.setAccountToClient(Code.account.read.done, updateUser);
+
+                res.send(result);
+            });
 
             common.saveSignInLog(req.param('email'));
         }
@@ -260,8 +263,6 @@ exports.createAccount = function (req, res) {
     }
 
     var user = new Account({
-        harooID: common.getHarooID(),
-        loginExpire: common.getLoginExpireDate(),
         email: req.param('email'),
         password: req.param('password'),
         createdAt: new Date(),
@@ -277,6 +278,9 @@ exports.createAccount = function (req, res) {
             res.send(result);
         } else {
             user.harooID = common.getHarooID();
+            user.accessToken = common.getAccessToken();
+            user.loginExpire = common.getLoginExpireDate();
+
             user.save(function(err) {
                 if (err) {
                     result = Code.account.create.database;
@@ -394,6 +398,44 @@ exports.removeAccount = function (req, res, callback) {
 
 };
 
+exports.accessToken = function (req, res, callback) {
+    req.assert('accessToken', 'AccessToken can not Empty').notEmpty();
+
+    var errors = req.validationErrors();
+
+    var result = {};
+
+    if (errors) {
+        result = Code.account.token.validation;
+
+        res.send(result);
+        return callback(errors);
+    }
+
+    Account.findOne({ accessToken: req.param('accessToken') }, function(err, existUser) {
+        if (existUser) {
+            // expired?
+            var now = new Date().getTime();
+
+            if (existUser.loginExpire > now) {
+                common.saveAccountAccessLog('signedIn', req.param('email'));
+
+                result = Code.account.token.allowed;
+
+                res.send(result);
+            } else {
+                result = Code.account.token.denied;
+
+                res.send(result);
+            }
+        } else {
+            result = Code.account.token.noExist;
+
+            res.send(result);
+        }
+    });
+};
+
 exports.harooID = function (req, res) {
     req.assert('harooID', 'harooID must be at least 4 characters long').len(4);
 
@@ -408,16 +450,16 @@ exports.harooID = function (req, res) {
         return;
     }
 
-    Account.findOne({ harooID: req.param('harooID') }, function(err, existingUser) {
-        if (existingUser) {
+    Account.findOne({ harooID: req.param('harooID') }, function(err, existUser) {
+        if (existUser) {
             result = Code.account.harooID.reserved;
 
             // expired?
             var now = new Date().getTime();
-            console.log(existingUser.loginExpire, now);
-            if (existingUser.loginExpire > now) {
+
+            if (existUser.loginExpire > now) {
                 // login session
-                req.logIn(existingUser, function(err) {
+                req.logIn(existUser, function(err) {
                     if (err) {
                         result = Code.account.harooID.database;
                         result.info = err;
@@ -426,7 +468,7 @@ exports.harooID = function (req, res) {
                     } else {
                         common.saveAccountAccessLog('signedIn', req.param('email'));
 
-                        result = common.setAccountToClient(Code.account.harooID.success, existingUser);
+                        result = common.setAccountToClient(Code.account.harooID.success, existUser);
 
                         res.send(result);
                     }

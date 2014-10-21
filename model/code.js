@@ -41,6 +41,32 @@ exports.account = {
             }
         }
     },
+    token: {
+        validation: {
+            code: 3,
+            msg: {
+                en: "common validation error"
+            }
+        },
+        allowed: {
+            code: 0,
+            msg: {
+                en: "access allowed"
+            }
+        },
+        denied: {
+            code: 1,
+            msg: {
+                en: "access denied"
+            }
+        },
+        noExist: {
+            code: 2,
+            msg: {
+                en: "no exist account"
+            }
+        }
+    },
     create: {
         validation: {
             code: 3,

@@ -2,6 +2,7 @@
  * Created by soomtong on 2014. 10. 15..
  */
 var uid = require('shortid');
+var uuid = require('node-uuid');
 
 var AccountLog = require('../model/accountLog');
 
@@ -89,6 +90,11 @@ function getHarooID() {
     return (getToday().toString()).replace(/-/g,'') + '-' + uid.generate();
 }
 
+function getAccessToken() {
+//    return uuid.v1();
+    return uuid.v4();
+}
+
 function getExpireDate() {
     return Date.now() + ( 15 * DAY );
 }
@@ -99,6 +105,9 @@ function setAccountToClient(codeStub, userData) {
     result.harooID = userData.harooID;
     result.loginExpire = userData.loginExpire;
     result.profile = userData.profile;
+    if (userData.accessToken) {
+        result.accessToken = userData.accessToken;
+    }
     if (userData.provider) {
         result.provider = userData.provider;
         result.tokens = userData.tokens;
@@ -111,6 +120,7 @@ function setAccountToClient(codeStub, userData) {
 module.exports = {
     getToday: getToday,
     getHarooID: getHarooID,
+    getAccessToken: getAccessToken,
     getLoginExpireDate: getExpireDate,
     saveAccountAccessLog: saveAccountAccessLog,
     saveAccountLinkLog: saveAccountLinkLog,
