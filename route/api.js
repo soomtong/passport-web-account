@@ -423,9 +423,25 @@ exports.harooID = function (req, res) {
             // expired?
             var now = new Date();
             if (existingUser.loginExpire > now) {
-                result = Code.account.harooID.success;
+                // login session
+                req.logIn(existingUser, function(err) {
+                    if (err) {
+                        result = Code.account.harooID.database;
+                        result.info = err;
 
-                res.send(result);
+                        res.send(result);
+                    } else {
+                        common.saveAccountAccessLog('signedIn', req.param('email'));
+
+                        result = Code.account.harooID.success;
+                        result.email = existingUser.email;
+                        result.harooID = existingUser.harooID;
+                        result.loginExpire = existingUser.loginExpire;
+                        result.profile = existingUser.profile;
+
+                        res.send(result);
+                    }
+                });
             } else {
                 result = Code.account.harooID.expired;
 

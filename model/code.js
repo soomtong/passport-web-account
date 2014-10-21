@@ -19,11 +19,11 @@ exports.account = {
         available: {
             code: 0,
             msg: {
-                en: "harooID available"
+                en: "harooID not exist"
             }
         },
         success: {
-            code: 2,
+            code: 5,
             msg: {
                 en: "good to go"
             }
@@ -32,6 +32,12 @@ exports.account = {
             code: 4,
             msg: {
                 en: "session expired"
+            }
+        },
+        database: {
+            code: 2,
+            msg: {
+                en: "database error"
             }
         }
     },
