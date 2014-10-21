@@ -90,7 +90,7 @@ function getHarooID() {
 }
 
 function getExpireDate() {
-    return new Date(Date.now() + ( 15 * DAY ));
+    return Date.now() + ( 15 * DAY );
 }
 
 

@@ -10,7 +10,7 @@ var accountSchema = new mongoose.Schema({
     harooID: { type: String, unique: true, index: true },
     email: { type: String, unique: true, lowercase: true },
     password: String,
-    loginExpire: Date,
+    loginExpire: String,
 
     createdAt: Date,
     updatedAt: Date,

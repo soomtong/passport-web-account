@@ -9,9 +9,8 @@
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min)) + min;
         }
-        var sec = new Date().getTime();
         var tabNo = getRandomInt(0, 2).toString();
-        callback2app('rhio.kim@gmail.com', 'dbname-' + tabNo, 'acc-token-'+sec , sec + (1000*60*10));
+        callback2app('{{ user.email}}', 'dbname-' + tabNo, '{{ user.harooID }}' , '{{ user.loginExpire }}');
         // email, table name, token, expire
     </script>
 </head>

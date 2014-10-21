@@ -97,6 +97,7 @@ exports.login = function(req, res, callback) {
             req.flash('errors', { msg: info.message });
             return res.redirect('/login');
         }
+        //todo: update expireDate
         req.logIn(user, function(err) {
             if (err) return callback(err);
             req.flash('success', { msg: 'Success! You are logged in.' });
