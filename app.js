@@ -129,7 +129,11 @@ app.get('/', function (req, res) {
     var params = {};
 
     req.session.clientRoute = null;
-    res.render('index', params);
+    if (req.isAuthenticated()) {
+        res.redirect('/dashboard');
+    } else {
+        res.render('index', params);
+    }
 });
 app.get('/login', accountController.loginForm);
 app.post('/login', accountController.login);
