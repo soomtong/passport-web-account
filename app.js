@@ -109,7 +109,8 @@ app.use(function(req, res, callback) {
     res.locals.user = req.user;
     res.locals.site = {
         title: "Haroo Cloud Service Hub",
-        url: app.get('hostEnv') == 'production' ? common['clientAuthUrl'] : '//localhost:' + common['port']
+        url: app.get('hostEnv') == 'production' ? common['clientAuthUrl'] : '//localhost:' + common['port'],
+        dbHost: database['couch']['url']
     };
     callback();
 });

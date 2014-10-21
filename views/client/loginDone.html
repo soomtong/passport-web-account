@@ -6,12 +6,7 @@
     <link href="{{ site.url }}/components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ site.url }}/css/haroo-cloud-common.css" rel="stylesheet">
     <script>
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min)) + min;
-        }
-        var tabNo = getRandomInt(0, 2).toString();
-        callback2app('{{ user.email}}', 'dbname-' + tabNo, '{{ user.harooID }}' , '{{ user.loginExpire }}');
-        // email, table name, token, expire
+        callback2app('{{ user.email}}', '{{ site.dbHost }}', '{{ user.harooID }}' , '{{ user.loginExpire }}');
     </script>
 </head>
 <body>
