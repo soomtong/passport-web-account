@@ -86,7 +86,7 @@ function getToday() {
 }
 
 function getHarooID() {
-    return getToday().toString() + '_' + uid.generate();
+    return (getToday().toString()).replace(/-/g,'') + '-' + uid.generate();
 }
 
 function getExpireDate() {
