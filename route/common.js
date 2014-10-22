@@ -90,7 +90,7 @@ function getToday() {
 }
 
 function getHarooID() {
-    return 'A' + (getToday().toString()).replace(/-/g,'') + '-' + uid.generate();
+    return 'a' + (getToday().toString()).replace(/-/g,'') + '-' + uid.generate().toLowerCase();
 }
 
 function getAccessToken() {
