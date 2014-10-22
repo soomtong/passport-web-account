@@ -260,7 +260,7 @@ exports.resetPassword = function (req, res) {
         var randomToken = uuid.v4();
 
         existAccount.reset_password_token = randomToken;
-        existAccount.reset_password_token_expires = common.getPasswordResetExpire();
+        existAccount.reset_password_token_expire = common.getPasswordResetExpire();
         existAccount.save();
         var host = req.protocol + '://' + req.host;
 
@@ -283,7 +283,7 @@ exports.updatePasswordForm = function (req, res) {
     }
 
     Account.findOne({ reset_password_token: req.param('token')})
-        .where('resetPasswordTokenExpires').gt(Date.now())
+        .where('reset_password_token_expire').gt(Date.now())
         .exec(function(err, user) {
             if (!user) {
                 req.flash('errors', { msg: 'Password reset token is invalid or has expired.' });
@@ -315,7 +315,7 @@ exports.updatePasswordForReset = function (req, res, next) {
 
             accountForReset.password = req.param('password');
             accountForReset.reset_password_token = undefined;
-            accountForReset.reset_password_token_expires = undefined;
+            accountForReset.reset_password_token_expire = undefined;
 
             // force Login process
             accountForReset.save(function(err) {

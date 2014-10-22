@@ -34,7 +34,7 @@ var accountSchema = new mongoose.Schema({
     },
 
     reset_password_token: String,
-    reset_password_expires: Date
+    reset_password_token_expire: Date
 });
 
 // hash password, executes before each user.save() call.

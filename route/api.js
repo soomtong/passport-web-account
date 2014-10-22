@@ -459,7 +459,7 @@ exports.forgotPassword = function (req, res, callback) {
             var randomToken = uuid.v4();
 
             existAccount.reset_password_token = randomToken;
-            existAccount.reset_password_token_expires = common.getPasswordResetExpire();
+            existAccount.reset_password_token_expire = common.getPasswordResetExpire();
             existAccount.save();
             var host = req.protocol + '://' + req.host;
 

@@ -103,7 +103,7 @@ function getExpireDate() {
 }
 
 function getPasswordResetExpire() {
-    return Date.now() + ( DAY );
+    return Date.now() + Number(DAY);
 }
 
 function setAccountToClient(codeStub, userData) {
