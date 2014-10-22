@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var passport = require('passport');
+var uuid = require('node-uuid');
 
 var Account = require('../model/account');
 var Logging = require('../model/accountLog');
@@ -429,6 +430,42 @@ exports.access_token = function (req, res, callback) {
             }
         } else {
             result = Code.account.token.no_exist;
+
+            res.send(result);
+        }
+    });
+};
+
+exports.forgotPassword = function (req, res, callback) {
+    req.assert('email', 'Email is not valid').isEmail();
+
+    var errors = req.validationErrors();
+
+    var result = {};
+
+    if (errors) {
+        result = Code.account.password.validation;
+
+        res.send(result);
+        return callback(errors);
+    }
+
+    Account.findOne({ email: req.param('email') }, function (err, existAccount) {
+        if (!existAccount) {
+            result = Code.account.password.no_exist;
+
+            res.send(result);
+        } else {
+            var randomToken = uuid.v4();
+
+            existAccount.reset_password_token = randomToken;
+            existAccount.reset_password_token_expires = common.getPasswordResetExpire();
+            existAccount.save();
+            var host = req.protocol + '://' + req.host;
+
+            common.sendPasswordResetMail(existAccount.email, { link: host + '/account/update-password/' + randomToken });
+
+            result = Code.account.password.send_mail;
 
             res.send(result);
         }

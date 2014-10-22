@@ -1,45 +1,10 @@
 var _ = require('lodash');
 var passport = require('passport');
-var nodemailer = require('nodemailer');
 var uuid = require('node-uuid');
-var emailToken = require('../config/mailer')['email-token'];
-var emailTemplates = require('swig-email-templates');
 var Account = require('../model/account');
 var Logging = require('../model/accountLog');
 
-var Code = require('../model/code');
-
 var common = require('./common');
-
-
-function sendPasswordResetMail(address, context) {
-    var smtpTransport = nodemailer.createTransport(emailToken);
-
-    emailTemplates({ root: __dirname + "/templates" }, function (error, render) {
-        var email = {
-            from: emailToken['reply'], // sender address
-            to: address,
-//            bcc: emailToken.bcc,
-            subject: "Reset your password link described"
-        };
-
-        render('password_reset_email.html', context, function (error, html) {
-            console.log(html);
-            email.html = html;
-            smtpTransport.sendMail(email, function (error, info) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log("Message sent: " + info.response);
-                }
-
-                // if you don't want to use this transport object anymore, uncomment following line
-                smtpTransport.close(); // shut down the connection pool, no more messages
-            });
-        });
-    });
-}
-
 
 // Login Required middleware.
 exports.isAuthenticated = function(req, res, callback) {
@@ -177,7 +142,7 @@ exports.accountInfo = function (req, res) {
     res.render('profile', params)
 };
 
-exports.udpateProfile = function (req, res) {
+exports.updateProfile = function (req, res) {
     //req.assert('haroo_id', 'haroo_id must be at least 4 characters long').len(4);
 
     var errors = req.validationErrors();
@@ -295,11 +260,11 @@ exports.resetPassword = function (req, res) {
         var randomToken = uuid.v4();
 
         existAccount.reset_password_token = randomToken;
-        existAccount.reset_password_token_expires = Date.now() + DAY; // 1 day
+        existAccount.reset_password_token_expires = common.getPasswordResetExpire();
         existAccount.save();
         var host = req.protocol + '://' + req.host;
 
-        sendPasswordResetMail(existAccount.email, { link: host + '/account/update-password/' + randomToken });
+        common.sendPasswordResetMail(existAccount.email, { link: host + '/account/update-password/' + randomToken });
 
         res.render('reset-password', params);
     });
@@ -328,7 +293,7 @@ exports.updatePasswordForm = function (req, res) {
         });
 };
 
-exports.updatePassword = function (req, res, next) {
+exports.updatePasswordForReset = function (req, res, next) {
     req.assert('password', 'Password must be at least 4 characters long.').len(4);
     req.assert('confirmPassword', 'Passwords must match.').equals(req.param('password'));
 

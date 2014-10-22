@@ -191,6 +191,26 @@ exports.account = {
             }
         }
     },
+    password: {
+        validation: {
+            code: 3,
+            msg: {
+                en: "common validation error"
+            }
+        },
+        send_mail: {
+            code: 0,
+            msg: {
+                en: "reset password mail sent"
+            }
+        },
+        no_exist: {
+            code: 2,
+            msg: {
+                en: "no exist account"
+            }
+        }
+    },
     external: {
         validation: {
             code: 3,

@@ -59,7 +59,7 @@ var WEEK = DAY * 7;
 
 // CSRF whitelist
 var CSRFEXCLUDE = ['/api/account/create', '/api/account/read', '/api/account/dismiss', '/api/account/update', '/api/account/remove',
-    '/api/account/link', '/api/account/unlink', '/api/account/access', '/api/account/haroo-id'];
+    '/api/account/link', '/api/account/unlink', '/api/account/access', '/api/account/forgot_password', '/api/account/haroo-id'];
 
 
 // Express configuration.
@@ -149,7 +149,7 @@ app.get('/signup', accountController.signUpForm);
 app.post('/signup', accountController.signUp);
 
 app.get('/account', accountController.isAuthenticated, accountController.accountInfo);
-app.post('/account/profile', accountController.isAuthenticated, accountController.udpateProfile);
+app.post('/account/profile', accountController.isAuthenticated, accountController.updateProfile);
 app.post('/account/password', accountController.isAuthenticated, accountController.updatePassword);
 app.post('/account/delete', accountController.isAuthenticated, accountController.deleteAccount);
 app.get('/account/unlink/:provider', accountController.isAuthenticated, accountController.unlinkAccount);
@@ -157,7 +157,7 @@ app.get('/account/unlink/:provider', accountController.isAuthenticated, accountC
 app.get('/account/reset-password', accountController.resetPasswordForm);
 app.post('/account/reset-password', accountController.resetPassword);
 app.get('/account/update-password/:token?', accountController.updatePasswordForm);
-app.post('/account/update-password/:token?', accountController.updatePassword);
+app.post('/account/update-password/:token?', accountController.updatePasswordForReset);
 
 app.get('/api/login', apiController.loginForm);
 app.post('/api/login', apiController.login);
@@ -176,6 +176,7 @@ app.post('/api/account/read', apiController.readAccount);
 app.post('/api/account/dismiss', apiController.dismissAccount);
 app.post('/api/account/update', apiController.updateAccount);
 app.post('/api/account/remove', apiController.removeAccount);
+app.post('/api/account/forgot_password', apiController.forgotPassword);
 app.post('/api/account/unlink', apiController.unlinkAuth);
 app.post('/api/account/check', apiController.checkLinkAuth);
 app.post('/api/account/link', apiController.linkAuth);
