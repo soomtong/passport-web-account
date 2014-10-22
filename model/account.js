@@ -7,16 +7,16 @@ var bcrypt = require('bcrypt-nodejs');
 var crypto = require('crypto');
 
 var accountSchema = new mongoose.Schema({
-    harooID: { type: String, unique: true, index: true },
+    haroo_id: { type: String, unique: true, index: true },
     email: { type: String, unique: true, lowercase: true },
     password: String,
-    accessToken: String,
-    loginExpire: String,
+    access_token: String,
+    login_expire: String,
 
-    createdAt: Date,
-    updatedAt: Date,
+    created_at: Date,
+    updated_at: Date,
 
-    fromWeb: String,
+    from_web: String,
     facebook: String,
     twitter: String,
     google: String,
@@ -33,8 +33,8 @@ var accountSchema = new mongoose.Schema({
         picture: { type: String, default: '' }
     },
 
-    resetPasswordToken: String,
-    resetPasswordExpires: Date
+    reset_password_token: String,
+    reset_password_expires: Date
 });
 
 // hash password, executes before each user.save() call.

@@ -3,7 +3,7 @@
  */
 
 exports.account = {
-    harooID: {
+    haroo_id: {
         validation: {
             code: 3,
             msg: {
@@ -13,13 +13,13 @@ exports.account = {
         reserved: {
             code: 1,
             msg: {
-                en: "already exist harooID"
+                en: "already exist haroo_id"
             }
         },
         available: {
             code: 0,
             msg: {
-                en: "harooID not exist"
+                en: "haroo_id not exist"
             }
         },
         success: {
@@ -60,7 +60,7 @@ exports.account = {
                 en: "access denied"
             }
         },
-        noExist: {
+        no_exist: {
             code: 2,
             msg: {
                 en: "no exist account"
@@ -100,13 +100,13 @@ exports.account = {
                 en: "common validation error"
             }
         },
-        validationForExt: {
+        validation_for_ext: {
             code: 4,
             msg: {
                 en: "common validation error for external"
             }
         },
-        noExist: {
+        no_exist: {
             code: 1,
             msg: {
                 en: "no exist account"
@@ -126,7 +126,7 @@ exports.account = {
                 en: "common validation error"
             }
         },
-        noExist: {
+        no_exist: {
             code: 1,
             msg: {
                 en: "no exist account"
@@ -152,7 +152,7 @@ exports.account = {
                 en: "database error"
             }
         },
-        noExist: {
+        no_exist: {
             code: 1,
             msg: {
                 en: "no exist account or password incorrect"
@@ -178,7 +178,7 @@ exports.account = {
                 en: "database error"
             }
         },
-        noExist: {
+        no_exist: {
             code: 1,
             msg: {
                 en: "no exist account or password incorrect"

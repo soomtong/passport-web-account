@@ -54,7 +54,7 @@ passport.use(new TwitterStrategy(passportSecretToken['twitter'], function(req, a
         Account.findOne({ email: profile.username + "@twitter.com" }, function(err, existingEmailUser) {
             if (existingEmailUser) {
                 existingEmailUser.twitter = profile.id;
-                existingEmailUser.tokens.push({ kind: 'twitter', accessToken: accessToken, tokenSecret: tokenSecret });
+                existingEmailUser.tokens.push({ kind: 'twitter', access_token: accessToken, token_secret: tokenSecret });
                 existingEmailUser.profile.name = profile.displayName;
                 existingEmailUser.profile.location = profile._json.location;
                 existingEmailUser.profile.picture = profile._json.profile_image_url;
@@ -63,14 +63,14 @@ passport.use(new TwitterStrategy(passportSecretToken['twitter'], function(req, a
                 });
             } else {
                 var user = new Account();
-                user.harooID = common.getHarooID();
-                user.loginExpire = common.getLoginExpireDate();
+                user.haroo_id = common.getHarooID();
+                user.login_expire = common.getLoginExpireDate();
                 // Twitter will not provide an email address.  Period.
                 // But a person’s twitter username is guaranteed to be unique
                 // so we can "fake" a twitter email address as follows:
                 user.email = profile.username + "@twitter.com";
                 user.twitter = profile.id;
-                user.tokens.push({ kind: 'twitter', accessToken: accessToken, tokenSecret: tokenSecret });
+                user.tokens.push({ kind: 'twitter', access_token: accessToken, token_secret: tokenSecret });
                 user.profile.name = profile.displayName;
                 user.profile.location = profile._json.location;
                 user.profile.picture = profile._json.profile_image_url;
@@ -89,7 +89,7 @@ passport.use(new FacebookStrategy(passportSecretToken['facebook'], function(req,
         Account.findOne({ email: profile._json.email }, function(err, existingEmailUser) {
             if (existingEmailUser) {
                 existingEmailUser.facebook = profile.id;
-                existingEmailUser.tokens.push({ kind: 'facebook', accessToken: accessToken });
+                existingEmailUser.tokens.push({ kind: 'facebook', access_token: accessToken });
                 existingEmailUser.profile.name = profile.displayName;
                 existingEmailUser.profile.gender = profile._json.gender;
                 existingEmailUser.profile.picture = 'https://graph.facebook.com/' + profile.id + '/picture?type=large';
@@ -99,11 +99,11 @@ passport.use(new FacebookStrategy(passportSecretToken['facebook'], function(req,
                 });
             } else {
                 var user = new Account();
-                user.harooID = common.getHarooID();
-                user.loginExpire = common.getLoginExpireDate();
+                user.haroo_id = common.getHarooID();
+                user.login_expire = common.getLoginExpireDate();
                 user.email = profile._json.email;
                 user.facebook = profile.id;
-                user.tokens.push({ kind: 'facebook', accessToken: accessToken });
+                user.tokens.push({ kind: 'facebook', access_token: accessToken });
                 user.profile.name = profile.displayName;
                 user.profile.gender = profile._json.gender;
                 user.profile.picture = 'https://graph.facebook.com/' + profile.id + '/picture?type=large';
@@ -123,7 +123,7 @@ passport.use(new GoogleStrategy(passportSecretToken['google'], function(req, acc
         Account.findOne({ email: profile._json.email }, function (err, existingEmailUser) {
             if (existingEmailUser) {
                 existingEmailUser.google = profile.id;
-                existingEmailUser.tokens.push({ kind: 'google', accessToken: accessToken });
+                existingEmailUser.tokens.push({ kind: 'google', access_token: accessToken });
                 existingEmailUser.profile.name = profile.displayName;
                 existingEmailUser.profile.gender = profile._json.gender;
                 existingEmailUser.profile.picture = profile._json.picture;
@@ -132,11 +132,11 @@ passport.use(new GoogleStrategy(passportSecretToken['google'], function(req, acc
                 });
             } else {
                 var user = new Account();
-                user.harooID = common.getHarooID();
-                user.loginExpire = common.getLoginExpireDate();
+                user.haroo_id = common.getHarooID();
+                user.login_expire = common.getLoginExpireDate();
                 user.email = profile._json.email;
                 user.google = profile.id;
-                user.tokens.push({ kind: 'google', accessToken: accessToken });
+                user.tokens.push({ kind: 'google', access_token: accessToken });
                 user.profile.name = profile.displayName;
                 user.profile.gender = profile._json.gender;
                 user.profile.picture = profile._json.picture;

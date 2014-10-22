@@ -22,7 +22,7 @@ function saveAccountLinkLog(provider, userEmail) {
     var log = new AccountLog({
         provider: provider,
         email: userEmail,
-        linkedAt: new Date()
+        linked_at: new Date()
     });
 
     log.save();
@@ -31,7 +31,7 @@ function saveAccountLinkLog(provider, userEmail) {
 function saveAccountUpdateLog(userEmail) {
     var log = new AccountLog({
         email: userEmail,
-        updatedAt: new Date()
+        updated_at: new Date()
     });
 
     log.save();
@@ -40,7 +40,7 @@ function saveAccountUpdateLog(userEmail) {
 function saveSignInLog(userEmail) {
     var log = new AccountLog({
         email: userEmail,
-        signedIn: new Date()
+        signed_in: new Date()
     });
 
     log.save();
@@ -49,7 +49,7 @@ function saveSignInLog(userEmail) {
 function saveSignOutLog(userEmail) {
     var log = new AccountLog({
         email: userEmail,
-        signedOut: new Date()
+        signed_out: new Date()
     });
 
     log.save();
@@ -58,7 +58,7 @@ function saveSignOutLog(userEmail) {
 function saveSignUpLog(userEmail) {
     var log = new AccountLog({
         email: userEmail,
-        createdAt: new Date()
+        created_at: new Date()
     });
 
     log.save();
@@ -67,7 +67,7 @@ function saveSignUpLog(userEmail) {
 function saveUnlinkLog(userEmail) {
     var log = new AccountLog({
         email: userEmail,
-        unlinkedAt: new Date()
+        unlinked_at: new Date()
     });
 
     log.save();
@@ -76,7 +76,7 @@ function saveUnlinkLog(userEmail) {
 function saveAccountRemoveLog(userEmail) {
     var log = new AccountLog({
         email: userEmail,
-        removedAt: new Date()
+        removed_at: new Date()
     });
 
     log.save();
@@ -102,11 +102,11 @@ function getExpireDate() {
 function setAccountToClient(codeStub, userData) {
     var result = codeStub;
     result.email = userData.email;
-    result.harooID = userData.harooID;
-    result.loginExpire = userData.loginExpire;
+    result.haroo_id = userData.haroo_id;
+    result.login_expire = userData.login_expire;
     result.profile = userData.profile;
-    if (userData.accessToken) {
-        result.accessToken = userData.accessToken;
+    if (userData.access_token) {
+        result.access_token = userData.access_token;
     }
     if (userData.provider) {
         result.provider = userData.provider;

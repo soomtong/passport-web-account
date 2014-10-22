@@ -41,9 +41,9 @@ exports.createTwitterAccount = function(req, res) {
     var user = req.user;
     var result = Code.account.external.link;
 
-    result.email = user.email;
-    result.profile = user.profile;
-    result.tokens = user.tokens;
+    result.email = user['email'];
+    result.profile = user['profile'];
+    result.tokens = user['tokens'];
 
     if (req.session['clientKey'] == 'external key') {
         result.clientKey = req.session['clientKey'];
@@ -60,9 +60,9 @@ exports.createFacebookAccount = function(req, res) {
     var user = req.user;
     var result = Code.account.external.link;
 
-    result.email = user.email;
-    result.profile = user.profile;
-    result.tokens = user.tokens;
+    result.email = user['email'];
+    result.profile = user['profile'];
+    result.tokens = user['tokens'];
 
     if (req.session['clientKey'] == 'external key') {
         result.clientKey = req.session['clientKey'];
@@ -79,9 +79,9 @@ exports.createGoogleAccount = function(req, res) {
     var user = req.user;
     var result = Code.account.external.link;
 
-    result.email = user.email;
-    result.profile = user.profile;
-    result.tokens = user.tokens;
+    result.email = user['email'];
+    result.profile = user['profile'];
+    result.tokens = user['tokens'];
 
     if (req.session['clientKey'] == 'external key') {
         result.clientKey = req.session['clientKey'];
@@ -97,14 +97,14 @@ exports.createGoogleAccount = function(req, res) {
 exports.checkLinkAuth = function (req, res, callback) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('provider', 'Provider can not Empty').notEmpty();
-    req.assert('accessToken', 'AccessToken can not Empty').notEmpty();
+    req.assert('access_token', 'AccessToken can not Empty').notEmpty();
 
     var errors = req.validationErrors();
 
     var result = {};
 
     if (errors) {
-        result = Code.account.read.validationForExt;
+        result = Code.account.read.validation_for_ext;
 
         res.send(result);
         return callback(errors);
@@ -119,12 +119,12 @@ exports.checkLinkAuth = function (req, res, callback) {
 
                 common.saveSignInLog(user.email);
             } else {
-                result = Code.account.read.noExist;
+                result = Code.account.read.no_exist;
 
                 res.send(result);
             }
         } else {
-            result = Code.account.read.noExist;
+            result = Code.account.read.no_exist;
 
             res.send(result);
         }
@@ -197,13 +197,13 @@ exports.readAccount = function (req, res, callback) {
             return callback(err);
         }
         if (!user) {
-            result = Code.account.read.noExist;
+            result = Code.account.read.no_exist;
 
             res.send(result);
         } else {
-            Account.findOne({ harooID: user.harooID }, function (err, updateUser) {
-                updateUser.accessToken = common.getAccessToken();
-                updateUser.loginExpire = common.getLoginExpireDate();
+            Account.findOne({ haroo_id: user.haroo_id }, function (err, updateUser) {
+                updateUser.access_token = common.getAccessToken();
+                updateUser.login_expire = common.getLoginExpireDate();
                 updateUser.save();
 
                 result = common.setAccountToClient(Code.account.read.done, updateUser);
@@ -230,10 +230,10 @@ exports.dismissAccount = function (req, res, callback) {
         return callback(errors);
     }
 
-    Logging.findOneAndUpdate({ email: req.param('email') }, { signedOut: new Date() }, { sort: { _id : -1 } },
+    Logging.findOneAndUpdate({ email: req.param('email') }, { signed_out: new Date() }, { sort: { _id : -1 } },
         function (err, lastLog) {
             if (!lastLog) {
-                result = Code.account.dismiss.noExist;
+                result = Code.account.dismiss.no_exist;
 
                 res.send(result);
 
@@ -265,7 +265,7 @@ exports.createAccount = function (req, res) {
     var user = new Account({
         email: req.param('email'),
         password: req.param('password'),
-        createdAt: new Date(),
+        created_at: new Date(),
         profile: {
             name: req.param('nickname')
         }
@@ -277,9 +277,9 @@ exports.createAccount = function (req, res) {
 
             res.send(result);
         } else {
-            user.harooID = common.getHarooID();
-            user.accessToken = common.getAccessToken();
-            user.loginExpire = common.getLoginExpireDate();
+            user.haroo_id = common.getHarooID();
+            user.access_token = common.getAccessToken();
+            user.login_expire = common.getLoginExpireDate();
 
             user.save(function(err) {
                 if (err) {
@@ -316,7 +316,6 @@ exports.updateAccount = function (req, res, callback) {
         return callback;
     }
 
-    // todo: 나중에는 토큰으로 찾아야 할 것인가?
     passport.authenticate('local', function(err, user, info) {
         if (err) {
             console.log(info);
@@ -324,12 +323,12 @@ exports.updateAccount = function (req, res, callback) {
             return callback(err);
         }
         if (!user) {
-            result = Code.account.update.noExist;
+            result = Code.account.update.no_exist;
 
             res.send(result);
         } else {
             Account.findById(user._id, function (err, updateUser) {
-                updateUser.updatedAt = new Date();
+                updateUser.updated_at = new Date();
                 updateUser.profile.name = req.param('nickname');
 
                 updateUser.save(function (err, affectedUser) {
@@ -376,7 +375,7 @@ exports.removeAccount = function (req, res, callback) {
             return callback(err);
         }
         if (!user) {
-            result = Code.account.remove.noExist;
+            result = Code.account.remove.no_exist;
 
             res.send(result);
         } else {
@@ -398,8 +397,8 @@ exports.removeAccount = function (req, res, callback) {
 
 };
 
-exports.accessToken = function (req, res, callback) {
-    req.assert('accessToken', 'AccessToken can not Empty').notEmpty();
+exports.access_token = function (req, res, callback) {
+    req.assert('access_token', 'AccessToken can not Empty').notEmpty();
 
     var errors = req.validationErrors();
 
@@ -412,13 +411,13 @@ exports.accessToken = function (req, res, callback) {
         return callback(errors);
     }
 
-    Account.findOne({ accessToken: req.param('accessToken') }, function(err, existUser) {
+    Account.findOne({ accessToken: req.param('access_token') }, function(err, existUser) {
         if (existUser) {
             // expired?
             var now = new Date().getTime();
 
-            if (existUser.loginExpire > now) {
-                common.saveAccountAccessLog('signedIn', req.param('email'));
+            if (existUser.login_expire > now) {
+                common.saveAccountAccessLog('signed_in', req.param('email'));
 
                 result = Code.account.token.allowed;
 
@@ -429,57 +428,57 @@ exports.accessToken = function (req, res, callback) {
                 res.send(result);
             }
         } else {
-            result = Code.account.token.noExist;
+            result = Code.account.token.no_exist;
 
             res.send(result);
         }
     });
 };
 
-exports.harooID = function (req, res) {
-    req.assert('harooID', 'harooID must be at least 4 characters long').len(4);
+exports.haroo_id = function (req, res) {
+    req.assert('haroo_id', 'haroo_id must be at least 4 characters long').len(4);
 
     var errors = req.validationErrors();
 
     var result = {};
 
     if (errors) {
-        result = Code.account.harooID.validation;
+        result = Code.account.haroo_id.validation;
 
         res.send(result);
         return;
     }
 
-    Account.findOne({ harooID: req.param('harooID') }, function(err, existUser) {
+    Account.findOne({ haroo_id: req.param('haroo_id') }, function(err, existUser) {
         if (existUser) {
-            result = Code.account.harooID.reserved;
+            result = Code.account.haroo_id.reserved;
 
             // expired?
             var now = new Date().getTime();
 
-            if (existUser.loginExpire > now) {
+            if (existUser.login_expire > now) {
                 // login session
                 req.logIn(existUser, function(err) {
                     if (err) {
-                        result = Code.account.harooID.database;
+                        result = Code.account.haroo_id.database;
                         result.info = err;
 
                         res.send(result);
                     } else {
-                        common.saveAccountAccessLog('signedIn', req.param('email'));
+                        common.saveAccountAccessLog('signed_in', req.param('email'));
 
-                        result = common.setAccountToClient(Code.account.harooID.success, existUser);
+                        result = common.setAccountToClient(Code.account.haroo_id.success, existUser);
 
                         res.send(result);
                     }
                 });
             } else {
-                result = Code.account.harooID.expired;
+                result = Code.account.haroo_id.expired;
 
                 res.send(result);
             }
         } else {
-            result = Code.account.harooID.available;
+            result = Code.account.haroo_id.available;
 
             res.send(result);
         }
@@ -511,8 +510,8 @@ exports.login = function(req, res, callback) {
             req.flash('errors', { msg: info.message });
             return res.redirect(res.locals.site.url + '/api/login');
         }
-        Account.findOne({ harooID: user.harooID }, function (err, updateUser) {
-            updateUser.loginExpire = common.getLoginExpireDate();
+        Account.findOne({ haroo_id: user.haroo_id }, function (err, updateUser) {
+            updateUser.login_expire = common.getLoginExpireDate();
             updateUser.save();
         });
 
@@ -521,7 +520,7 @@ exports.login = function(req, res, callback) {
             req.flash('success', { msg: 'Success! You are logged in.' });
             res.redirect(res.locals.site.url + '/api/loginDone');
 
-            common.saveAccountAccessLog('signedIn', req.param('email'));
+            common.saveAccountAccessLog('signed_in', req.param('email'));
 
         });
     })(req, res, callback);
@@ -538,10 +537,10 @@ exports.loginDone = function (req, res) {
 exports.logout = function(req, res) {
     if (req.isAuthenticated()) {
         var userEmail = req.user['email'];
-        Logging.findOneAndUpdate({ email: userEmail }, { signedOut: new Date() }, { sort: { _id : -1 } },
+        Logging.findOneAndUpdate({ email: userEmail }, { signed_out: new Date() }, { sort: { _id : -1 } },
             function (err, lastLog) {
                 if (!lastLog) {
-                    common.saveAccountAccessLog('signedOut', userEmail);
+                    common.saveAccountAccessLog('signed_out', userEmail);
                 }
             });
     }
@@ -570,11 +569,11 @@ exports.signUp = function (req, res) {
     }
 
     var user = new Account({
-        harooID: common.getHarooID(),
-        loginExpire: common.getLoginExpireDate(),
+        haroo_id: common.getHarooID(),
+        login_expire: common.getLoginExpireDate(),
         email: req.param('email'),
         password: req.param('password'),
-        createdAt: new Date(),
+        created_at: new Date(),
         profile: {
             name: req.param('nickname')
         }
@@ -596,7 +595,7 @@ exports.signUp = function (req, res) {
                     if (err) {
                         console.log(err);
                     }
-                    common.saveAccountAccessLog('createdAt', req.param('email'));
+                    common.saveAccountAccessLog('created_at', req.param('email'));
 
                     return res.redirect(res.locals.site.url + '/api/loginDone');
                 });

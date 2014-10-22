@@ -6,13 +6,13 @@ var mongoose = require('mongoose');
 
 var loggingSchema = new mongoose.Schema({
     email: { type: String, index: true, lowercase: true },
-    createdAt: Date,
-    updatedAt: Date,
-    removedAt: Date,
-    linkedAt: Date,
-    unlinkedAt: Date,
-    signedIn: Date,
-    signedOut: Date
+    created_at: Date,
+    updated_at: Date,
+    removed_at: Date,
+    linked_at: Date,
+    unlinked_at: Date,
+    signed_in: Date,
+    signed_out: Date
 });
 
 module.exports = mongoose.model('Log', loggingSchema);

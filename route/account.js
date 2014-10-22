@@ -62,10 +62,10 @@ exports.isAuthorized = function(req, res, callback) {
 exports.logout = function(req, res) {
     if (req.isAuthenticated()) {
         var userEmail = req.user['email'];
-        Logging.findOneAndUpdate({ email: userEmail }, { signedOut: new Date() }, { sort: { _id : -1 } },
+        Logging.findOneAndUpdate({ email: userEmail }, { signed_out: new Date() }, { sort: { _id : -1 } },
             function (err, lastLog) {
                 if (!lastLog) {
-                    common.saveAccountAccessLog('signedOut', userEmail);
+                    common.saveAccountAccessLog('signed_out', userEmail);
                 }
             });
     }
@@ -97,8 +97,8 @@ exports.login = function(req, res, callback) {
             req.flash('errors', { msg: info.message });
             return res.redirect('/login');
         }
-        Account.findOne({ harooID: user.harooID }, function (err, updateUser) {
-            updateUser.loginExpire = common.getLoginExpireDate();
+        Account.findOne({ haroo_id: user.haroo_id }, function (err, updateUser) {
+            updateUser.login_expire = common.getLoginExpireDate();
             updateUser.save();
         });
 
@@ -107,7 +107,7 @@ exports.login = function(req, res, callback) {
             req.flash('success', { msg: 'Success! You are logged in.' });
             res.redirect(req.session.returnTo || '/');
 
-            common.saveAccountAccessLog('signedIn', req.param('email'));
+            common.saveAccountAccessLog('signed_in', req.param('email'));
         });
     })(req, res, callback);
 };
@@ -132,12 +132,12 @@ exports.signUp = function (req, res, next) {
     }
 
     var user = new Account({
-        harooID: common.getHarooID(),
-        loginExpire: common.getLoginExpireDate(),
+        haroo_id: common.getHarooID(),
+        login_expire: common.getLoginExpireDate(),
         email: req.param('email'),
         password: req.param('password'),
-        createdAt: new Date(),
-        fromWeb: 'public homepage',
+        created_at: new Date(),
+        from_web: 'public homepage',
         profile: {
             name: req.param('nickname')
         }
@@ -160,7 +160,7 @@ exports.signUp = function (req, res, next) {
                         console.log(err);
                         return next(err);
                     }
-                    common.saveAccountAccessLog('createdAt', req.param('email'));
+                    common.saveAccountAccessLog('created_at', req.param('email'));
 
                     res.redirect('/');
                 });
@@ -178,7 +178,7 @@ exports.accountInfo = function (req, res) {
 };
 
 exports.udpateProfile = function (req, res) {
-    //req.assert('harooID', 'harooID must be at least 4 characters long').len(4);
+    //req.assert('haroo_id', 'haroo_id must be at least 4 characters long').len(4);
 
     var errors = req.validationErrors();
 
@@ -190,7 +190,7 @@ exports.udpateProfile = function (req, res) {
     Account.findById(req.user.id, function(err, user) {
         if (err) return next(err);
 
-        //user.harooID = req.param('harooID');  // deprecated
+        //user.haroo_id = req.param('haroo_id');  // deprecated
         // model for update, something like
         //user.profile = req.body;
 
@@ -294,8 +294,8 @@ exports.resetPassword = function (req, res) {
 
         var randomToken = uuid.v4();
 
-        existAccount.resetPasswordToken = randomToken;
-        existAccount.resetPasswordTokenExpires = Date.now() + DAY; // 1 day
+        existAccount.reset_password_token = randomToken;
+        existAccount.reset_password_token_expires = Date.now() + DAY; // 1 day
         existAccount.save();
         var host = req.protocol + '://' + req.host;
 
@@ -317,7 +317,7 @@ exports.updatePasswordForm = function (req, res) {
         return res.redirect('/login');
     }
 
-    Account.findOne({ resetPasswordToken: req.param('token')})
+    Account.findOne({ reset_password_token: req.param('token')})
         .where('resetPasswordTokenExpires').gt(Date.now())
         .exec(function(err, user) {
             if (!user) {
@@ -340,7 +340,7 @@ exports.updatePassword = function (req, res, next) {
     }
 
     Account
-        .findOne({ resetPasswordToken: req.param('token') })
+        .findOne({ reset_password_token: req.param('token') })
         .where('resetPasswordTokenExpires').gt(Date.now())
         .exec(function(err, accountForReset) {
             if (!accountForReset) {
@@ -349,8 +349,8 @@ exports.updatePassword = function (req, res, next) {
             }
 
             accountForReset.password = req.param('password');
-            accountForReset.resetPasswordToken = undefined;
-            accountForReset.resetPasswordTokenExpires = undefined;
+            accountForReset.reset_password_token = undefined;
+            accountForReset.reset_password_token_expires = undefined;
 
             // force Login process
             accountForReset.save(function(err) {
