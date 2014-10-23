@@ -1,8 +1,8 @@
 {
     "mongo": {
-        "url": "mongodb://localhost:27017/test"
+        "host": "mongodb://localhost:27017/test"
     },
     "couch": {
-        "url": "http://localhost:5984/test"
+        "host": "http://localhost:5984/test"
     }
 }

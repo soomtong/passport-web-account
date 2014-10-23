@@ -45,7 +45,7 @@ var apiController = require('./route/api');
 // Start Body
 var app = express();
 
-mongoose.connect(database['mongo'].url);
+mongoose.connect(database['mongo'].host);
 mongoose.connection.on('error', function() {
     console.error('MongoDB Connection Error. Make sure MongoDB is running.');
 });
@@ -90,7 +90,7 @@ app.use(session({
     resave: true,
     saveUninitialized: true,
     store: new MongoStore({
-        url: database['mongo'].url,
+        url: database['mongo'].host,
         auto_reconnect: true
     })
 }));
@@ -110,7 +110,7 @@ app.use(function(req, res, callback) {
     res.locals.site = {
         title: "Haroo Cloud Service Hub",
         url: app.get('hostEnv') == 'production' ? common['clientAuthUrl'] : '//localhost:' + common['port'],
-        dbHost: database['couch']['url']
+        dbHost: database['couch']['host']
     };
     callback();
 });

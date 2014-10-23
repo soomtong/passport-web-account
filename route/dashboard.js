@@ -1,7 +1,7 @@
 var database = require('../config/database');
 var async = require('async');
 
-var nano = require('nano')(database.couch.url);
+var nano = require('nano')('http://' + database.couch.host);
 
 function getPageParams (totalCount, nowPage, pageSize, pageGutter) {
     var params = {};

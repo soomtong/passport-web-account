@@ -4,6 +4,7 @@ var uuid = require('node-uuid');
 
 var Account = require('../model/account');
 var Logging = require('../model/accountLog');
+var AccountInit = require('../model/accountInit');
 
 var Code = require('../model/code');
 var common = require('./common');
@@ -281,6 +282,8 @@ exports.createAccount = function (req, res) {
             user.haroo_id = common.getHarooID();
             user.access_token = common.getAccessToken();
             user.login_expire = common.getLoginExpireDate();
+
+            AccountInit.initAccount(user.haroo_id);
 
             user.save(function(err) {
                 if (err) {

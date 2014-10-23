@@ -16,6 +16,7 @@
     "express-flash": "0.0.2",
     "express-session": "^1.6.1",
     "express-validator": "^2.3.0",
+    "init-user": "git://github.com/haroo-studio/init-user.git",
     "lodash": "^2.4.1",
     "lusca": "^1.0.1",
     "method-override": "^2.0.2",
