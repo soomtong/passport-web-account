@@ -1,8 +1,10 @@
 var _ = require('lodash');
 var passport = require('passport');
 var uuid = require('node-uuid');
+
 var Account = require('../model/account');
 var Logging = require('../model/accountLog');
+var AccountInit = require('../model/accountInit');
 
 var common = require('./common');
 
@@ -97,8 +99,6 @@ exports.signUp = function (req, res, next) {
     }
 
     var user = new Account({
-        haroo_id: common.getHarooID(),
-        login_expire: common.getLoginExpireDate(),
         email: req.param('email'),
         password: req.param('password'),
         created_at: new Date(),
@@ -115,6 +115,11 @@ exports.signUp = function (req, res, next) {
 
             return res.redirect('/signup');
         } else {
+            user.haroo_id = common.getHarooID();
+            user.login_expire = common.getLoginExpireDate();
+
+            AccountInit.initAccount(user.haroo_id);
+
             user.save(function(err) {
                 if (err) {
                     console.log(err);
@@ -130,6 +135,8 @@ exports.signUp = function (req, res, next) {
                     res.redirect('/');
                 });
             });
+
+
         }
     });
 };
