@@ -167,8 +167,6 @@ app.get('/api/loginDone', apiController.loginDone);
 app.get('/api/signup', apiController.signUpForm);
 app.post('/api/signup', apiController.signUp);
 
-app.get('/api/haroo_id/:haroo_id', apiController.haroo_id);
-
 app.post('/api/account/haroo_id', apiController.haroo_id);
 app.post('/api/account/access', apiController.access_token);
 app.post('/api/account/create', apiController.createAccount);
