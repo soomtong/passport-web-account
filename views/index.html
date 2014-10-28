@@ -8,15 +8,34 @@
     <meta name="author" content="">
     <link rel="icon" href="http://pad.haroopress.com/assets/haroopad.ico">
     <title>{{ site.title }}</title>
-    <link href="/components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/haroo-cloud-common.css" rel="stylesheet">
+    <link href="/components/pure/pure.css" rel="stylesheet">
+    <link href="/css/haroo-cloud.css" rel="stylesheet">
 </head>
 <body>
-<div class="navbar-wrapper">
-    <div class="container" id="top">
-        {% include 'partials/top-menu.html' %}
+
+<div class="pure-menu pure-menu-open pure-menu-horizontal pure-menu-fixed top-menu">
+    <a href="#" class="pure-menu-heading top-menu-heading">Haroo Cloud for Business에 대해 알아보기</a>
+    <ul>
+        <li class=""><a href="#">다운로드</a></li>
+    </ul>
+</div>
+
+<div class="pure-g banner">
+    <!-- todo: add some scrolling effect -->
+    <div class="pure-u-1-2 graphic">
+        <img class="pure-img" src="/img/logo-v1.png" alt="Haroo Avatar"/>
+    </div>
+    <div class="pure-u-1-2 cloud-form">
+        <h1 class="graphic-head">Big Bold Text</h1>
+        <p class="graphic-subhead">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+        </p>
+        <p>
+            <a href="http://purecss.io" class="pure-button pure-button-primary">Get Started</a>
+        </p>
     </div>
 </div>
+
 
 
 <div id="myCarousel" class="carousel slide" data-ride="carousel">
@@ -183,7 +202,5 @@
     </footer>
 
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
