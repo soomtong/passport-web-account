@@ -59,7 +59,7 @@ var WEEK = DAY * 7;
 
 // CSRF whitelist
 var CSRFEXCLUDE = ['/api/account/create', '/api/account/read', '/api/account/dismiss', '/api/account/update', '/api/account/remove',
-    '/api/account/link', '/api/account/unlink', '/api/account/access', '/api/account/forgot_password', '/api/account/haroo-id'];
+    '/api/account/link', '/api/account/unlink', '/api/account/access', '/api/account/forgot_password', '/api/account/haroo_id'];
 
 
 // Express configuration.

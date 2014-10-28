@@ -306,8 +306,8 @@ exports.createAccount = function (req, res) {
 exports.updateAccount = function (req, res, callback) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
-    req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
-    req.assert('nickname', 'Need a nickname').notEmpty();
+    req.assert('access_token', 'Access Token can not Empty').notEmpty();
+    //req.assert('nickname', 'Need a nickname').notEmpty();
 
     var errors = req.validationErrors();
 
@@ -331,9 +331,12 @@ exports.updateAccount = function (req, res, callback) {
 
             res.send(result);
         } else {
+            // todo: check token and expire
             Account.findById(user._id, function (err, updateUser) {
                 updateUser.updated_at = new Date();
                 updateUser.profile.name = req.param('nickname');
+                updateUser.access_token = common.getAccessToken();
+                updateUser.login_expire = common.getLoginExpireDate();
 
                 updateUser.save(function (err, affectedUser) {
                     if (err) {
@@ -341,8 +344,7 @@ exports.updateAccount = function (req, res, callback) {
 
                         res.send(result);
                     } else {
-                        result = Code.account.update.done;
-                        result.tokens = affectedUser.tokens;
+                        result = common.setAccountToClient(Code.account.create.done, affectedUser);
 
                         res.send(result);
 
@@ -418,7 +420,7 @@ exports.access_token = function (req, res, callback) {
     Account.findOne({ accessToken: req.param('access_token') }, function(err, existUser) {
         if (existUser) {
             // expired?
-            var now = new Date().getTime();
+            var now = Date.now();
 
             if (existUser.login_expire > now) {
                 common.saveAccountAccessLog('signed_in', req.param('email'));
@@ -477,6 +479,7 @@ exports.forgotPassword = function (req, res, callback) {
 
 exports.haroo_id = function (req, res) {
     req.assert('haroo_id', 'haroo_id must be at least 4 characters long').len(4);
+    req.assert('access_token', 'haroo_id have to need access token for retrieve').notEmpty();
 
     var errors = req.validationErrors();
 
@@ -490,11 +493,12 @@ exports.haroo_id = function (req, res) {
     }
 
     Account.findOne({ haroo_id: req.param('haroo_id') }, function(err, existUser) {
-        if (existUser) {
-            result = Code.account.haroo_id.reserved;
+        //  todo: should check access token
+        if (existUser && (existUser.access_token == req.param('access_token'))) {
+        result = Code.account.haroo_id.reserved;
 
             // expired?
-            var now = new Date().getTime();
+            var now = Date.now();
 
             if (existUser.login_expire > now) {
                 // login session
