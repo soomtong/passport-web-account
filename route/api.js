@@ -251,7 +251,7 @@ exports.dismissAccount = function (req, res, callback) {
 exports.createAccount = function (req, res) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
-    req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
+    req.assert('confirm_password', 'Passwords do not match').equals(req.body.password);
 
     var errors = req.validationErrors();
 
@@ -361,7 +361,7 @@ exports.updateAccount = function (req, res, callback) {
 exports.removeAccount = function (req, res, callback) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
-    req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
+    req.assert('access_token', 'Access Token can not Empty').notEmpty();
 
     var errors = req.validationErrors();
 
@@ -385,19 +385,26 @@ exports.removeAccount = function (req, res, callback) {
 
             res.send(result);
         } else {
-            Account.remove({ _id: user._id }, function(err, countAffected) {
-                if (err) {
-                    result = Code.account.remove.database;
+            var now = Date.now();
+            if (user.access_token == req.param('access_token') && user.login_expire > now) {
+                Account.remove({ _id: user._id }, function(err, countAffected) {
+                    if (err) {
+                        result = Code.account.remove.database;
 
-                    res.send(result);
-                } else {
-                    result = Code.account.remove.done;
+                        res.send(result);
+                    } else {
+                        result = Code.account.remove.done;
 
-                    res.send(result);
+                        res.send(result);
 
-                    common.saveAccountRemoveLog(req.param('email'));
-                }
-            });
+                        common.saveAccountRemoveLog(req.param('email'));
+                    }
+                });
+            } else {
+                result = Code.account.remove.token_expired;
+
+                res.send(result);
+            }
         }
     })(req, res, callback);
 
@@ -602,7 +609,7 @@ exports.signUpForm = function (req, res) {
 exports.signUp = function (req, res) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
-    req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
+    req.assert('confirm_password', 'Passwords do not match').equals(req.body.password);
 
     var errors = req.validationErrors();
 

@@ -178,6 +178,12 @@ exports.account = {
                 en: "database error"
             }
         },
+        token_expired: {
+            code: 4,
+            msg: {
+                en: "invalid access token exist or token expired"
+            }
+        },
         no_exist: {
             code: 1,
             msg: {
