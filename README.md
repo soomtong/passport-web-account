@@ -8,14 +8,24 @@ cloud service stack for haroopad
 ## Features
 
 - account management
+- simple review document view for own account
+- trend and featured contents
 
+## Service Stack
 
-## List of Packages
+### backend
 
-| Package                         | Description               |
-| ------------------------------- |:-------------------------:|
-| express                         | web and rest framework    |
-| Responsive-Dashboard            | dashboard theme           |
+- couchdb
+- mongodb
+- nginx
+- node.js
+- express.js
+
+### frontend
+
+- jquery
+- react.js
+- pure
 
 ## Link
 
