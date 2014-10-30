@@ -31,30 +31,37 @@
             <img class="pure-img" src="/img/logo-v1.png" alt="Haroo Avatar"/>
         </div>
         <div class="pure-u-1 pure-u-sm-2-3 pure-u-md-1-2 cloud-form is-center">
-            <div class="form-wrapper" style="display: none">
-                <form class="pure-form pure-form-stacked">
+            <div class="form-wrapper is-center {% if !messages.errors %}hidden{% endif %}">
+                <h1 class="cloud-form-head">Something Missed</h1>
+                {% if messages.errors %}
+                <div class="alert-msg">
+                    {% for error in messages.errors %}
+                    <div>{{ error.msg }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <form class="pure-form pure-form-stacked" method="POST">
+                    <input type="hidden" name="_csrf" value="{{ _csrf }}">
                     <fieldset>
-                        <label for="name">Your Name</label>
-                        <input id="name" type="text" placeholder="Your Name">
-                        <label for="email">Your Email</label>
-                        <input id="email" type="email" placeholder="Your Email">
-                        <label for="password">Your Password</label>
+                        <input id="email" type="email" name="email" placeholder="Email">
                         <input id="password" type="password" placeholder="Your Password">
-                        <button type="submit" class="pure-button">Sign Up</button>
+                        <input id="name" type="text" name="profile_name" placeholder="Your Screen Name">
                     </fieldset>
                 </form>
             </div>
 
-            <h1 class="cloud-form-head">Getting Big Start</h1>
+            <div class="form-intro {% if messages.errors %}hidden{% endif %}">
+                <h1 class="cloud-form-head">Getting Big Start</h1>
 
-            <p class="cloud-form-subhead">Haroonote Professional Writing Platform</p>
-
+                <p class="cloud-form-subhead">Haroonote Professional Writing Platform</p>
+            </div>
             <p>
-                <button class="pure-button pure-button-primary">Sign up</button>
+                <button class="pure-button pure-button-primary" id="form-submit">Sign up</button>
             </p>
             <p class="cloud-form-sign-in"><a href="/login">Sign in</a> or <a href="/login">Social Registration</a></p>
         </div>
         <div class="pure-u-1 fix-bottom-lane is-center">
+            <!-- todo: scrollTo -->
             <p><a href="">More About</a></p>
         </div>
     </div>
@@ -72,7 +79,7 @@
             <p>
                 Not only supports Markdown, but also has ability to build extensions for making your own features.
             </p>
-            <img class="feature-image pure-img" src="/img/logo-v1.png" alt="Haroo Avatar"/>
+            <img class="insert-image pure-img" src="/img/logo-v1.png" alt="Haroo Avatar"/>
         </div>
         <div class="l-box pure-u-1 pure-u-sm-1-2 pure-u-lg-1-4">
             <h3 class="content-subhead">
@@ -82,7 +89,7 @@
             <p>
                 Just write down anywhere with haroonote, Stay your document in cloud on sync.
             </p>
-            <img class="feature-image pure-img" src="/img/logo-v1.png" alt="Haroo Avatar"/>
+            <img class="insert-image pure-img" src="/img/logo-v1.png" alt="Haroo Avatar"/>
         </div>
         <div class="l-box pure-u-1 pure-u-sm-1-2 pure-u-lg-1-4">
             <h3 class="content-subhead">
@@ -92,7 +99,7 @@
             <p>
                 We support (Ubuntu, 32/64 bit) Windows 7/8, Mac OS X, of Linux. and working on IOS, Android.
             </p>
-            <img class="feature-image pure-img" src="/img/logo-v1.png" alt="Haroo Avatar"/>
+            <img class="insert-image pure-img" src="/img/logo-v1.png" alt="Haroo Avatar"/>
         </div>
         <div class="l-box pure-u-1 pure-u-sm-1-2 pure-u-lg-1-4">
             <h3 class="content-subhead">
@@ -102,7 +109,7 @@
             <p>
                 Supports modern themes in editing area, skins for transformed documents.
             </p>
-            <img class="feature-image pure-img" src="/img/logo-v1.png" alt="Haroo Avatar"/>
+            <img class="insert-image pure-img" src="/img/logo-v1.png" alt="Haroo Avatar"/>
         </div>
     </div>
     <div class="pure-u-1 fix-bottom-lane is-center">
@@ -110,18 +117,17 @@
     </div>
 </div>
 
-
 <div class="description-content">
     <div class="pure-g">
         <div class="l-box pure-u-1-2">
-            <h2 class="featurette-heading">Write Your All About It <span class="text-muted">Just write down</span></h2>
+            <h2 class="content-subhead">Write Your All About It <span class="text-muted">Just write down</span></h2>
 
             <p class="lead">Simply write a text for your report or homework, daily review or blog post.
                 Simply write a text for your report or homework, daily review or blog post.
                 Simply write a text for your report or homework, daily review or blog post.</p>
         </div>
         <div class="l-box pure-u-1-2">
-            <img class="pure-img" src="/img/logo-v1.png">
+            <img class="pure-img insert-image" src="/img/logo-v1.png">
         </div>
     </div>
 
@@ -131,10 +137,10 @@
 
     <div class="pure-g">
         <div class="l-box pure-u-1-2">
-            <img class="pure-img" src="/img/logo-v1.png">
+            <img class="pure-img insert-image" src="/img/logo-v1.png">
         </div>
         <div class="l-box pure-u-1-2">
-            <h2 class="featurette-heading">Browse Your Homepage <span class="text-muted">Share To the Web</span>
+            <h2 class="content-subhead">Browse Your Article <span class="text-muted">Share To the Web</span>
             </h2>
 
             <p class="lead">Easily make own blog system, no more wordpress
@@ -149,24 +155,73 @@
 
     <div class="pure-g">
         <div class="l-box pure-u-1-2">
-            <h2 class="featurette-heading">Productive Your Business <span class="text-muted">For The Win.</span></h2>
+            <h2 class="content-subhead">Productive Your Business <span class="text-muted">For The Win.</span></h2>
 
             <p class="lead">Co-working solution for small business team
                 Co-working solution for small business team
                 Co-working solution for small business team</p>
         </div>
         <div class="l-box pure-u-1-2">
-            <img class="pure-img" src="/img/logo-v1.png">
+            <img class="pure-img insert-image" src="/img/logo-v1.png">
         </div>
     </div>
 </div>
 
 <footer>
     <div class="footer-content is-center">
-        <div>
-            © 2014 Haroopress, Inc.
+        <div class="pure-menu pure-menu-open pure-menu-horizontal">
+            <a href="#" class="pure-menu-heading">© 2014 Haroopress, Inc.</a>
+
+            <ul>
+                <li><a href="#">Feature List</a></li>
+                <li><a href="#">Markdown Guide</a></li>
+                <li><a href="#">Enhanced Usage</a></li>
+            </ul>
         </div>
     </div>
 </footer>
+<script src="/components/jquery/dist/jquery.min.js"></script>
+<script src="/js/strength_checker.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#form-submit').on('click', function (e) {
+            if (!$('.form-wrapper').hasClass('hidden')) {
+                $('.form-wrapper form').attr('action', '/signup');
+                $('.form-wrapper form').submit();
+            }
+            toggleFormIntro('.form-wrapper', '.form-intro');
+
+            $('#password').on('change', function (e) {
+                console.log(e);
+                var associatedString = [];
+
+                associatedString.push($('#name').getValue() || null);
+                associatedString.push($('#email').getValue() || null);
+
+                console.log(passwordStrengthChecker($('#password'), associatedString));
+            })
+
+        });
+    });
+
+    function passwordStrengthChecker(password, combined) {
+        if (!window.dropbox_strength_checker) {
+            return 0;
+        }
+        var result = dropbox_strength_checker(password, combined);
+        return result.score;
+    }
+
+    function toggleFormIntro(el1, el2) {
+        if ($(el1).hasClass('hidden')) {
+            $(el1).removeClass('hidden');
+            $(el2).addClass('hidden');
+        } else {
+            $(el2).removeClass('hidden');
+            $(el1).addClass('hidden');
+        }
+    }
+
+</script>
 </body>
 </html>

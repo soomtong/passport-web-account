@@ -88,14 +88,14 @@ exports.signUpForm = function (req, res) {
 exports.signUp = function (req, res, next) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
-    req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
+    //req.assert('confirmPassword', 'Passwords do not match').equals(req.body.password);
 
     var errors = req.validationErrors();
 
     if (errors) {
         console.log(errors);
         req.flash('errors', errors);
-        return res.redirect('signup');
+        return res.redirect('back');
     }
 
     var user = new Account({
@@ -113,7 +113,7 @@ exports.signUp = function (req, res, next) {
             console.log('Account with that email address already exists.');
             req.flash('errors', { msg: 'Account with that email address already exists.' });
 
-            return res.redirect('/signup');
+            return res.redirect('back');
         } else {
             user.haroo_id = common.getHarooID();
             user.login_expire = common.getLoginExpireDate();
@@ -132,7 +132,7 @@ exports.signUp = function (req, res, next) {
                     }
                     common.saveAccountAccessLog('created_at', req.param('email'));
 
-                    res.redirect('/');
+                    res.redirect('/dashboard');
                 });
             });
 

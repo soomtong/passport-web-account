@@ -36,6 +36,15 @@ p {
   border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 
+.text-muted {
+  color: #91a8ba;
+}
+
+.hidden {
+  display: none !important;
+  visibility: hidden !important;
+}
+
 .fix-bottom-lane {
   border-bottom: 1px solid #eee;
   margin-bottom: 4em;
@@ -48,6 +57,7 @@ p {
 
 
 .top-menu {
+  background: #fff;
   text-align: left;
   .top-menu-alternative {
     float: left;
@@ -89,7 +99,7 @@ p {
       padding: 1em 1.6em;
       border-radius: 5px;
       line-height: 1em;
-      margin: 0 auto;
+      margin: 0 auto 0.8em;
       width: 14em;
     }
     .cloud-form-subhead {
@@ -104,10 +114,18 @@ p {
         color: #0078e7;
       }
     }
+    .alert-msg {
+      color: cornflowerblue;
+      border-radius: 4px;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+      font-size: 85%;
+      text-transform: none;
+      margin: 0.2em auto;
+    }
   }
 }
 
-.feature-content {
+.feature-content, .description-content {
   .content-subhead {
     color: #1f8dd6;
     letter-spacing: 0.1em;
@@ -115,8 +133,20 @@ p {
       margin-right: 1px;
     }
   }
-  .feature-image {
+  .insert-image {
     padding: 0.5em 3em 1em 0;
+    margin: 0 auto;
+  }
+}
+
+.feature-content {
+  .insert-image {
+    max-width: 12em;
+  }
+}
+.description-content {
+  .insert-image {
+    max-width: 20em;
   }
 }
 
@@ -126,12 +156,29 @@ p {
   padding: 3em 1em;
 }
 
+.form-wrapper {
+  position: relative;
+  top: 0;
+  left: 0;
+  form {
+    margin: 0 auto;
+    max-width: 20em;
+    fieldset {
+      input {
+        width: 100%;
+      }
+    }
+  }
+}
 
 @media (min-width: 35.5em) {
   .main-content {
     .profile-img {
       padding: 1em 1em 1em 2em;
     }
+  }
+  .description-content {
+    padding: 1em 2em;
   }
 }
 
@@ -152,5 +199,8 @@ p {
 @media (min-width: 78em) {
   .content-head {
     font-size: 200%;
+  }
+  .description-content {
+    margin: 1em 2em;
   }
 }
