@@ -1,5 +1,11 @@
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 body {
   color: #526066;
+  font-size: 13px;
 }
 h2,
 h3 {
@@ -10,43 +16,122 @@ h3 {
 p {
   line-height: 1.6em;
 }
-.ddd {
+.debug {
   border: 1px solid darkred !important;
+}
+.is-center {
+  text-align: center;
+}
+.l-box {
+  padding: 1em;
+}
+.l-box-lrg {
+  padding: 2em;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.fix-bottom-lane {
+  border-bottom: 1px solid #eee;
+  margin-bottom: 4em;
+}
+.fix-bottom-lane a {
+  text-decoration: none;
+  font-size: 14px;
+  color: #91a8ba;
 }
 .top-menu {
   text-align: left;
+}
+.top-menu .top-menu-alternative {
+  float: left;
 }
 .top-menu ul {
   float: right;
 }
 .top-menu .top-menu-heading {
-  padding: 0.8em 1em;
-  font-size: 0.7em;
+  padding: 0.5em 1em;
+  font-size: 0.75em;
+  vertical-align: bottom;
+  color: #565d64;
+  text-transform: uppercase;
+  margin-top: 0.4em;
+  display: block;
+  line-height: 1em;
+  text-decoration: none;
+  white-space: nowrap;
 }
-.banner {
+.main-content {
   padding-top: 10em;
 }
-.graphic {
+.main-content .profile-img {
+  padding: 2em 2em 2em 5.5em;
+}
+.main-content .profile-img img {
+  margin: 0 auto;
+}
+.main-content .cloud-form {
   margin: auto;
   top: 100px;
   left: 0;
   bottom: 0;
   right: 0;
-  text-align: center;
   text-transform: uppercase;
 }
-.graphic .pure-img {
-  margin: 0 auto;
-}
-.graphic .graphic-head {
-  font-size: 20px;
+.main-content .cloud-form .cloud-form-head {
+  font-size: 1.2em;
   font-weight: bold;
+  color: cornflowerblue;
+  border: 3px solid cornflowerblue;
   padding: 1em 1.6em;
-  font-weight: 100;
   border-radius: 5px;
   line-height: 1em;
+  margin: 0 auto;
+  width: 14em;
 }
-.graphic .graphic-subhead {
+.main-content .cloud-form .cloud-form-subhead {
   letter-spacing: 0.05em;
   opacity: 0.8;
+}
+.main-content .cloud-form .cloud-form-sign-in {
+  text-transform: none;
+  font-size: 0.8em;
+  color: #909090;
+}
+.main-content .cloud-form .cloud-form-sign-in a {
+  color: #0078e7;
+}
+.feature-content .content-subhead {
+  color: #1f8dd6;
+  letter-spacing: 0.1em;
+}
+.feature-content .content-subhead i {
+  margin-right: 1px;
+}
+.feature-content .feature-image {
+  padding: 0.5em 3em 1em 0;
+}
+.footer-content {
+  margin-top: 3em;
+  border-top: 1px solid #eee;
+  padding: 3em 1em;
+}
+@media (min-width: 35.5em) {
+  .main-content .profile-img {
+    padding: 1em 1em 1em 2em;
+  }
+}
+@media (min-width: 48em) {
+  body {
+    font-size: 16px;
+  }
+  .feature-content {
+    padding: 1em;
+  }
+  .l-box-lrg {
+    border: none;
+  }
+}
+@media (min-width: 78em) {
+  .content-head {
+    font-size: 200%;
+  }
 }
