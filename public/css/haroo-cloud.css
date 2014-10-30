@@ -89,7 +89,7 @@ p {
   right: 0;
   text-transform: uppercase;
 }
-.main-content .cloud-form a {
+.main-content .cloud-form .cloud-form-sign-in a {
   color: #0078e7;
 }
 .main-content .cloud-form .cloud-form-head {
