@@ -22,6 +22,9 @@ p {
 .is-center {
   text-align: center;
 }
+.is-right {
+  text-align: right;
+}
 .l-box {
   padding: 1em;
 }
@@ -38,12 +41,14 @@ p {
 }
 .fix-bottom-lane {
   border-bottom: 1px solid #eee;
-  margin-bottom: 4em;
+  margin: 4em auto;
 }
 .fix-bottom-lane a {
   text-decoration: none;
   font-size: 14px;
   color: #91a8ba;
+  margin-bottom: 2em;
+  display: inline-block;
 }
 .top-menu {
   background: #fff;
@@ -158,7 +163,7 @@ p {
   max-width: 12em;
 }
 .description-content .insert-image {
-  max-width: 20em;
+  max-width: 24em;
 }
 .footer-content {
   margin-top: 3em;
@@ -177,12 +182,56 @@ p {
 .form-wrapper form fieldset input {
   width: 100%;
 }
+.modal-content {
+  background-color: #fff;
+  border-radius: 5px 5px 5px 5px;
+  box-shadow: 0 0 25px 5px #999;
+  color: #111;
+  display: none;
+  padding: 25px;
+}
+.modal-content .pure-form legend {
+  margin-bottom: 1em;
+}
+.modal-content .pure-form legend .form-login-control {
+  padding-top: 1em;
+}
+.modal-content .pure-form legend .form-login-control label {
+  display: none;
+}
+.modal-content .pure-g {
+  font-size: 0.9em;
+}
+.modal-content .pure-g label {
+  padding-bottom: 0.2em;
+}
+.modal-content .form-login-control a {
+  color: #0078e7;
+  margin-left: 1em;
+}
+.modal-content .btn-social {
+  margin: 0.5em 1em;
+}
+.modal-content .btn-social a {
+  color: #fff;
+  margin-left: 1em;
+}
+.modal-content .btn-social .raw-text {
+  font-weight: bold;
+}
+.modal-content .btn-social i.fa {
+  display: none;
+}
 @media (min-width: 35.5em) {
   .main-content .profile-img {
     padding: 1em 1em 1em 2em;
   }
   .description-content {
     padding: 1em 2em;
+  }
+  .modal-content {
+    min-width: 30em;
+    font-size: 1.1em;
   }
 }
 @media (min-width: 48em) {
@@ -194,6 +243,30 @@ p {
   }
   .main-content .cloud-form .password-meter {
     margin-top: -1.15em;
+  }
+  .modal-content {
+    font-size: 1.2em;
+  }
+  .modal-content .pure-g {
+    font-size: 0.8em;
+    margin: 0.4em;
+  }
+  .modal-content .pure-g label {
+    display: block;
+    text-align: right;
+    margin-right: 1em;
+  }
+  .modal-content .form-login-control {
+    margin-top: 1em;
+  }
+  .modal-content .btn-social .raw-text {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  .modal-content .btn-social i.fa {
+    display: inline-block;
+    font-size: 2em;
+    margin-left: 0.2em;
   }
 }
 @media (min-width: 78em) {

@@ -116,7 +116,7 @@ var PasswordStrength = {
         var inputs = 'dropbox'.split();
         fname = $('fname');
         lname = $('lname');
-        email = $('email');
+        email = $('signup-email');
         if (fname) {
             inputs.push(fname.getValue());
         }

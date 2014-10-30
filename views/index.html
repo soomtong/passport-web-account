@@ -17,10 +17,10 @@
 
 <div class="pure-menu pure-menu-open pure-menu-horizontal pure-menu-fixed top-menu">
     <div class="top-menu-alternative">
-        <a href="#" class="top-menu-heading">Check about Haroo Cloud for Business</a>
+        <a href="/" class="top-menu-heading">Check about Haroo Cloud for Business</a>
     </div>
     <ul>
-        <li class=""><a href="#" class="">Download</a></li>
+        <li class=""><a href="/" class="">Download</a></li>
     </ul>
 </div>
 
@@ -46,9 +46,9 @@
                 <form class="pure-form pure-form-stacked" method="POST">
                     <input type="hidden" name="_csrf" value="{{ _csrf }}">
                     <fieldset style="position: relative">
-                        <input id="email" type="email" name="email" placeholder="Email" tabindex="1">
-                        <input id="password" type="password" name="password" placeholder="Password" tabindex="2">
-                        <input id="nickname" type="text" name="nickname" placeholder="Only Screen Name" tabindex="3">
+                        <input id="signup-email" type="email" name="email" placeholder="Email" tabindex="1">
+                        <input id="signup-password" type="password" name="password" placeholder="Password" tabindex="2">
+                        <input id="signup-nickname" type="text" name="nickname" placeholder="Only Screen Name" tabindex="3">
                         <!-- sourced by dropbox, use temporary, sorry -->
                         <div class="password-meter">
                             <div class="password-dot" style="background-color: #cce6f9;"></div>
@@ -72,16 +72,21 @@
                 <p class="cloud-form-subhead">Haroonote Professional Writing Platform</p>
             </div>
             <p>
-                <button type="submit" class="pure-button pure-button-primary" id="form-submit">Sign up</button>
+                <button type="submit" class="pure-button pure-button-primary" id="form-signup-submit">Sign up</button>
             </p>
-            <p class="cloud-form-sign-in"><a href="/login">Sign in</a> or <a href="/login">Social Registration</a></p>
+            <p class="cloud-form-sign-in">
+                <a href="/login" id="pop_login">Sign in</a> or <a href="/login" id="pop_social_login">Social Registration</a>
+            </p>
 
         </div>
-        <div class="pure-u-1 fix-bottom-lane is-center">
-            <!-- todo: scrollTo -->
-            <p><a href="">More About</a></p>
-        </div>
     </div>
+    <div class="pure-g">
+        <!-- todo: scrollTo -->
+        <p class="pure-u-1 fix-bottom-lane is-center">
+            <a href="">More About</a>
+        </p>
+    </div>
+
 </div>
 
 <div class="feature-content">
@@ -96,7 +101,7 @@
             <p>
                 Not only supports Markdown, but also has ability to build extensions for making your own features.
             </p>
-            <img class="insert-image pure-img" src="/img/logo-v1.png" alt="Haroo Avatar"/>
+            <img class="insert-image pure-img" src="http://pad.haroopress.com/assets/images/illustrations/mail.png" alt="Haroo Avatar"/>
         </div>
         <div class="l-box pure-u-1 pure-u-sm-1-2 pure-u-lg-1-4">
             <h3 class="content-subhead">
@@ -106,7 +111,7 @@
             <p>
                 Just write down anywhere with haroonote, Stay your document in cloud on sync.
             </p>
-            <img class="insert-image pure-img" src="/img/logo-v1.png" alt="Haroo Avatar"/>
+            <img class="insert-image pure-img" src="http://pad.haroopress.com/assets/images/illustrations/infinity.png" alt="Haroo Avatar"/>
         </div>
         <div class="l-box pure-u-1 pure-u-sm-1-2 pure-u-lg-1-4">
             <h3 class="content-subhead">
@@ -116,7 +121,7 @@
             <p>
                 We support (Ubuntu, 32/64 bit) Windows 7/8, Mac OS X, of Linux. and working on IOS, Android.
             </p>
-            <img class="insert-image pure-img" src="/img/logo-v1.png" alt="Haroo Avatar"/>
+            <img class="insert-image pure-img" src="http://pad.haroopress.com/assets/images/illustrations/bag.png" alt="Haroo Avatar"/>
         </div>
         <div class="l-box pure-u-1 pure-u-sm-1-2 pure-u-lg-1-4">
             <h3 class="content-subhead">
@@ -126,11 +131,11 @@
             <p>
                 Supports modern themes in editing area, skins for transformed documents.
             </p>
-            <img class="insert-image pure-img" src="/img/logo-v1.png" alt="Haroo Avatar"/>
+            <img class="insert-image pure-img" src="http://pad.haroopress.com/assets/images/illustrations/retina.png" alt="Haroo Avatar"/>
         </div>
     </div>
-    <div class="pure-u-1 fix-bottom-lane is-center">
-        <p></p>
+    <div class="pure-g">
+        <p class="pure-u-1 fix-bottom-lane is-center"></p>
     </div>
 </div>
 
@@ -144,17 +149,17 @@
                 Simply write a text for your report or homework, daily review or blog post.</p>
         </div>
         <div class="l-box pure-u-1-2">
-            <img class="pure-img insert-image" src="/img/logo-v1.png">
+            <img class="pure-img insert-image" src="http://pad.haroopress.com/assets/images/intro/10.png">
         </div>
     </div>
 
-    <div class="pure-u-1 fix-bottom-lane is-center">
-        <p></p>
+    <div class="pure-g">
+        <p class="pure-u-1 fix-bottom-lane is-center"></p>
     </div>
 
     <div class="pure-g">
         <div class="l-box pure-u-1-2">
-            <img class="pure-img insert-image" src="/img/logo-v1.png">
+            <img class="pure-img insert-image" src="http://pad.haroopress.com/assets/images/intro/8.png">
         </div>
         <div class="l-box pure-u-1-2">
             <h2 class="content-subhead">Browse Your Article <span class="text-muted">Share To the Web</span>
@@ -166,8 +171,8 @@
         </div>
     </div>
 
-    <div class="pure-u-1 fix-bottom-lane is-center">
-        <p></p>
+    <div class="pure-g">
+        <p class="pure-u-1 fix-bottom-lane is-center"></p>
     </div>
 
     <div class="pure-g">
@@ -179,7 +184,7 @@
                 Co-working solution for small business team</p>
         </div>
         <div class="l-box pure-u-1-2">
-            <img class="pure-img insert-image" src="/img/logo-v1.png">
+            <img class="pure-img insert-image" src="http://pad.haroopress.com/assets/images/intro/5.png">
         </div>
     </div>
 </div>
@@ -197,11 +202,58 @@
         </div>
     </div>
 </footer>
+
+<div class="modal-content pure-g" id="modal_login">
+    <form method="POST" action="/login" class="pure-u-1 pure-form">
+        <input type="hidden" name="_csrf" value="{{ _csrf }}">
+        <legend>Sign in</legend>
+
+        <div class="pure-g">
+            <label class="pure-u-1 pure-u-md-1-4" for="login_email">Email</label>
+            <input type="text" name="email" class="pure-u-1 pure-u-md-2-3" id="login_email" placeholder="Email">
+        </div>
+
+        <div class="pure-g">
+            <label class="pure-u-1 pure-u-md-1-4" for="login_password">Password</label>
+            <input type="password" name="password" class="pure-u-1 pure-u-md-2-3" id="login_password" placeholder="Password">
+        </div>
+
+        <div class="pure-g form-login-control">
+            <label class="pure-u-1 pure-u-md-1-4"></label>
+            <div class="pure-u-1 pure-u-md-2-3">
+                <button type="submit" class="pure-button pure-button-primary" id="login-submit">Login</button>
+                <a href="/account/reset-password" class="">Forgot your password?</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-content pure-g" id="modal_social_login">
+    <div class="pure-u-1 pure-u-md-1-3">
+        <div class="pure-g">
+            <a href="/auth/facebook" class="pure-button pure-button-primary btn-facebook btn-social pure-u-1">Sign in with
+                <i class="fa fa-facebook-square"></i><span class="raw-text">Facebook</span></a>
+        </div>
+    </div>
+    <div class="pure-u-1 pure-u-md-1-3">
+        <div class="pure-g">
+            <a href="/auth/twitter" class="pure-button pure-button-primary btn-twitter btn-social pure-u-1">Sign in with
+                <i class="fa fa-twitter-square"></i><span class="raw-text">Twitter</span></a>
+        </div>
+    </div>
+    <div class="pure-u-1 pure-u-md-1-3">
+        <div class="pure-g">
+            <a href="/auth/google" class="pure-button pure-button-primary btn-google-plus btn-social pure-u-1">Sign in with
+                <i class="fa fa-google-plus-square"></i><span class="raw-text">Google</span></a>
+        </div>
+    </div>
+</div>
 <script src="/components/jquery/dist/jquery.min.js"></script>
+<script src="/components/bpopup/jquery.bpopup.min.js"></script>
 <script src="/js/strength_checker.js"></script>
 <script>
     $(document).ready(function () {
-        $('#form-submit').on('click', function (e) {
+        $('#form-signup-submit').on('click', function (e) {
             if (!$('.form-wrapper').hasClass('hidden')) {
                 $('.form-wrapper form').attr('action', '/signup');
                 $('.form-wrapper form').submit();
@@ -209,16 +261,30 @@
             toggleFormIntro('.form-wrapper', '.form-intro');
         });
 
-        $('#password').on('change paste keyup', document, function (e) {
+        $('#signup-password').on('change paste keyup', document, function (e) {
             var associatedString = [];
-            var name = $('#nickname').val();
-            var email = $('#email').val();
-            var password = $('#password').val();
+            var name = $('#signup-nickname').val();
+            var email = $('#signup-email').val();
+            var password = $('#signup-password').val();
 
             if (name) associatedString.push(name);
             if (email) associatedString.push(email);
 
             updatePasswordStrength(passwordStrengthChecker(password, associatedString), $('.password-meter'));
+        });
+
+        $('#pop_login').on('click', function (e) {
+            e.preventDefault();
+            $('#modal_login').bPopup({
+                opacity: 0.2
+            });
+        });
+
+        $('#pop_social_login').on('click', function (e) {
+            e.preventDefault();
+            $('#modal_social_login').bPopup({
+                opacity: 0.2
+            });
         })
     });
 
@@ -248,7 +314,7 @@
         if ($(el1).hasClass('hidden')) {
             $(el1).removeClass('hidden');
             $(el2).addClass('hidden');
-            $(el1).find('#email').focus();
+            $(el1).find('#signup-email').focus();
         } else {
             $(el2).removeClass('hidden');
             $(el1).addClass('hidden');
