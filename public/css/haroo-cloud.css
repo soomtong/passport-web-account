@@ -84,6 +84,9 @@ p {
   right: 0;
   text-transform: uppercase;
 }
+.main-content .cloud-form a {
+  color: #0078e7;
+}
 .main-content .cloud-form .cloud-form-head {
   font-size: 1.2em;
   font-weight: bold;
@@ -95,6 +98,14 @@ p {
   margin: 0 auto 0.8em;
   width: 14em;
 }
+.main-content .cloud-form .warning {
+  color: #df7514;
+  border-color: #df7514;
+}
+.main-content .cloud-form .success {
+  color: #1cb841;
+  border-color: #1cb841;
+}
 .main-content .cloud-form .cloud-form-subhead {
   letter-spacing: 0.05em;
   opacity: 0.8;
@@ -104,9 +115,6 @@ p {
   font-size: 0.8em;
   color: #909090;
 }
-.main-content .cloud-form .cloud-form-sign-in a {
-  color: #0078e7;
-}
 .main-content .cloud-form .alert-msg {
   color: cornflowerblue;
   border-radius: 4px;
@@ -114,6 +122,23 @@ p {
   font-size: 85%;
   text-transform: none;
   margin: 0.2em auto;
+}
+.main-content .cloud-form .password-meter {
+  position: absolute;
+  top: 50%;
+  right: 1px;
+  padding: 5px;
+  margin-top: -1.3em;
+}
+.main-content .cloud-form .password-meter .password-dot {
+  height: 3px;
+  width: 4px;
+  margin: 2px;
+  background-color: #cce6f9;
+}
+.main-content .cloud-form .tos-agree {
+  font-size: 0.75em;
+  text-transform: none;
 }
 .feature-content .content-subhead,
 .description-content .content-subhead {
@@ -167,8 +192,8 @@ p {
   .feature-content {
     padding: 1em;
   }
-  .l-box-lrg {
-    border: none;
+  .main-content .cloud-form .password-meter {
+    margin-top: -1.15em;
   }
 }
 @media (min-width: 78em) {

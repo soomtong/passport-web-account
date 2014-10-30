@@ -132,7 +132,7 @@ exports.signUp = function (req, res, next) {
                     }
                     common.saveAccountAccessLog('created_at', req.param('email'));
 
-                    res.redirect('/dashboard');
+                    res.redirect('/');
                 });
             });
 

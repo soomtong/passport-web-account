@@ -32,21 +32,37 @@
         </div>
         <div class="pure-u-1 pure-u-sm-2-3 pure-u-md-1-2 cloud-form is-center">
             <div class="form-wrapper is-center {% if !messages.errors %}hidden{% endif %}">
-                <h1 class="cloud-form-head">Something Missed</h1>
                 {% if messages.errors %}
+                <h1 class="cloud-form-head warning">Something Missed</h1>
+
                 <div class="alert-msg">
                     {% for error in messages.errors %}
                     <div>{{ error.msg }}</div>
                     {% endfor %}
                 </div>
+                {% else %}
+                <h1 class="cloud-form-head success">Simple Approach</h1>
                 {% endif %}
                 <form class="pure-form pure-form-stacked" method="POST">
                     <input type="hidden" name="_csrf" value="{{ _csrf }}">
-                    <fieldset>
-                        <input id="email" type="email" name="email" placeholder="Email">
-                        <input id="password" type="password" placeholder="Your Password">
-                        <input id="name" type="text" name="profile_name" placeholder="Your Screen Name">
+                    <fieldset style="position: relative">
+                        <input id="email" type="email" name="email" placeholder="Email" tabindex="1">
+                        <input id="password" type="password" name="password" placeholder="Password" tabindex="2">
+                        <input id="nickname" type="text" name="nickname" placeholder="Only Screen Name" tabindex="3">
+                        <!-- sourced by dropbox, use temporary, sorry -->
+                        <div class="password-meter">
+                            <div class="password-dot" style="background-color: #cce6f9;"></div>
+                            <div class="password-dot" style="background-color: #cce6f9;"></div>
+                            <div class="password-dot" style="background-color: #cce6f9;"></div>
+                            <div class="password-dot" style="background-color: #cce6f9;"></div>
+                        </div>
                     </fieldset>
+                    <div class="tos-agree">
+                        <label for="tos_agree">
+                        <input type="checkbox" id="tos_agree" name="tos_agree" tabindex="4">
+                            I agree to <a href="/terms" target="_blank">Haroopress Terms</a>
+                        </label>
+                    </div>
                 </form>
             </div>
 
@@ -56,9 +72,10 @@
                 <p class="cloud-form-subhead">Haroonote Professional Writing Platform</p>
             </div>
             <p>
-                <button class="pure-button pure-button-primary" id="form-submit">Sign up</button>
+                <button type="submit" class="pure-button pure-button-primary" id="form-submit">Sign up</button>
             </p>
             <p class="cloud-form-sign-in"><a href="/login">Sign in</a> or <a href="/login">Social Registration</a></p>
+
         </div>
         <div class="pure-u-1 fix-bottom-lane is-center">
             <!-- todo: scrollTo -->
@@ -170,12 +187,12 @@
 <footer>
     <div class="footer-content is-center">
         <div class="pure-menu pure-menu-open pure-menu-horizontal">
-            <a href="#" class="pure-menu-heading">© 2014 Haroopress, Inc.</a>
+            <a href="/company" class="pure-menu-heading">© 2014 Haroopress, Inc.</a>
 
             <ul>
-                <li><a href="#">Feature List</a></li>
-                <li><a href="#">Markdown Guide</a></li>
-                <li><a href="#">Enhanced Usage</a></li>
+                <li><a href="/features">Feature List</a></li>
+                <li><a href="/markdown">Markdown Guide</a></li>
+                <li><a href="/guide">Enhanced Usage</a></li>
             </ul>
         </div>
     </div>
@@ -190,19 +207,34 @@
                 $('.form-wrapper form').submit();
             }
             toggleFormIntro('.form-wrapper', '.form-intro');
-
-            $('#password').on('change', function (e) {
-                console.log(e);
-                var associatedString = [];
-
-                associatedString.push($('#name').getValue() || null);
-                associatedString.push($('#email').getValue() || null);
-
-                console.log(passwordStrengthChecker($('#password'), associatedString));
-            })
-
         });
+
+        $('#password').on('change paste keyup', document, function (e) {
+            var associatedString = [];
+            var name = $('#nickname').val();
+            var email = $('#email').val();
+            var password = $('#password').val();
+
+            if (name) associatedString.push(name);
+            if (email) associatedString.push(email);
+
+            updatePasswordStrength(passwordStrengthChecker(password, associatedString), $('.password-meter'));
+        })
     });
+
+    function updatePasswordStrength(str, el1) {
+        var countDot = 4;
+        var counter = Number(str);
+
+        for (var idx = 0; idx < countDot; idx++) {
+            var el2 = el1.children('.password-dot');
+            if (idx >= counter) {
+                el2.eq(countDot - idx - 1).css('background-color', '#cce6f9');  // safe gauge
+            } else {
+                el2.eq(countDot - idx - 1).css('background-color', '#27b30f');
+            }
+        }
+    }
 
     function passwordStrengthChecker(password, combined) {
         if (!window.dropbox_strength_checker) {
@@ -216,6 +248,7 @@
         if ($(el1).hasClass('hidden')) {
             $(el1).removeClass('hidden');
             $(el2).addClass('hidden');
+            $(el1).find('#email').focus();
         } else {
             $(el2).removeClass('hidden');
             $(el1).addClass('hidden');
