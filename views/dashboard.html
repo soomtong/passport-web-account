@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" ng-app="Dashboard">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,23 +10,15 @@
 
     <title>{{ site.title }}</title>
 
-    <link rel="stylesheet" href="/components/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="/components/font-awesome/css/font-awesome.min.css"/>
-    <link rel="stylesheet" href="/css/dashboard/dashboard.css"/>
-
-    <script src="/components/angular/angular.min.js"></script>
-    <script src="/components/angular-cookies/angular-cookies.min.js"></script>
-    <script src="/components/angular-bootstrap/ui-bootstrap.min.js"></script>
-    <script src="/components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
-    <script src="/components/angular-ui-router/release/angular-ui-router.min.js"></script>
-
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="/components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/dashboard/dashboard.css">
     <link rel="stylesheet" href="/css/haroo-cloud-common.css">
     <link rel="stylesheet" href="/css/haroo-cloud-patch.css">
-
-    <script src="/js/dashboard.js"></script>
 </head>
-<body ng-controller="MasterCtrl">
-<div id="page-wrapper" ng-class="{'active': toggle}" ng-cloak>
+<body>
+<div id="page-wrapper" class="active">
 
     {% include 'partials/dashboard_sidemenu.html' %}
 
@@ -56,214 +48,141 @@
                 </div>
             </div>
 
-            <section data-ui-view></section>
+            <div class="row">
+                <div class="col-lg-3 col-md-6 col-xs-12">
+                    <div class="widget">
+                        <div class="widget-body">
+                            <div class="widget-icon green pull-left">
+                                <i class="fa fa-users"></i>
+                            </div>
+                            <div class="widget-content pull-left">
+                                <div class="title">80</div>
+                                <div class="comment">Follower</div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-xs-12">
+                    <div class="widget">
+                        <div class="widget-body">
+                            <div class="widget-icon red pull-left">
+                                <i class="fa fa-tasks"></i>
+                            </div>
+                            <div class="widget-content pull-left">
+                                <div class="title">16</div>
+                                <div class="comment">Favorite</div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-xs-12">
+                    <div class="widget">
+                        <div class="widget-body">
+                            <div class="widget-icon orange pull-left">
+                                <i class="fa fa-sitemap"></i>
+                            </div>
+                            <div class="widget-content pull-left">
+                                <div class="title">225</div>
+                                <div class="comment">Documents</div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="spacer visible-xs"></div>
+                <div class="col-lg-3 col-md-6 col-xs-12">
+                    <div class="widget">
+                        <div class="widget-body">
+                            <div class="widget-icon blue pull-left">
+                                <i class="fa fa-support"></i>
+                            </div>
+                            <div class="widget-content pull-left">
+                                <div class="title">{{ tagCount }}</div>
+                                <div class="comment">Tags</div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="widget">
+                        <div class="widget-title">
+                            <i class="fa fa-tasks"></i> Documents
+                            <a href="#" class="pull-right">Manage</a>
+                        </div>
+                        <div class="widget-body no-padding">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tbody>
+                                    {% for item in list %}
+                                    <tr>
+                                        <td style="width: 5em;">{{ page_param.lineCounter - loop.index0 }}</td>
+                                        <td><a href="/dashboard/{{ item.key | safe }}">{{ item.value[0] }}</a></td>
+                                        <td style="width: 8em;">{{ item.value[1]|date('Y-m-d') }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="widget">
+                        <div class="widget-title">
+                            <i class="fa fa-users"></i> Users
+                            <input type="text" placeholder="Search" class="form-control input-sm pull-right"/>
+
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="widget-body no-padding">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center">ID</th>
+                                        <th>Username</th>
+                                        <th>Role</th>
+                                        <th>Account</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="text-center">1</td>
+                                        <td>Joe Bloggs</td>
+                                        <td>Super Admin</td>
+                                        <td>AZ23045</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-center">2</td>
+                                        <td>Timothy Hernandez</td>
+                                        <td>Admin</td>
+                                        <td>AU24783</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-center">3</td>
+                                        <td>Joe Bickham</td>
+                                        <td>User</td>
+                                        <td>AM23781</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<script type="text/ng-template" id="dashboard.html">
-    <div class="row alerts-container" data-ng-controller="AlertsCtrl" data-ng-show="alerts.length">
-        <div class="col-xs-12">
-            <alert data-ng-repeat="alert in alerts" type="{% raw %}{{alert.type}}{% endraw %}" close="closeAlert($index)">{% raw %}{{alert.msg}}{% endraw %}</alert>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-3 col-md-6 col-xs-12">
-            <div class="widget">
-                <div class="widget-body">
-                    <div class="widget-icon green pull-left">
-                        <i class="fa fa-users"></i>
-                    </div>
-                    <div class="widget-content pull-left">
-                        <div class="title">80</div>
-                        <div class="comment">Follower</div>
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-xs-12">
-            <div class="widget">
-                <div class="widget-body">
-                    <div class="widget-icon red pull-left">
-                        <i class="fa fa-tasks"></i>
-                    </div>
-                    <div class="widget-content pull-left">
-                        <div class="title">16</div>
-                        <div class="comment">Favorite</div>
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-xs-12">
-            <div class="widget">
-                <div class="widget-body">
-                    <div class="widget-icon orange pull-left">
-                        <i class="fa fa-sitemap"></i>
-                    </div>
-                    <div class="widget-content pull-left">
-                        <div class="title">225</div>
-                        <div class="comment">Documents</div>
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-            </div>
-        </div>
-        <div class="spacer visible-xs"></div>
-        <div class="col-lg-3 col-md-6 col-xs-12">
-            <div class="widget">
-                <div class="widget-body">
-                    <div class="widget-icon blue pull-left">
-                        <i class="fa fa-support"></i>
-                    </div>
-                    <div class="widget-content pull-left">
-                        <div class="title">{{ tagCount }}</div>
-                        <div class="comment">Tags</div>
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="widget">
-                <div class="widget-header">
-                    <i class="fa fa-tasks"></i> Documents
-                    <a href="#" class="pull-right">Manage</a>
-                </div>
-                <div class="widget-body no-padding">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <tbody>
-                            {% for item in list %}
-                            <tr>
-                                <td style="width: 5em;">{{ page_param.lineCounter - loop.index0 }}</td>
-                                <td><a href="/dashboard/{{ item.key | safe }}">{{ item.value[0] }}</a></td>
-                                <td style="width: 8em;">{{ item.value[1]|date('Y-m-d') }}</td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="widget">
-                <div class="widget-header">
-                    <i class="fa fa-users"></i> Users
-                    <input type="text" placeholder="Search" class="form-control input-sm pull-right" />
-                    <div class="clearfix"></div>
-                </div>
-                <div class="widget-body no-padding">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th class="text-center">ID</th>
-                                <th>Username</th>
-                                <th>Role</th>
-                                <th>Account</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td class="text-center">1</td>
-                                <td>Joe Bloggs</td>
-                                <td>Super Admin</td>
-                                <td>AZ23045</td>
-                            </tr>
-                            <tr>
-                                <td class="text-center">2</td>
-                                <td>Timothy Hernandez</td>
-                                <td>Admin</td>
-                                <td>AU24783</td>
-                            </tr>
-                            <tr>
-                                <td class="text-center">3</td>
-                                <td>Joe Bickham</td>
-                                <td>User</td>
-                                <td>AM23781</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</script>
-<script type="text/ng-template" id="list.html">
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="widget">
-                <div class="widget-header">
-                    <i class="fa fa-tasks"></i> Documents
-                    <a href="#" class="pull-right">Manage</a>
-                </div>
-                <div class="widget-body no-padding">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <tbody data-id="{{ _csrf }}">
-                            {% for item in list %}
-                            <tr class="list-ctrl" data-id="{{ item.value._id | safe }}">
-                                <td style="width: 5em;">{{ page_param.lineCounter - loop.index0 }}</td>
-                                <td><a href="/dashboard/{{ item.value._id | safe }}">{{ item.value.title }}</a></td>
-                                <td style="width: 7.2em;">{{ item.value.updated_at|date('Y-m-d') || item.value.created_at|date('Y-m-d') }}</td>
-                                <td style="width: 3em;">
-                                    {% if item.value.meta.share %}
-                                    <span class="text-success toggle-public" title="PUBLIC"><i class="fa fa-toggle-on"></i></span>
-                                    {% else %}
-                                    <span class="text-success toggle-public" title="PRIVATE"><i class="fa fa-toggle-off"></i></span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</script>
-<script type="text/ng-template" id="view.html">
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="widget">
-                <div class="widget-body">
-                    <div class="widget-icon red pull-left">
-                        <i class="fa fa-sitemap"></i>
-                    </div>
-                    <div class="widget-content pull-left">
-                        <div class="title" title="Tags">{{ doc.tags.length }}</div>
-                        <div class="comment">Tags</div>
-                    </div>
-                    <div style="padding-left: 8em;">
-                        {{ doc.toc.html | safe }}
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-12">
-            <div class="widget">
-                <div class="widget-header">
-                    <i class="fa fa-tasks"></i> {{ doc.title }}
-                    <span class="pull-right hidden">{{ doc.updated_at|default('doc.created_at')|date('Y-m-d') }}</span>
-                </div>
-                <div class="widget-body no-padding">
-                    <div>
-                        {{ doc.html | safe }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</script>
 <!-- End Page Wrapper -->
+<script src="/components/jquery/dist/jquery.min.js"></script>
+<script src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/components/jquery-cookie/jquery.cookie.js"></script>
+<script src="/js/dashboard.js"></script>
 </body>
 </html>

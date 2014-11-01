@@ -160,6 +160,7 @@ app.post('/account/reset-password', accountController.resetPassword);
 app.get('/account/update-password/:token?', accountController.updatePasswordForm);
 app.post('/account/update-password/:token?', accountController.updatePasswordForReset);
 
+// for only client embedded web page
 app.get('/api/login', apiController.loginForm);
 app.post('/api/login', apiController.login);
 app.get('/api/logout', apiController.logout);
@@ -168,6 +169,7 @@ app.get('/api/loginDone', apiController.loginDone);
 app.get('/api/signup', apiController.signUpForm);
 app.post('/api/signup', apiController.signUp);
 
+// for only api access
 app.post('/api/account/haroo_id', apiController.haroo_id);
 app.post('/api/account/access', apiController.access_token);
 app.post('/api/account/create', apiController.createAccount);
