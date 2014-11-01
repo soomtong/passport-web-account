@@ -74,9 +74,7 @@ exports.login = function(req, res, callback) {
 
             common.saveAccountAccessLog('signed_in', req.param('email'));
 
-            req.flash('success', { msg: 'Success! You are logged in.' });
-
-            return res.redirect(req.session.returnTo || '/');
+            return res.redirect(String(req.session.returnTo) || '/dashboard');
         });
     })(req, res, callback);
 };
