@@ -71,10 +71,12 @@ exports.login = function(req, res, callback) {
 
         req.logIn(user, function(err) {
             if (err) return callback(err);
-            req.flash('success', { msg: 'Success! You are logged in.' });
-            res.redirect(req.session.returnTo || '/');
 
             common.saveAccountAccessLog('signed_in', req.param('email'));
+
+            req.flash('success', { msg: 'Success! You are logged in.' });
+
+            return res.redirect(req.session.returnTo || '/');
         });
     })(req, res, callback);
 };
