@@ -70,11 +70,15 @@ exports.login = function(req, res, callback) {
         });
 
         req.logIn(user, function(err) {
-            if (err) return callback(err);
+            if (err) {
+                console.error(err);
+                req.flash('errors', { msg: err });
+                return res.redirect('/login');
+            }
 
             common.saveAccountAccessLog('signed_in', req.param('email'));
 
-            return res.redirect(String(req.session.returnTo) || '/dashboard');
+            res.redirect(String(req.session.returnTo) || '/dashboard');
         });
     })(req, res, callback);
 };
