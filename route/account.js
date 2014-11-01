@@ -36,7 +36,7 @@ exports.logout = function(req, res) {
                 }
             });
     }
-
+    req.session.returnTo = '';
     req.logout();
     res.redirect('/');
 };
@@ -47,7 +47,7 @@ exports.loginForm = function (req, res) {
     res.render('login', params);
 };
 
-exports.login = function(req, res, callback) {
+exports.login = function(req, res) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password cannot be blank').notEmpty();
 
@@ -59,30 +59,27 @@ exports.login = function(req, res, callback) {
     }
 
     passport.authenticate('local', function(err, user, info) {
-        if (err) return callback(err);
-        if (!user) {
-            req.flash('errors', { msg: info.message });
+        if (err || !user) {
+            req.flash('errors', { msg: err || info.message });
             return res.redirect('/login');
+        } else {
+            Account.findOne({haroo_id: user.haroo_id}, function (err, updateUser) {
+                updateUser.login_expire = common.getLoginExpireDate();
+                updateUser.save();
+            });
+            req.logIn(user, function (err) {
+                if (err) {
+                    console.error(err);
+                    req.flash('errors', {msg: err});
+                    return res.redirect('/login');
+                } else {
+                    common.saveAccountAccessLog('signed_in', req.param('email'));
+                    return res.redirect(String(req.session.returnTo) || '/dashboard');
+                }
+            });
         }
-        Account.findOne({ haroo_id: user.haroo_id }, function (err, updateUser) {
-            updateUser.login_expire = common.getLoginExpireDate();
-            updateUser.save();
-        });
-
-        req.logIn(user, function(err) {
-            if (err) {
-                console.error(err);
-                req.flash('errors', { msg: err });
-                return res.redirect('/login');
-            }
-
-            common.saveAccountAccessLog('signed_in', req.param('email'));
-
-            res.redirect(String(req.session.returnTo) || '/dashboard');
-        });
-    })(req, res, callback);
+    })(req, res);
 };
-
 exports.signUpForm = function (req, res) {
     var params = {};
     if (req.isAuthenticated()) return res.redirect('/');

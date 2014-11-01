@@ -118,7 +118,8 @@ app.use(function(req, res, callback) {
 app.use(function(req, res, callback) {
     // Remember original destination before login.
     var path = req.path.split('/')[1];
-    if (/auth|login|logout|signup|favicon/i.test(path)) {
+
+    if (/auth|api|login|logout|signup|components|css|img|js|favicon/i.test(path) || path == '') {
         return callback();
     }
     req.session.returnTo = req.path;
