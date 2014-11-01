@@ -179,7 +179,7 @@ exports.updateProfile = function (req, res) {
 
 exports.updatePassword = function (req, res, next) {
     req.assert('password', 'Password must be at least 4 characters long').len(4);
-    req.assert('confirmPassword', 'Passwords do not match').equals(req.param('password'));
+    //req.assert('confirmPassword', 'Passwords do not match').equals(req.param('password'));
 
     var errors = req.validationErrors();
 
@@ -302,7 +302,7 @@ exports.updatePasswordForm = function (req, res) {
 
 exports.updatePasswordForReset = function (req, res, next) {
     req.assert('password', 'Password must be at least 4 characters long.').len(4);
-    req.assert('confirmPassword', 'Passwords must match.').equals(req.param('password'));
+    //req.assert('confirmPassword', 'Passwords must match.').equals(req.param('password'));
 
     var errors = req.validationErrors();
 
@@ -313,7 +313,7 @@ exports.updatePasswordForReset = function (req, res, next) {
 
     Account
         .findOne({ reset_password_token: req.param('token') })
-        .where('resetPasswordTokenExpires').gt(Date.now())
+        .where('reset_password_token_expire').gt(Date.now())
         .exec(function(err, accountForReset) {
             if (!accountForReset) {
                 req.flash('errors', { msg: 'Password reset token is invalid or has expired.' });
