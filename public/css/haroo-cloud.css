@@ -20,7 +20,7 @@ p {
   border: 1px solid darkred !important;
 }
 .is-center {
-  text-align: center;
+  text-align: center !important;
 }
 .is-right {
   text-align: right;

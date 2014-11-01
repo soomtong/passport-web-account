@@ -25,6 +25,7 @@ $(document).ready(function () {
         $('#modal_login').bPopup({
             opacity: 0.2
         });
+        $('#login_email').focus();
     });
 
     $('#pop_social_login').on('click', function (e) {
