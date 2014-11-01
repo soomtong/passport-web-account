@@ -40,7 +40,7 @@
 
                         <input type="hidden" name="_csrf" value="{{ _csrf }}">
                         <fieldset style="position: relative">
-                            <input id="signup-email" type="email" name="email" placeholder="Email" tabindex="1">
+                            <input id="signup-email" type="email" name="email" placeholder="Email" tabindex="1" autofocus>
                             <input id="signup-password" type="password" name="password" placeholder="Password" tabindex="2">
                         </fieldset>
                         <button type="submit" class="pure-button pure-button-primary">Sign in</button>
@@ -49,18 +49,20 @@
 
                 <div class="social-link">
                     <div class="pure-g">
-                        <a href="/auth/facebook" class="pure-button btn-facebook btn-social pure-u-1">Sign in with<i class="fa fa-facebook-square"></i><span class="raw-text">Facebook</span></a>
+                        <a href="/auth/facebook" class="pure-button btn-facebook btn-social pure-u-1">Sign in with<i class="fa fa-facebook"></i><span class="raw-text">Facebook</span></a>
                     </div>
                     <div class="pure-g">
-                        <a href="/auth/twitter" class="pure-button btn-twitter btn-social pure-u-1">Sign in with<i class="fa fa-twitter-square"></i><span class="raw-text">Twitter</span></a>
+                        <a href="/auth/twitter" class="pure-button btn-twitter btn-social pure-u-1">Sign in with<i class="fa fa-twitter"></i><span class="raw-text">Twitter</span></a>
                     </div>
                     <div class="pure-g">
-                        <a href="/auth/google" class="pure-button btn-google-plus btn-social pure-u-1">Sign in with<i class="fa fa-google-plus-square"></i><span class="raw-text">Google</span></a>
+                        <a href="/auth/google" class="pure-button btn-google-plus btn-social pure-u-1">Sign in with<i class="fa fa-google-plus"></i><span class="raw-text">Google</span></a>
                     </div>
                 </div>
 
                 <p class="cloud-form-sign-in">
-                    or <a href="/signup">Sign up</a> for new account
+                    <a href="/signup">Sign up</a> for new account or
+                    <a href="/account/reset-password" class="">Forgot your password?</a>
+
                 </p>
             </div>
         </div>
