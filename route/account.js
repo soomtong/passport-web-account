@@ -43,7 +43,7 @@ exports.logout = function(req, res) {
 
 exports.loginForm = function (req, res) {
     var params = {};
-    if (req.isAuthenticated()) return res.redirect('/account');
+    if (req.isAuthenticated()) return res.redirect('/');
     res.render('login', params);
 };
 
@@ -135,8 +135,6 @@ exports.signUp = function (req, res, next) {
                     res.redirect('/');
                 });
             });
-
-
         }
     });
 };
