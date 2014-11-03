@@ -1,7 +1,7 @@
 /**
  * Created by soomtong on 2014. 10. 15..
  */
-var uid = require('shortid');
+var cuid = require('cuid');
 var uuid = require('node-uuid');
 var nodemailer = require('nodemailer');
 var emailToken = require('../config/mailer')['email-token'];
@@ -90,7 +90,8 @@ function getToday() {
 }
 
 function getHarooID() {
-    return 'a' + (getToday().toString()).replace(/-/g,'') + '-' + uid.generate().toLowerCase();
+    //return 'a' + (getToday().toString()).replace(/-/g,'') + '-' + uid.generate().toLowerCase();
+    return cuid();
 }
 
 function getAccessToken() {
