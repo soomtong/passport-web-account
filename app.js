@@ -154,7 +154,7 @@ app.get('/download', useragent.express(), function (req, res) {
         isLinux: req.useragent.isLinux,
         isLinux64: req.useragent.isLinux64
     };
-    var haroonoteAppUrl = '';
+    var haroonoteAppUrl = '/';
 
     if (!params.isDesktop) {
         res.render('index', params);
