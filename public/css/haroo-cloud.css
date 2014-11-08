@@ -85,6 +85,17 @@ p {
   background-size: 1.8em;
   padding-left: 4em;
 }
+.top-menu .dropout-show {
+  left: auto;
+  right: 0;
+  top: 2.35em;
+  visibility: visible;
+}
+.top-menu .dropout-show li {
+  font-size: 0.9em;
+  background: #efefef;
+  margin: 1px;
+}
 .main-content {
   padding-top: 10em;
 }

@@ -16,6 +16,7 @@
     "express": "^4.4.5",
     "express-flash": "0.0.2",
     "express-session": "^1.6.1",
+    "express-useragent": "^0.1.2",
     "express-validator": "^2.3.0",
     "init-user": "git://github.com/haroo-studio/init-user.git",
     "lodash": "^2.4.1",

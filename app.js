@@ -19,6 +19,7 @@ var errorHandler = require('errorhandler');
 var csrf = require('lusca').csrf();
 var methodOverride = require('method-override');
 var swig = require('swig');
+var useragent = require('express-useragent');
 
 var _ = require('lodash');
 var MongoStore = require('connect-mongo')({ session: session });
@@ -130,7 +131,8 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: WEEK }));
 
 // Route Point
 app.get('/', function (req, res) {
-    var params = {};
+    var params = {
+    };
 
     req.session.clientRoute = null;
 /*
@@ -144,6 +146,46 @@ app.get('/', function (req, res) {
     res.render('index', params);
 
 });
+app.get('/download', useragent.express(), function (req, res) {
+    var params = {
+        isDesktop: req.useragent.isDesktop,
+        isMac: req.useragent.isMac,
+        isWindows: req.useragent.isWindows,
+        isLinux: req.useragent.isLinux,
+        isLinux64: req.useragent.isLinux64
+    };
+    var haroonoteAppUrl = '';
+
+    if (!params.isDesktop) {
+        res.render('index', params);
+    } else {
+        if (params.isMac) haroonoteAppUrl = '/get/mac';
+        if (params.isLinux) haroonoteAppUrl = '/get/linux';
+        if (params.isLinux64) haroonoteAppUrl = '/get/linux64';
+        if (params.isWindows) haroonoteAppUrl = '/get/windows';
+
+        res.redirect(haroonoteAppUrl);
+    }
+});
+app.get('/get/mac', function (req, res) {
+    res.redirect(common['appDownloadUrl']['MAC']);
+});
+app.get('/get/linux', function (req, res) {
+    res.redirect(common['appDownloadUrl']['LINUX']);
+});
+app.get('/get/linux64', function (req, res) {
+    res.redirect(common['appDownloadUrl']['LINUX64']);
+});
+app.get('/get/linux-deb', function (req, res) {
+    res.redirect(common['appDownloadUrl']['LINUX-DEB']);
+});
+app.get('/get/linux64-deb', function (req, res) {
+    res.redirect(common['appDownloadUrl']['LINUX64-DEB']);
+});
+app.get('/get/windows', function (req, res) {
+    res.redirect(common['appDownloadUrl']['WINDOWS']);
+});
+
 app.get('/login', accountController.loginForm);
 app.post('/login', accountController.login);
 app.get('/logout', accountController.logout);

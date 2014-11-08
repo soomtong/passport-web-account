@@ -51,6 +51,17 @@ $(document).ready(function () {
             $changeLanguage.removeClass('pure-button-hover');
         });
     });
+
+    $('#download_link').on('click', function (e) {
+        e.preventDefault();
+
+        var $dropout = $('#download_link_dropout');
+        if ($dropout.hasClass('dropout-show')) {
+            $dropout.removeClass('dropout-show');
+        } else {
+            $dropout.addClass('dropout-show');
+        }
+    })
 });
 
 function updatePasswordStrength(str, el1) {
