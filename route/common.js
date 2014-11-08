@@ -1,8 +1,8 @@
 /**
  * Created by soomtong on 2014. 10. 15..
  */
-var cuid = require('cuid');
 var uuid = require('node-uuid');
+var createUUIDv5 = require('uuidv5');
 var nodemailer = require('nodemailer');
 var emailToken = require('../config/mailer')['email-token'];
 var emailTemplates = require('swig-email-templates');
@@ -89,9 +89,11 @@ function getToday() {
     return new Date().toISOString().slice(0, 10);
 }
 
-function getHarooID() {
-    //return 'a' + (getToday().toString()).replace(/-/g,'') + '-' + uid.generate().toLowerCase();
-    return cuid();
+function getHarooID(email) {
+    var namespace = createUUIDv5('null', 'db1.haroopress.com', true); // Buffer form is more efficient
+    var uuid = createUUIDv5(namespace, email);
+
+    return 'b' + uuid.replace(/-/g,'');
 }
 
 function getAccessToken() {

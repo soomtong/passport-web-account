@@ -11,6 +11,7 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var Account = require('../model/account');
+var AccountInit = require('../model/accountInit');
 
 var common = require('./common');
 
@@ -63,8 +64,6 @@ passport.use(new TwitterStrategy(passportSecretToken['twitter'], function(req, a
                 });
             } else {
                 var user = new Account();
-                user.haroo_id = common.getHarooID();
-                user.login_expire = common.getLoginExpireDate();
                 // Twitter will not provide an email address.  Period.
                 // But a person’s twitter username is guaranteed to be unique
                 // so we can "fake" a twitter email address as follows:
@@ -74,7 +73,14 @@ passport.use(new TwitterStrategy(passportSecretToken['twitter'], function(req, a
                 user.profile.name = profile.displayName;
                 user.profile.location = profile._json.location;
                 user.profile.picture = profile._json.profile_image_url;
+
+                user.haroo_id = common.getHarooID(user.email);
+                user.login_expire = common.getLoginExpireDate();
+
+
                 user.save(function(err) {
+                    AccountInit.initAccount(user.haroo_id);
+
                     callback(err, user);
                 });
             }
@@ -99,8 +105,6 @@ passport.use(new FacebookStrategy(passportSecretToken['facebook'], function(req,
                 });
             } else {
                 var user = new Account();
-                user.haroo_id = common.getHarooID();
-                user.login_expire = common.getLoginExpireDate();
                 user.email = profile._json.email;
                 user.facebook = profile.id;
                 user.tokens.push({ kind: 'facebook', access_token: accessToken });
@@ -108,7 +112,13 @@ passport.use(new FacebookStrategy(passportSecretToken['facebook'], function(req,
                 user.profile.gender = profile._json.gender;
                 user.profile.picture = 'https://graph.facebook.com/' + profile.id + '/picture?type=large';
                 user.profile.location = (profile._json.location) ? profile._json.location.name : '';
+
+                user.haroo_id = common.getHarooID(user.email);
+                user.login_expire = common.getLoginExpireDate();
+
                 user.save(function(err) {
+                    AccountInit.initAccount(user.haroo_id);
+
                     callback(err, user);
                 });
             }
@@ -132,15 +142,20 @@ passport.use(new GoogleStrategy(passportSecretToken['google'], function(req, acc
                 });
             } else {
                 var user = new Account();
-                user.haroo_id = common.getHarooID();
-                user.login_expire = common.getLoginExpireDate();
                 user.email = profile._json.email;
                 user.google = profile.id;
                 user.tokens.push({ kind: 'google', access_token: accessToken });
                 user.profile.name = profile.displayName;
                 user.profile.gender = profile._json.gender;
                 user.profile.picture = profile._json.picture;
+
+                user.haroo_id = common.getHarooID(user.email);
+                user.login_expire = common.getLoginExpireDate();
+
+
                 user.save(function (err) {
+                    AccountInit.initAccount(user.haroo_id);
+
                     callback(err, user);
                 });
             }
