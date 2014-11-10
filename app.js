@@ -203,6 +203,23 @@ app.post('/account/reset-password', accountController.resetPassword);
 app.get('/account/update-password/:token?', accountController.updatePasswordForm);
 app.post('/account/update-password/:token?', accountController.updatePasswordForReset);
 
+// pages
+app.get('/studio', function (req, res) {
+    var params = {};
+
+    res.render('studio/index', params);
+});
+app.get('/haroonote', function (req, res) {
+    var params = {};
+
+    res.render('haroonote/index', params);
+});
+app.get('/harookit', function (req, res) {
+    var params = {};
+
+    res.render('harookit/index', params);
+});
+
 // for only client embedded web page
 app.get('/api/login', apiController.loginForm);
 app.post('/api/login', apiController.login);
