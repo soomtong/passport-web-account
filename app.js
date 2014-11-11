@@ -85,47 +85,33 @@ app.get('/', function (req, res) {
     res.send(common['welcomeMsg'] + ' : ' + common['welcomeRev']);
 });
 
-// for only client embedded web page
-app.get('/login', apiController.loginForm);
-app.post('/login', apiController.login);
-app.get('/logout', apiController.logout);
-app.post('/logout', apiController.logout);
-app.get('/loginDone', apiController.loginDone);
-app.get('/signup', apiController.signUpForm);
-app.post('/signup', apiController.signUp);
-
 // for only api access
-app.post('/account/get_haroo_id', function (req, res) {
+app.post('/api/account/get_haroo_id', function (req, res) {
     res.json({haroo_id: 'new id'});
 });
-app.post('/account/haroo_id', apiController.haroo_id);
-app.post('/account/access', apiController.access_token);
-app.post('/account/create', apiController.createAccount);
-app.post('/account/read', apiController.readAccount);
-app.post('/account/dismiss', apiController.dismissAccount);
-app.post('/account/update', apiController.updateAccount);
-app.post('/account/remove', apiController.removeAccount);
-app.post('/account/forgot_password', apiController.forgotPassword);
-app.post('/account/unlink', apiController.unlinkAuth);
-app.post('/account/check', apiController.checkLinkAuth);
-app.post('/account/link', apiController.linkAuth);
+app.post('/api/account/haroo_id', apiController.haroo_id);
+app.post('/api/account/access', apiController.access_token);
+app.post('/api/account/create', apiController.createAccount);
+app.post('/api/account/read', apiController.readAccount);
+app.post('/api/account/dismiss', apiController.dismissAccount);
+app.post('/api/account/update', apiController.updateAccount);
+app.post('/api/account/remove', apiController.removeAccount);
+app.post('/api/account/forgot_password', apiController.forgotPassword);
+app.post('/api/account/unlink', apiController.unlinkAuth);
+app.post('/api/account/check', apiController.checkLinkAuth);
+app.post('/api/account/link', apiController.linkAuth);
 
 // for haroonote app
-app.post('/:haroo_id/info', haroonoteController.haroo_id);
+app.post('/api/:haroo_id/info', haroonoteController.haroo_id);
 
-app.get('/auth/token', function (req, res) {
-    //check token expired?
-    return res.end();
-});
+app.get('/api/auth/twitter', passport.authenticate('twitter'));
+app.get('/api/auth/twitter/callback', apiController.linkExternalAccount);
 
-app.get('/auth/twitter', passport.authenticate('twitter'));
-app.get('/auth/twitter/callback', apiController.linkExternalAccount);
+app.get('/api/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
+app.get('/api/auth/facebook/callback', apiController.linkExternalAccount);
 
-app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
-app.get('/auth/facebook/callback', apiController.linkExternalAccount);
-
-app.get('/auth/google', passport.authenticate('google', { scope: 'profile email' }));
-app.get('/auth/google/callback', apiController.linkExternalAccount);
+app.get('/api/auth/google', passport.authenticate('google', { scope: 'profile email' }));
+app.get('/api/auth/google/callback', apiController.linkExternalAccount);
 
 
 // 500 Error Handler
