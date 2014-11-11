@@ -74,7 +74,7 @@ passport.use(new TwitterStrategy(passportSecretToken['twitter'], function(req, a
                 user.profile.location = profile._json.location;
                 user.profile.picture = profile._json.profile_image_url;
 
-                user.haroo_id = common.getHarooID(user.email);
+                user.haroo_id = AccountInit.initHarooID(user.email);
                 user.login_expire = common.getLoginExpireDate();
 
 
@@ -113,7 +113,7 @@ passport.use(new FacebookStrategy(passportSecretToken['facebook'], function(req,
                 user.profile.picture = 'https://graph.facebook.com/' + profile.id + '/picture?type=large';
                 user.profile.location = (profile._json.location) ? profile._json.location.name : '';
 
-                user.haroo_id = common.getHarooID(user.email);
+                user.haroo_id = AccountInit.initHarooID(user.email);
                 user.login_expire = common.getLoginExpireDate();
 
                 user.save(function(err) {
@@ -149,7 +149,7 @@ passport.use(new GoogleStrategy(passportSecretToken['google'], function(req, acc
                 user.profile.gender = profile._json.gender;
                 user.profile.picture = profile._json.picture;
 
-                user.haroo_id = common.getHarooID(user.email);
+                user.haroo_id = AccountInit.initHarooID(user.email);
                 user.login_expire = common.getLoginExpireDate();
 
 

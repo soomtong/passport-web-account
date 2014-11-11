@@ -279,7 +279,7 @@ exports.createAccount = function (req, res) {
 
             res.send(result);
         } else {
-            user.haroo_id = common.getHarooID(req.param('email'));
+            user.haroo_id = AccountInit.initHarooID(req.param('email'));
             user.access_token = common.getAccessToken();
             user.login_expire = common.getLoginExpireDate();
 
@@ -620,7 +620,7 @@ exports.signUp = function (req, res) {
     }
 
     var user = new Account({
-        haroo_id: common.getHarooID(req.param('email')),
+        haroo_id: AccountInit.initHarooID(req.param('email')),
         login_expire: common.getLoginExpireDate(),
         email: req.param('email'),
         password: req.param('password'),

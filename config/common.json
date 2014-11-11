@@ -1,16 +1,8 @@
 {
-    "sessionSecret": "haroo-cloud",
+    "welcomeMsg": "Hello world this is haroo-cloud-core",
+    "welcomeRev": "0.0.1",
     "port": "3030",
     "domain": "cloud.haroopress.com",
     "clientAuthUrl": "http://cloud.haroopress.com",
-    "mailServer": "mail.haroopress.com",
-    "appDownloadUrl": {
-        "MAC": "//bitbucket.org/rhiokim/haroopad-download/downloads/haroopad-v0.12.2.dmg",
-        "LINUX": "//bitbucket.org/rhiokim/haroopad-download/downloads/haroopad-v0.12.2_i386.tar.gz",
-        "LINUX-DEB": "//bitbucket.org/rhiokim/haroopad-download/downloads/haroopad-v0.12.2-i386.deb",
-        "LINUX64": "//bitbucket.org/rhiokim/haroopad-download/downloads/haroopad-v0.12.2_amd64.tar.gz",
-        "LINUX64-DEB": "//bitbucket.org/rhiokim/haroopad-download/downloads/haroopad-v0.12.2_amd64.deb",
-        "WINDOWS": "//bitbucket.org/rhiokim/haroopad-download/downloads/haroopad-v0.12.2-i386.msi"
-    },
-    "appName": "haroonote_beta1"
+    "mailServer": "mail.haroopress.com"
 }
