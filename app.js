@@ -81,7 +81,7 @@ app.use(function(req, res, callback) {
 });
 
 // Route Point prefix hosted in nginx with '/api'
-app.get('/', function (req, res) {
+app.get('/api', function (req, res) {
     res.send(common['welcomeMsg'] + ' : ' + common['welcomeRev']);
 });
 
