@@ -1,6 +1,17 @@
-/**
- * Created by soomtong on 2014. 7. 3..
- */
+exports.token = {
+    allowed: {
+        code: 0,
+        msg: {
+            en: "this request will be allowed"
+        }
+    },
+    blocked: {
+        code: 1,
+        msg: {
+            en: "this request will be not allowed"
+        }
+    }
+};
 
 exports.account = {
     haroo_id: {
@@ -16,10 +27,10 @@ exports.account = {
                 en: "already exist haroo_id"
             }
         },
-        available: {
+        invalid: {
             code: 0,
             msg: {
-                en: "haroo_id not exist"
+                en: "invalid haroo_id or invalid access token"
             }
         },
         success: {

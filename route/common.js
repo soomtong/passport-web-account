@@ -107,8 +107,9 @@ function setAccountToClient(codeStub, userData) {
     result.haroo_id = userData.accountInfo;
     result.login_expire = userData.login_expire;
     result.profile = userData.profile;
-    if (userData.readAccessToken) {
-        result.access_token = userData.readAccessToken;
+    result.db_host = userData.db_host || 'a:1@db1.haroopress.com';
+    if (userData.access_token) {
+        result.access_token = userData.access_token;
     }
     if (userData.provider) {
         result.provider = userData.provider;
@@ -145,7 +146,6 @@ function sendPasswordResetMail(address, context) {
         });
     });
 }
-
 
 
 module.exports = {

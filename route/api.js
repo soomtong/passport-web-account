@@ -9,6 +9,14 @@ var AccountInit = require('../model/accountInit');
 var Code = require('../model/code');
 var common = require('./common');
 
+
+exports.accessTokenMiddleware = function (req, res, next) {
+    var token = res.locals.token = req.header('x-access-token');
+    if (!token) return res.send(Code.token.blocked);
+
+    next();
+};
+
 exports.linkExternalAccount = function (req, res, next) {
     var provider = req.path.split('/')[2];
 
@@ -549,7 +557,7 @@ exports.accountInfo = function (req, res) {
                 res.send(result);
             }
         } else {
-            result = Code.account.haroo_id.available;
+            result = Code.account.haroo_id.invalid;
 
             res.send(result);
         }

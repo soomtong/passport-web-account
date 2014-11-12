@@ -11,6 +11,7 @@ var accountSchema = new mongoose.Schema({
     email: { type: String, unique: true, lowercase: true },
     password: String,
     access_token: String,
+    db_host: String,
     login_expire: String,
 
     created_at: Date,

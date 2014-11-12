@@ -38,7 +38,7 @@ var haroonoteController = require('./route/haroonote');
 var app = express();
 
 mongoose.connect(database['mongo'].host);
-mongoose.connection.on('error', function() {
+mongoose.connection.on('error', function () {
     console.error('MongoDB Connection Error. Make sure MongoDB is running.');
 });
 
@@ -56,37 +56,37 @@ app.set('views', path.join(__dirname, 'views'));
 app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
 app.set('view cache', false);
-swig.setDefaults({ cache: false });
+swig.setDefaults({cache: false});
 
 app.use(compress());
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(session({
     secret: common['sessionSecret'],
     resave: true,
     saveUninitialized: true
 }));
 app.use(expressValidator({
-    errorFormatter: function(param, msg, value) {
+    errorFormatter: function (param, msg, value) {
         var namespace = param.split('.')
-            , root    = namespace.shift()
+            , root = namespace.shift()
             , formParam = root;
 
-        while(namespace.length) {
+        while (namespace.length) {
             formParam += '[' + namespace.shift() + ']';
         }
         return {
-            param : formParam,
-            msg   : msg,
-            value : value
+            param: formParam,
+            msg: msg,
+            value: value
         };
     }
 }));
 
 app.use(passport.initialize());
 
-app.use(function(req, res, callback) {
+app.use(function (req, res, callback) {
     // Make user object available in templates.
     res.locals.user = req.user;
     res.locals.site = {
@@ -110,13 +110,14 @@ if (app.get('hostEnv') != 'development') {
 
 // api list for developers
 app.get('/', function (req, res) {
-    res.json({ msg: common['welcomeMsg'], rev: common['welcomeRev'] });
+    res.json({msg: common['welcomeMsg'], rev: common['welcomeRev']});
 });
 app.get('/api', function (req, res) {
     res.render('index');
 });
 
-// todo: access token by header
+// todo: use access token check middleware here for the future
+//app.use(apiController.accessTokenMiddleware);
 
 // todo: redesign restful
 app.post('/api/account/haroo_id', apiController.createHarooID);
@@ -132,16 +133,20 @@ app.post('/api/account/unlink', apiController.unlinkAuth);
 app.post('/api/account/check', apiController.checkLinkAuth);
 app.post('/api/account/link', apiController.linkAuth);
 
+// will be removed for test
+app.use(apiController.accessTokenMiddleware);
+
 // for haroonote app
-app.post('/api/:haroo_id/info', haroonoteController.haroo_id);
+app.post('/api/user/:haroo_id/info', haroonoteController.accountInfo);
+
 
 app.get('/api/auth/twitter', passport.authenticate('twitter'));
 app.get('/api/auth/twitter/callback', apiController.linkExternalAccount);
 
-app.get('/api/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'user_location'] }));
+app.get('/api/auth/facebook', passport.authenticate('facebook', {scope: ['email', 'user_location']}));
 app.get('/api/auth/facebook/callback', apiController.linkExternalAccount);
 
-app.get('/api/auth/google', passport.authenticate('google', { scope: 'profile email' }));
+app.get('/api/auth/google', passport.authenticate('google', {scope: 'profile email'}));
 app.get('/api/auth/google/callback', apiController.linkExternalAccount);
 
 
@@ -150,7 +155,7 @@ app.use(errorHandler());
 
 
 // Start Express server
-app.listen(app.get('port'), function() {
+app.listen(app.get('port'), function () {
     console.log('Express server listening on port %d in %s mode', app.get('port'), app.get('hostEnv'));
 });
 
