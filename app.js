@@ -12,9 +12,9 @@ var path = require('path');
 var express = require('express');
 var compress = require('compression');
 var bodyParser = require('body-parser');
+var session = require('express-session');
 var logger = require('morgan');
 var errorHandler = require('errorhandler');
-var methodOverride = require('method-override');
 var swig = require('swig');
 
 var mongoose = require('mongoose');
@@ -60,11 +60,29 @@ swig.setDefaults({ cache: false });
 
 app.use(compress());
 
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(expressValidator());
-app.use(methodOverride());
+app.use(session({
+    secret: common['sessionSecret'],
+    resave: true,
+    saveUninitialized: true
+}));
+app.use(expressValidator({
+    errorFormatter: function(param, msg, value) {
+        var namespace = param.split('.')
+            , root    = namespace.shift()
+            , formParam = root;
+
+        while(namespace.length) {
+            formParam += '[' + namespace.shift() + ']';
+        }
+        return {
+            param : formParam,
+            msg   : msg,
+            value : value
+        };
+    }
+}));
 
 app.use(passport.initialize());
 
@@ -73,24 +91,37 @@ app.use(function(req, res, callback) {
     res.locals.user = req.user;
     res.locals.site = {
         title: "Haroo Cloud Service Hub",
-        url: app.get('hostEnv') == 'production' ? common['clientAuthUrl'] : '//localhost:' + common['port'],
+        url: common['clientAuthUrl'],
         dbHost: database['couch']['host'],
         mailHost: common['mailServer']
     };
     callback();
 });
 
+// for nginx proxy
+if (app.get('hostEnv') != 'development') {
+    app.enable('trust proxy');  // using Express behind nginx
+    app.use(logger('combined'));
+} else {
+    app.use(logger('dev'));
+}
+
 // Route Point prefix hosted in nginx with '/api'
+
+// api list for developers
+app.get('/', function (req, res) {
+    res.json({ msg: common['welcomeMsg'], rev: common['welcomeRev'] });
+});
 app.get('/api', function (req, res) {
-    res.send(common['welcomeMsg'] + ' : ' + common['welcomeRev']);
+    res.render('index');
 });
 
-// for only api access
-app.post('/api/account/get_haroo_id', function (req, res) {
-    res.json({haroo_id: 'new id'});
-});
-app.post('/api/account/haroo_id', apiController.haroo_id);
-app.post('/api/account/access', apiController.access_token);
+// todo: access token by header
+
+// todo: redesign restful
+app.post('/api/account/haroo_id', apiController.createHarooID);
+app.post('/api/account/info', apiController.accountInfo);
+app.post('/api/account/access', apiController.readAccessToken);
 app.post('/api/account/create', apiController.createAccount);
 app.post('/api/account/read', apiController.readAccount);
 app.post('/api/account/dismiss', apiController.dismissAccount);

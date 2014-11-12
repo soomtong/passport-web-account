@@ -104,11 +104,11 @@ function getPasswordResetExpire() {
 function setAccountToClient(codeStub, userData) {
     var result = codeStub;
     result.email = userData.email;
-    result.haroo_id = userData.haroo_id;
+    result.haroo_id = userData.accountInfo;
     result.login_expire = userData.login_expire;
     result.profile = userData.profile;
-    if (userData.access_token) {
-        result.access_token = userData.access_token;
+    if (userData.readAccessToken) {
+        result.access_token = userData.readAccessToken;
     }
     if (userData.provider) {
         result.provider = userData.provider;

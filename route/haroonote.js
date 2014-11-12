@@ -27,7 +27,7 @@ exports.haroo_id = function (req, res) {
 
     Account.findOne({ haroo_id: req.param('haroo_id') }, function(err, existUser) {
         //  todo: should check access token
-        if (existUser && (existUser.access_token == req.param('access_token'))) {
+        if (existUser && (existUser.readAccessToken == req.param('access_token'))) {
             result = Code.account.haroo_id.reserved;
 
             // expired?

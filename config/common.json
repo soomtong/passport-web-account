@@ -1,6 +1,7 @@
 {
     "welcomeMsg": "Hello world this is haroo-cloud-core",
     "welcomeRev": "0.0.1",
+    "sessionSecret": "haroo-cloud",
     "port": "3030",
     "domain": "cloud.haroopress.com",
     "clientAuthUrl": "http://cloud.haroopress.com",

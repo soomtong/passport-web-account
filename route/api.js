@@ -386,7 +386,7 @@ exports.removeAccount = function (req, res, callback) {
             res.send(result);
         } else {
             var now = Date.now();
-            if (user.access_token == req.param('access_token') && user.login_expire > now) {
+            if (user.readAccessToken == req.param('access_token') && user.login_expire > now) {
                 Account.remove({ _id: user._id }, function(err, countAffected) {
                     if (err) {
                         result = Code.account.remove.database;
@@ -410,7 +410,7 @@ exports.removeAccount = function (req, res, callback) {
 
 };
 
-exports.access_token = function (req, res, callback) {
+exports.readAccessToken = function (req, res, callback) {
     req.assert('access_token', 'AccessToken can not Empty').notEmpty();
 
     var errors = req.validationErrors();
@@ -484,7 +484,27 @@ exports.forgotPassword = function (req, res, callback) {
     });
 };
 
-exports.haroo_id = function (req, res) {
+exports.createHarooID = function (req, res) {
+    req.assert('email', 'Email is not valid').isEmail();
+
+    var errors = req.validationErrors();
+
+    var result = {};
+
+    if (errors) {
+        result = Code.account.password.validation;
+
+        res.send(result);
+        return callback(errors);
+    }
+
+    res.json({
+        email: req.param('email'),
+        haroo_id: AccountInit.initHarooID(req.param('email'))
+    });
+};
+
+exports.accountInfo = function (req, res) {
     req.assert('haroo_id', 'haroo_id must be at least 4 characters long').len(4);
     req.assert('access_token', 'haroo_id have to need access token for retrieve').notEmpty();
 
@@ -501,7 +521,7 @@ exports.haroo_id = function (req, res) {
 
     Account.findOne({ haroo_id: req.param('haroo_id') }, function(err, existUser) {
         //  todo: should check access token
-        if (existUser && (existUser.access_token == req.param('access_token'))) {
+        if (existUser && (existUser.readAccessToken == req.param('access_token'))) {
         result = Code.account.haroo_id.reserved;
 
             // expired?
