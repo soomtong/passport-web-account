@@ -107,7 +107,7 @@ function setAccountToClient(codeStub, userData) {
     result.haroo_id = userData.accountInfo;
     result.login_expire = userData.login_expire;
     result.profile = userData.profile;
-    result.db_host = userData.db_host || 'a:1@db1.haroopress.com';
+    result.db_host = userData.db_host || 'db1.haroopress.com';
     if (userData.access_token) {
         result.access_token = userData.access_token;
     }

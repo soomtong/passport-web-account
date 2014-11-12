@@ -138,6 +138,7 @@ app.use(apiController.accessTokenMiddleware);
 
 // for haroonote app
 app.post('/api/user/:haroo_id/info', haroonoteController.accountInfo);
+app.post('/api/user/:haroo_id/change_password', haroonoteController.updatePassword);
 
 
 app.get('/api/auth/twitter', passport.authenticate('twitter'));

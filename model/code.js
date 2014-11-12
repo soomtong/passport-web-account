@@ -42,7 +42,7 @@ exports.account = {
         expired: {
             code: 4,
             msg: {
-                en: "session expired"
+                en: "access token expired"
             }
         },
         database: {
