@@ -83,7 +83,6 @@ exports.readAccount = function (req, res, callback) {
 
     if (errors) {
         result = Code.account.login.validation;
-
         result.validation = errors;
 
         res.send(result);
@@ -223,6 +222,7 @@ exports.accountInfo = function (req, res) {
 
 // update user password
 exports.updatePassword = function (req, res) {
+    req.assert('haroo_id', 'Haroo ID is not valid').notEmpty();
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
 
@@ -240,7 +240,7 @@ exports.updatePassword = function (req, res) {
     Account.findOne({haroo_id: req.param('haroo_id'), email: req.param('email')}, function(err, updateUser) {
         if (err) {
             result = Code.account.haroo_id.database;
-            result.passport = err;
+            result.db_info = err;
             res.send(result);
 
             return;
@@ -352,6 +352,121 @@ exports.updateAccountInfo = function (req, res) {
         }
     });
 };
+
+exports.dismissAccount = function (req, res) {
+    req.assert('email', 'Email is not valid').isEmail();
+
+    var result = {};
+    var errors = req.validationErrors();
+
+    if (errors) {
+        result = Code.account.dismiss.validation;
+        result.validation = errors;
+
+        res.send(result);
+        return;
+    }
+
+    Account.findOne({haroo_id: req.param('haroo_id'), email: req.param('email')}, function (err, logoutUser) {
+        if (err) {
+            result = Code.account.dismiss.database;
+            result.db_info = err;
+            res.send(result);
+
+            return;
+        }
+
+        var accessToken = res.locals.token;
+
+        if (logoutUser && logoutUser.access_token == accessToken) {
+            result = Code.account.dismiss.done;
+
+            var now = Date.now();
+
+            if (logoutUser.login_expire > now) {
+                logoutUser.access_token = undefined;
+                logoutUser.login_expire = undefined;
+
+                logoutUser.save(function (err) {
+                    if (err) {
+                        result = Code.account.dismiss.database;
+                        result.db_info = err;
+                        res.send(result);
+
+                        return;
+                    }
+
+                    // good
+                    common.saveSignOutLog(req.param('email'));
+
+                    result = Code.account.dismiss.done;
+
+                    res.send(result);
+                });
+            } else {
+                result = Code.account.haroo_id.expired;
+
+                res.send(result);
+            }
+        } else {
+            result = Code.account.haroo_id.invalid;
+
+            res.send(result);
+        }
+    });
+};
+
+exports.removeAccount = function (req, res, callback) {
+    req.assert('email', 'Email is not valid').isEmail();
+    req.assert('password', 'Password must be at least 4 characters long').len(4);
+
+    var errors = req.validationErrors();
+
+    var result = {};
+
+    if (errors) {
+        result = Code.account.remove.validation;
+
+        res.send(result);
+        return;
+    }
+
+    passport.authenticate('local', function(err, user, info) {
+        if (err) {
+            console.log(info);
+
+            return callback(err);
+        }
+        if (!user) {
+            result = Code.account.remove.no_exist;
+
+            res.send(result);
+        } else {
+            var now = Date.now();
+            if (user.readAccessToken == req.param('access_token') && user.login_expire > now) {
+                Account.remove({ _id: user._id }, function(err, countAffected) {
+                    if (err) {
+                        result = Code.account.remove.database;
+
+                        res.send(result);
+                    } else {
+                        result = Code.account.remove.done;
+
+                        res.send(result);
+
+                        common.saveAccountRemoveLog(req.param('email'));
+                    }
+                });
+            } else {
+                result = Code.account.remove.token_expired;
+
+                res.send(result);
+            }
+        }
+    })(req, res, callback);
+
+};
+
 
 // block unknown
 exports.accessTokenMiddleware = function (req, res, next) {
@@ -532,35 +647,6 @@ exports.unlinkAuth = function(req, res, callback) {
     });
 };
 
-exports.dismissAccount = function (req, res, callback) {
-    req.assert('email', 'Email is not valid').isEmail();
-
-    var errors = req.validationErrors();
-
-    var result = {};
-
-    if (errors) {
-        result = Code.account.dismiss.validation;
-
-        res.send(result);
-        return callback(errors);
-    }
-
-    Logging.findOneAndUpdate({ email: req.param('email') }, { signed_out: new Date() }, { sort: { _id : -1 } },
-        function (err, lastLog) {
-            if (!lastLog) {
-                result = Code.account.dismiss.no_exist;
-
-                res.send(result);
-
-                common.saveSignOutLog(req.param('email'));
-            } else {
-                result = Code.account.dismiss.done;
-
-                res.send(result);
-            }
-        });
-};
 
 exports.updateAccount = function (req, res, callback) {
     req.assert('email', 'Email is not valid').isEmail();
@@ -612,58 +698,6 @@ exports.updateAccount = function (req, res, callback) {
                 });
 
             });
-        }
-    })(req, res, callback);
-
-};
-
-exports.removeAccount = function (req, res, callback) {
-    req.assert('email', 'Email is not valid').isEmail();
-    req.assert('password', 'Password must be at least 4 characters long').len(4);
-    req.assert('access_token', 'Access Token can not Empty').notEmpty();
-
-    var errors = req.validationErrors();
-
-    var result = {};
-
-    if (errors) {
-        result = Code.account.remove.validation;
-
-        res.send(result);
-        return;
-    }
-
-    passport.authenticate('local', function(err, user, info) {
-        if (err) {
-            console.log(info);
-
-            return callback(err);
-        }
-        if (!user) {
-            result = Code.account.remove.no_exist;
-
-            res.send(result);
-        } else {
-            var now = Date.now();
-            if (user.readAccessToken == req.param('access_token') && user.login_expire > now) {
-                Account.remove({ _id: user._id }, function(err, countAffected) {
-                    if (err) {
-                        result = Code.account.remove.database;
-
-                        res.send(result);
-                    } else {
-                        result = Code.account.remove.done;
-
-                        res.send(result);
-
-                        common.saveAccountRemoveLog(req.param('email'));
-                    }
-                });
-            } else {
-                result = Code.account.remove.token_expired;
-
-                res.send(result);
-            }
         }
     })(req, res, callback);
 

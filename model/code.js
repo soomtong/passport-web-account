@@ -131,6 +131,12 @@ exports.account = {
         }
     },
     dismiss: {
+        database: {
+            code: 4,
+            msg: {
+                en: "database error"
+            }
+        },
         validation: {
             code: 3,
             msg: {

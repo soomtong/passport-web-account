@@ -49,12 +49,17 @@ function saveSignInLog(userEmail) {
 }
 
 function saveSignOutLog(userEmail) {
-    var log = new AccountLog({
-        email: userEmail,
-        signed_out: new Date()
-    });
+    AccountLog.findOneAndUpdate({ email: userEmail }, { signed_out: new Date() },
+        { sort: { _id : -1 } }, function (err, lastSignedLog) {
+            if (!lastSignedLog) {
+                var log = new AccountLog({
+                    email: userEmail,
+                    signed_out: new Date()
+                });
 
-    log.save();
+                log.save();
+            }
+        });
 }
 
 function saveSignUpLog(userEmail) {
