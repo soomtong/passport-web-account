@@ -7,10 +7,10 @@ var bcrypt = require('bcrypt-nodejs');
 var crypto = require('crypto');
 
 var accountSchema = new mongoose.Schema({
+    access_token: { type: String, unique: true, index: true },
     haroo_id: { type: String, unique: true, index: true },
-    email: { type: String, unique: true, lowercase: true },
+    email: { type: String, unique: true, index: true, lowercase: true },
     password: String,
-    access_token: String,
     db_host: String,
     login_expire: String,
 

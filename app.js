@@ -136,7 +136,9 @@ app.post('/api/account/link', apiController.linkAuth);
 // will be removed for test
 app.use(apiController.accessTokenMiddleware);
 
-// for haroonote app
+// for token
+app.post('/api/token/validate', haroonoteController.validateToken);
+// for user
 app.post('/api/user/:haroo_id/info', haroonoteController.accountInfo);
 app.post('/api/user/:haroo_id/change_password', haroonoteController.updatePassword);
 

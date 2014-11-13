@@ -12,7 +12,8 @@ var loggingSchema = new mongoose.Schema({
     linked_at: Date,
     unlinked_at: Date,
     signed_in: Date,
-    signed_out: Date
+    signed_out: Date,
+    check_token: Date
 });
 
 module.exports = mongoose.model('Log', loggingSchema);

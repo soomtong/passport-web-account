@@ -62,19 +62,19 @@ exports.account = {
         allowed: {
             code: 0,
             msg: {
-                en: "access allowed"
+                en: "access token allowed"
             }
         },
         denied: {
             code: 1,
             msg: {
-                en: "access denied"
+                en: "access token denied"
             }
         },
         no_exist: {
             code: 2,
             msg: {
-                en: "no exist account"
+                en: "no exist access token"
             }
         }
     },
