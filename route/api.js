@@ -35,7 +35,7 @@ exports.createAccount = function (req, res) {
         }
     });
 
-    Account.findOne({ email: req.param('email') }, function(err, existingUser) {
+    Account.findOne({ email: req.param('email') }, function(err, existUser) {
         if (err) {
             result = Code.account.create.database;
             result.passport = err;
@@ -43,7 +43,7 @@ exports.createAccount = function (req, res) {
 
             return;
         }
-        if (existingUser) {
+        if (existUser) {
             result = Code.account.create.duplication;
 
             res.send(result);
@@ -170,7 +170,7 @@ exports.validateToken = function (req, res) {
     });
 };
 
-// user info
+// get user info
 exports.accountInfo = function (req, res) {
     req.assert('haroo_id', 'haroo_id must be at least 4 characters long').len(4);
 
@@ -221,7 +221,7 @@ exports.accountInfo = function (req, res) {
     });
 };
 
-// update password
+// update user password
 exports.updatePassword = function (req, res) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
@@ -281,6 +281,72 @@ exports.updatePassword = function (req, res) {
             }
         } else {
             result = Code.account.haroo_id.invalid;
+
+            res.send(result);
+        }
+    });
+};
+
+// update user info
+exports.updateAccountInfo = function (req, res) {
+    req.assert('email', 'Email is not valid').isEmail();
+
+    var result = {};
+    var errors = req.validationErrors();
+
+    if (errors) {
+        result = Code.account.update.validation;
+        result.validation = errors;
+
+        res.send(result);
+        return callback;
+    }
+
+    Account.findOne({ email: req.param('email') }, function(err, existUserForUpdate) {
+        if (err) {
+            result = Code.account.haroo_id.database;
+            result.passport = err;
+            res.send(result);
+
+            return;
+        }
+
+        var accessToken = res.locals.token;
+
+        if (existUserForUpdate && (existUserForUpdate.access_token == accessToken)) {
+            result = Code.account.update.done;
+
+            var now = Date.now();
+
+            if (existUserForUpdate.login_expire > now) {
+                existUserForUpdate.profile.name = req.param('nickname');
+                existUserForUpdate.updated_at = new Date();
+                existUserForUpdate.access_token = common.getAccessToken();
+                existUserForUpdate.login_expire = common.getLoginExpireDate();
+
+                existUserForUpdate.save(function (err, affectedUser) {
+                    if (err) {
+                        result = Code.account.update.database;
+                        result.db_info = err;
+                        res.send(result);
+
+                        return;
+                    }
+
+                    // good
+                    common.saveAccountUpdateLog(req.param('email'));
+
+                    result = common.setAccountToClient(Code.account.create.done, affectedUser);
+
+                    res.send(result);
+                });
+            } else {
+                result = Code.account.haroo_id.expired;
+
+                res.send(result);
+            }
+        } else {
+            result = Code.account.update.no_exist;
 
             res.send(result);
         }

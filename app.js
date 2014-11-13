@@ -119,7 +119,7 @@ app.get('/api', function (req, res) {
 //app.use(apiController.accessTokenMiddleware);
 
 // todo: redesign restful
-//app.post('/api/account/info', apiController.accountInfo);
+app.post('/api/account/info', apiController.accountInfo);
 app.post('/api/account/access', apiController.readAccessToken);
 app.post('/api/account/dismiss', apiController.dismissAccount);
 app.post('/api/account/update', apiController.updateAccount);
@@ -129,7 +129,7 @@ app.post('/api/account/unlink', apiController.unlinkAuth);
 app.post('/api/account/check', apiController.checkLinkAuth);
 app.post('/api/account/link', apiController.linkAuth);
 
-// route api
+// for account
 app.post('/api/account/create', apiController.createAccount);
 app.post('/api/account/login', apiController.readAccount);
 
@@ -138,11 +138,13 @@ app.use(apiController.accessTokenMiddleware);
 
 // for token
 app.post('/api/token/validate', apiController.validateToken);
+
 // for user
 app.post('/api/user/:haroo_id/info', apiController.accountInfo);
 app.post('/api/user/:haroo_id/change_password', apiController.updatePassword);
+app.post('/api/user/:haroo_id/update_info', apiController.updateAccountInfo);
 
-
+// for external service
 app.get('/api/auth/twitter', passport.authenticate('twitter'));
 app.get('/api/auth/twitter/callback', apiController.linkExternalAccount);
 
