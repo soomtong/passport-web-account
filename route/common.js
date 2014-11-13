@@ -104,7 +104,7 @@ function getPasswordResetExpire() {
 function setAccountToClient(codeStub, userData) {
     var result = codeStub;
     result.email = userData.email;
-    result.haroo_id = userData.accountInfo;
+    result.haroo_id = userData.haroo_id;
     result.login_expire = userData.login_expire;
     result.profile = userData.profile;
     result.db_host = userData.db_host || 'db1.haroopress.com';
