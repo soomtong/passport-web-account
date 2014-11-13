@@ -115,23 +115,10 @@ app.get('/api', function (req, res) {
     res.render('index');
 });
 
-// todo: use access token check middleware here for the future
-//app.use(apiController.accessTokenMiddleware);
-
-// todo: redesign restful
-//app.post('/api/account/info', apiController.accountInfo);
-//app.post('/api/account/access', apiController.readAccessToken);
-//app.post('/api/account/dismiss', apiController.dismissAccount);
-//app.post('/api/account/update', apiController.updateAccount);
-//app.post('/api/account/remove', apiController.removeAccount);
-app.post('/api/account/forgot_password', apiController.forgotPassword);
-app.post('/api/account/unlink', apiController.unlinkAuth);
-app.post('/api/account/check', apiController.checkLinkAuth);
-app.post('/api/account/link', apiController.linkAuth);
-
 // for account
 app.post('/api/account/create', apiController.createAccount);
 app.post('/api/account/login', apiController.readAccount);
+app.post('/api/account/forgot_password', apiController.forgotPassword);
 
 // should need a header token
 app.use(apiController.accessTokenMiddleware);
@@ -147,6 +134,10 @@ app.post('/api/user/:haroo_id/logout', apiController.dismissAccount);
 app.post('/api/user/:haroo_id/delete', apiController.removeAccount);
 
 // for external service
+app.post('/api/account/link', apiController.linkAuth);
+app.post('/api/account/unlink', apiController.unlinkAuth);
+app.post('/api/account/check_link', apiController.checkLinkAuth);
+
 app.get('/api/auth/twitter', passport.authenticate('twitter'));
 app.get('/api/auth/twitter/callback', apiController.linkExternalAccount);
 

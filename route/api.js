@@ -125,6 +125,51 @@ exports.readAccount = function (req, res, callback) {
     })(req, res, callback);
 };
 
+// forget password mailing
+exports.forgotPassword = function (req, res) {
+    req.assert('email', 'Email is not valid').isEmail();
+
+    var result = {};
+    var errors = req.validationErrors();
+
+    if (errors) {
+        result = Code.account.password.validation;
+        result.validation = errors;
+
+        res.send(result);
+        return;
+    }
+
+    Account.findOne({ email: req.param('email') }, function (err, existAccount) {
+        if (err) {
+            result = Code.account.password.database;
+            result.passport = err;
+            res.send(result);
+
+            return;
+        }
+
+        if (existAccount && existAccount.email) {
+            var randomToken = uuid.v4();
+
+            existAccount.reset_password_token = randomToken;
+            existAccount.reset_password_token_expire = common.getPasswordResetExpire();
+            existAccount.save();
+            var host = req.protocol + '://' + req.host;
+
+            common.sendPasswordResetMail(existAccount.email, {link: host + '/account/update-password/' + randomToken});
+
+            result = Code.account.password.send_mail;
+
+            res.send(result);
+        } else {
+            result = Code.account.password.no_exist;
+
+            res.send(result);
+        }
+    });
+};
+
 // token check
 exports.validateToken = function (req, res) {
     var accessToken = res.locals.token;
@@ -742,161 +787,6 @@ exports.readAccessToken = function (req, res, callback) {
             result = Code.account.token.no_exist;
 
             res.send(result);
-        }
-    });
-};
-
-exports.forgotPassword = function (req, res, callback) {
-    req.assert('email', 'Email is not valid').isEmail();
-
-    var errors = req.validationErrors();
-
-    var result = {};
-
-    if (errors) {
-        result = Code.account.password.validation;
-
-        res.send(result);
-        return callback(errors);
-    }
-
-    Account.findOne({ email: req.param('email') }, function (err, existAccount) {
-        if (!existAccount) {
-            result = Code.account.password.no_exist;
-
-            res.send(result);
-        } else {
-            var randomToken = uuid.v4();
-
-            existAccount.reset_password_token = randomToken;
-            existAccount.reset_password_token_expire = common.getPasswordResetExpire();
-            existAccount.save();
-            var host = req.protocol + '://' + req.host;
-
-            common.sendPasswordResetMail(existAccount.email, { link: host + '/account/update-password/' + randomToken });
-
-            result = Code.account.password.send_mail;
-
-            res.send(result);
-        }
-    });
-};
-
-exports.loginForm = function (req, res) {
-    var params = {};
-    if (req.isAuthenticated()) return res.redirect(res.locals.site.url + '/api/loginDone');
-
-    req.session.clientRoute = true;
-    res.render('client/login', params);
-};
-
-exports.login = function(req, res, callback) {
-    req.assert('email', 'Email is not valid').isEmail();
-    req.assert('password', 'Password cannot be blank').notEmpty();
-
-    var errors = req.validationErrors();
-
-    if (errors) {
-        req.flash('errors', errors);
-        return res.redirect(res.locals.site.url + '/api/login');
-    }
-
-    passport.authenticate('local', function(err, user, info) {
-        if (err) return callback(err);
-        if (!user) {
-            req.flash('errors', { msg: info.message });
-            return res.redirect(res.locals.site.url + '/api/login');
-        }
-        Account.findOne({ haroo_id: user.haroo_id }, function (err, updateUser) {
-            updateUser.login_expire = common.getLoginExpireDate();
-            updateUser.save();
-        });
-
-        req.logIn(user, function(err) {
-            if (err) return callback(err);
-            req.flash('success', { msg: 'Success! You are logged in.' });
-            res.redirect(res.locals.site.url + '/api/loginDone');
-
-            common.saveAccountAccessLog('signed_in', req.param('email'));
-
-        });
-    })(req, res, callback);
-};
-
-exports.loginDone = function (req, res) {
-    var params = {};
-
-    req.session.clientRoute = null;
-
-    res.render('client/loginDone', params);
-};
-
-exports.logout = function(req, res) {
-    if (req.isAuthenticated()) {
-        var userEmail = req.user['email'];
-        Logging.findOneAndUpdate({ email: userEmail }, { signed_out: new Date() }, { sort: { _id : -1 } },
-            function (err, lastLog) {
-                if (!lastLog) {
-                    common.saveAccountAccessLog('signed_out', userEmail);
-                }
-            });
-    }
-
-    req.logout();
-    res.redirect(res.locals.site.url + '/api/login');
-};
-
-exports.signUpForm = function (req, res) {
-    var params = {};
-    if (req.isAuthenticated()) return res.redirect(res.locals.site.url + '/api/loginDone');
-    res.render('client/signup', params);
-};
-
-exports.signUp = function (req, res) {
-    req.assert('email', 'Email is not valid').isEmail();
-    req.assert('password', 'Password must be at least 4 characters long').len(4);
-    req.assert('confirm_password', 'Passwords do not match').equals(req.body.password);
-
-    var errors = req.validationErrors();
-
-    if (errors) {
-        console.log(errors);
-        req.flash('errors', errors);
-        return res.redirect(res.locals.site.url + '/api/signup');
-    }
-
-    var user = new Account({
-        haroo_id: AccountInit.initHarooID(req.param('email')),
-        login_expire: common.getLoginExpireDate(),
-        email: req.param('email'),
-        password: req.param('password'),
-        created_at: new Date(),
-        profile: {
-            name: req.param('nickname')
-        }
-    });
-
-    Account.findOne({ email: req.param('email') }, function(err, existingUser) {
-        if (existingUser) {
-            console.log('Account with that email address already exists.');
-            req.flash('errors', { msg: 'Account with that email address already exists.' });
-
-            return res.redirect(res.locals.site.url + '/api/signup');
-        } else {
-            user.save(function(err) {
-                if (err) {
-                    console.log(err);
-                    return res.redirect(res.locals.site.url + '/api/signup');
-                }
-                req.logIn(user, function (err) {
-                    if (err) {
-                        console.log(err);
-                    }
-                    common.saveAccountAccessLog('created_at', req.param('email'));
-
-                    return res.redirect(res.locals.site.url + '/api/loginDone');
-                });
-            });
         }
     });
 };

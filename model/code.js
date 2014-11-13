@@ -232,6 +232,12 @@ exports.account = {
             msg: {
                 en: "no exist account"
             }
+        },
+        database: {
+            code: 1,
+            msg: {
+                en: "database error"
+            }
         }
     },
     external: {
