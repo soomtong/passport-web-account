@@ -104,7 +104,7 @@ exports.account = {
             }
         }
     },
-    read: {
+    login: {
         validation: {
             code: 3,
             msg: {

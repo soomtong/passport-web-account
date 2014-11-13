@@ -31,7 +31,6 @@ require('./route/passport');
 
 // Route Controller
 var apiController = require('./route/api');
-var haroonoteController = require('./route/haroonote');
 
 
 // Start Body
@@ -120,11 +119,8 @@ app.get('/api', function (req, res) {
 //app.use(apiController.accessTokenMiddleware);
 
 // todo: redesign restful
-app.post('/api/account/haroo_id', apiController.createHarooID);
-app.post('/api/account/info', apiController.accountInfo);
+//app.post('/api/account/info', apiController.accountInfo);
 app.post('/api/account/access', apiController.readAccessToken);
-app.post('/api/account/create', apiController.createAccount);
-app.post('/api/account/read', apiController.readAccount);
 app.post('/api/account/dismiss', apiController.dismissAccount);
 app.post('/api/account/update', apiController.updateAccount);
 app.post('/api/account/remove', apiController.removeAccount);
@@ -133,14 +129,18 @@ app.post('/api/account/unlink', apiController.unlinkAuth);
 app.post('/api/account/check', apiController.checkLinkAuth);
 app.post('/api/account/link', apiController.linkAuth);
 
-// will be removed for test
+// route api
+app.post('/api/account/create', apiController.createAccount);
+app.post('/api/account/login', apiController.readAccount);
+
+// should need a header token
 app.use(apiController.accessTokenMiddleware);
 
 // for token
-app.post('/api/token/validate', haroonoteController.validateToken);
+app.post('/api/token/validate', apiController.validateToken);
 // for user
-app.post('/api/user/:haroo_id/info', haroonoteController.accountInfo);
-app.post('/api/user/:haroo_id/change_password', haroonoteController.updatePassword);
+app.post('/api/user/:haroo_id/info', apiController.accountInfo);
+app.post('/api/user/:haroo_id/change_password', apiController.updatePassword);
 
 
 app.get('/api/auth/twitter', passport.authenticate('twitter'));

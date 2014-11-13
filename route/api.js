@@ -10,12 +10,293 @@ var Code = require('../model/code');
 var common = require('./common');
 
 
+// signup
+exports.createAccount = function (req, res) {
+    req.assert('email', 'Email is not valid').isEmail();
+    req.assert('password', 'Password must be at least 4 characters long').len(4);
+
+    var result = {};
+    var errors = req.validationErrors();
+
+    if (errors) {
+        result = Code.account.create.validation;
+        result.validation = errors;
+
+        res.send(result);
+        return;
+    }
+
+    var user = new Account({
+        email: req.param('email'),
+        password: req.param('password'),
+        created_at: new Date(),
+        profile: {
+            name: req.param('nickname')
+        }
+    });
+
+    Account.findOne({ email: req.param('email') }, function(err, existingUser) {
+        if (err) {
+            result = Code.account.create.database;
+            result.passport = err;
+            res.send(result);
+
+            return;
+        }
+        if (existingUser) {
+            result = Code.account.create.duplication;
+
+            res.send(result);
+        } else {
+            user.haroo_id = AccountInit.initHarooID(req.param('email'));
+            user.access_token = common.getAccessToken();
+            user.login_expire = common.getLoginExpireDate();
+
+            AccountInit.initAccount(user.haroo_id);
+
+            user.save(function(err) {
+                if (err) {
+                    result = Code.account.create.database;
+                    result.db_info = err;
+                    res.send(result);
+
+                    return;
+                }
+
+                common.saveSignUpLog(req.param('email'));
+
+                result = common.setAccountToClient(Code.account.create.done, user);
+
+                res.send(result);
+            });
+        }
+    });
+};
+
+// login
+exports.readAccount = function (req, res, callback) {
+    req.assert('email', 'Email is not valid').isEmail();
+    req.assert('password', 'Password cannot be blank').notEmpty();
+
+    var result = {};
+    var errors = req.validationErrors();
+
+    if (errors) {
+        result = Code.account.login.validation;
+
+        result.validation = errors;
+
+        res.send(result);
+        return;
+    }
+
+    passport.authenticate('local', function(err, loginUser, info) {
+        if (err) {
+            result = Code.account.login.database;
+            result.passport = err;
+            res.send(result);
+
+            return callback();
+        }
+        if (!loginUser) {
+            result = Code.account.login.no_exist;
+
+            res.send(result);
+        } else {
+            Account.findById(loginUser._id, function (err, updateUser) {
+                updateUser.access_token = common.getAccessToken();
+                updateUser.login_expire = common.getLoginExpireDate();
+                updateUser.save(function (err) {
+                    if (err) {
+                        result = Code.account.login.database;
+                        result.db_info = err;
+                        res.send(result);
+
+                        return;
+                    }
+                    common.saveSignInLog(req.param('email'));
+
+                    result = common.setAccountToClient(Code.account.login.done, updateUser);
+
+                    res.send(result);
+                });
+            });
+        }
+    })(req, res, callback);
+};
+
+// token check
+exports.validateToken = function (req, res) {
+    var accessToken = res.locals.token;
+
+    var result = {};
+
+    if (!accessToken) {
+        result = Code.account.token.validation;
+
+        res.send(result);
+        return;
+    }
+
+    Account.findOne({access_token: accessToken}, function (err, existUser) {
+        if (err) {
+            result = Code.account.token.no_exist;
+            result.passport = err;
+            res.send(result);
+
+            return;
+        }
+
+        if (existUser) {
+            // expired?
+            var now = Date.now();
+
+            if (existUser.login_expire > now) {
+                common.saveAccountAccessLog('check_token', existUser.email);
+
+                result = common.setAccountToClient(Code.account.token.allowed, existUser);
+
+                res.send(result);
+            } else {
+                result = Code.account.token.denied;
+
+                res.send(result);
+            }
+        } else {
+            result = Code.account.token.no_exist;
+
+            res.send(result);
+        }
+    });
+};
+
+// user info
+exports.accountInfo = function (req, res) {
+    req.assert('haroo_id', 'haroo_id must be at least 4 characters long').len(4);
+
+    var result = {};
+    var errors = req.validationErrors();
+
+    if (errors) {
+        result = Code.account.haroo_id.validation;
+        result.validation = errors;
+
+        res.send(result);
+        return;
+    }
+
+    Account.findOne({haroo_id: req.param('haroo_id')}, function (err, existUser) {
+        if (err) {
+            result = Code.account.haroo_id.database;
+            result.passport = err;
+            res.send(result);
+
+            return;
+        }
+
+        var accessToken = res.locals.token;
+
+        if (existUser && (existUser.access_token == accessToken)) {
+            result = Code.account.haroo_id.reserved;
+
+            // expired?
+            var now = Date.now();
+
+            if (existUser.login_expire > now) {
+                common.saveAccountAccessLog('signed_in', req.param('email'));
+
+                result = common.setAccountToClient(Code.account.haroo_id.success, existUser);
+
+                res.send(result);
+            } else {
+                result = Code.account.haroo_id.expired;
+
+                res.send(result);
+            }
+        } else {
+            result = Code.account.haroo_id.invalid;
+
+            res.send(result);
+        }
+    });
+};
+
+// update password
+exports.updatePassword = function (req, res) {
+    req.assert('email', 'Email is not valid').isEmail();
+    req.assert('password', 'Password must be at least 4 characters long').len(4);
+
+    var result = {};
+    var errors = req.validationErrors();
+
+    if (errors) {
+        result = Code.account.update.validation;
+        result.validation = errors;
+
+        res.send(result);
+        return;
+    }
+
+    Account.findOne({haroo_id: req.param('haroo_id'), email: req.param('email')}, function(err, updateUser) {
+        if (err) {
+            result = Code.account.haroo_id.database;
+            result.passport = err;
+            res.send(result);
+
+            return;
+        }
+
+        var accessToken = res.locals.token;
+
+        if (updateUser && (updateUser.access_token == accessToken)) {
+            result = Code.account.update.done;
+
+            var now = Date.now();
+
+            if (updateUser.login_expire > now) {
+                updateUser.password = req.param('password');
+                updateUser.access_token = common.getAccessToken();
+                updateUser.login_expire = common.getLoginExpireDate();
+
+                updateUser.save(function(err) {
+                    if (err) {
+                        result = Code.account.update.database;
+                        result.db_info = err;
+                        res.send(result);
+
+                        return;
+                    }
+
+                    // good
+                    common.saveAccountAccessLog('change_password', req.param('email'));
+
+                    result = common.setAccountToClient(Code.account.update.done, updateUser);
+
+                    res.send(result);
+                });
+            } else {
+                result = Code.account.haroo_id.expired;
+
+                res.send(result);
+            }
+        } else {
+            result = Code.account.haroo_id.invalid;
+
+            res.send(result);
+        }
+    });
+};
+
+// block unknown
 exports.accessTokenMiddleware = function (req, res, next) {
     var token = res.locals.token = req.header('x-access-token');
     if (!token) return res.send(Code.token.blocked);
 
     next();
 };
+
+
+
 
 exports.linkExternalAccount = function (req, res, next) {
     var provider = req.path.split('/')[2];
@@ -114,7 +395,7 @@ exports.checkLinkAuth = function (req, res, callback) {
     var result = {};
 
     if (errors) {
-        result = Code.account.read.validation_for_ext;
+        result = Code.account.login.validation_for_ext;
 
         res.send(result);
         return callback(errors);
@@ -123,18 +404,18 @@ exports.checkLinkAuth = function (req, res, callback) {
     Account.findOne({ email: req.param('email') }, function(err, user) {
         if (user) {
             if (_.find(user.tokens, { kind: req.param('provider') })) {
-                result = common.setAccountToClient(Code.account.read.done, user);
+                result = common.setAccountToClient(Code.account.login.done, user);
 
                 res.send(result);
 
                 common.saveSignInLog(user.email);
             } else {
-                result = Code.account.read.no_exist;
+                result = Code.account.login.no_exist;
 
                 res.send(result);
             }
         } else {
-            result = Code.account.read.no_exist;
+            result = Code.account.login.no_exist;
 
             res.send(result);
         }
@@ -185,47 +466,6 @@ exports.unlinkAuth = function(req, res, callback) {
     });
 };
 
-exports.readAccount = function (req, res, callback) {
-    req.assert('email', 'Email is not valid').isEmail();
-    req.assert('password', 'Password cannot be blank').notEmpty();
-
-    var errors = req.validationErrors();
-
-    var result = {};
-
-    if (errors) {
-        result = Code.account.read.validation;
-
-        res.send(result);
-        return callback(errors);
-    }
-
-    passport.authenticate('local', function(err, user, info) {
-        if (err) {
-            console.log(info);
-
-            return callback(err);
-        }
-        if (!user) {
-            result = Code.account.read.no_exist;
-
-            res.send(result);
-        } else {
-            Account.findOne({ haroo_id: user.haroo_id }, function (err, updateUser) {
-                updateUser.access_token = common.getAccessToken();
-                updateUser.login_expire = common.getLoginExpireDate();
-                updateUser.save();
-
-                result = common.setAccountToClient(Code.account.read.done, updateUser);
-
-                res.send(result);
-            });
-
-            common.saveSignInLog(req.param('email'));
-        }
-    })(req, res, callback);
-};
-
 exports.dismissAccount = function (req, res, callback) {
     req.assert('email', 'Email is not valid').isEmail();
 
@@ -254,61 +494,6 @@ exports.dismissAccount = function (req, res, callback) {
                 res.send(result);
             }
         });
-};
-
-exports.createAccount = function (req, res) {
-    req.assert('email', 'Email is not valid').isEmail();
-    req.assert('password', 'Password must be at least 4 characters long').len(4);
-    //req.assert('confirm_password', 'Passwords do not match').equals(req.body.password);
-
-    var errors = req.validationErrors();
-
-    var result = {};
-
-    if (errors) {
-        result = Code.account.create.validation;
-
-        res.send(result);
-        return;
-    }
-
-    var user = new Account({
-        email: req.param('email'),
-        password: req.param('password'),
-        created_at: new Date(),
-        profile: {
-            name: req.param('nickname')
-        }
-    });
-
-    Account.findOne({ email: req.param('email') }, function(err, existingUser) {
-        if (existingUser) {
-            result = Code.account.create.duplication;
-
-            res.send(result);
-        } else {
-            user.haroo_id = AccountInit.initHarooID(req.param('email'));
-            user.access_token = common.getAccessToken();
-            user.login_expire = common.getLoginExpireDate();
-
-            AccountInit.initAccount(user.haroo_id);
-
-            user.save(function(err) {
-                if (err) {
-                    result = Code.account.create.database;
-                    result.info = err;
-
-                    res.send(result);
-                }
-
-                result = common.setAccountToClient(Code.account.create.done, user);
-
-                res.send(result);
-
-                common.saveSignUpLog(req.param('email'));
-            });
-        }
-    });
 };
 
 exports.updateAccount = function (req, res, callback) {
@@ -486,78 +671,6 @@ exports.forgotPassword = function (req, res, callback) {
             common.sendPasswordResetMail(existAccount.email, { link: host + '/account/update-password/' + randomToken });
 
             result = Code.account.password.send_mail;
-
-            res.send(result);
-        }
-    });
-};
-
-exports.createHarooID = function (req, res) {
-    req.assert('email', 'Email is not valid').isEmail();
-
-    var errors = req.validationErrors();
-
-    var result = {};
-
-    if (errors) {
-        result = Code.account.password.validation;
-
-        res.send(result);
-        return callback(errors);
-    }
-
-    res.json({
-        email: req.param('email'),
-        haroo_id: AccountInit.initHarooID(req.param('email'))
-    });
-};
-
-exports.accountInfo = function (req, res) {
-    req.assert('haroo_id', 'haroo_id must be at least 4 characters long').len(4);
-    req.assert('access_token', 'haroo_id have to need access token for retrieve').notEmpty();
-
-    var errors = req.validationErrors();
-
-    var result = {};
-
-    if (errors) {
-        result = Code.account.haroo_id.validation;
-
-        res.send(result);
-        return;
-    }
-
-    Account.findOne({ haroo_id: req.param('haroo_id') }, function(err, existUser) {
-        //  todo: should check access token
-        if (existUser && (existUser.readAccessToken == req.param('access_token'))) {
-        result = Code.account.haroo_id.reserved;
-
-            // expired?
-            var now = Date.now();
-
-            if (existUser.login_expire > now) {
-                // login session
-                req.logIn(existUser, function(err) {
-                    if (err) {
-                        result = Code.account.haroo_id.database;
-                        result.info = err;
-
-                        res.send(result);
-                    } else {
-                        common.saveAccountAccessLog('signed_in', req.param('email'));
-
-                        result = common.setAccountToClient(Code.account.haroo_id.success, existUser);
-
-                        res.send(result);
-                    }
-                });
-            } else {
-                result = Code.account.haroo_id.expired;
-
-                res.send(result);
-            }
-        } else {
-            result = Code.account.haroo_id.invalid;
 
             res.send(result);
         }
