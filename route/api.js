@@ -97,12 +97,9 @@ exports.readAccount = function (req, res, callback) {
 
             return callback();
         }
-        if (!loginUser) {
-            result = Code.account.login.no_exist;
-
-            res.send(result);
-        } else {
+        if (loginUser && loginUser._id) {
             Account.findById(loginUser._id, function (err, updateUser) {
+                // login and save access token
                 updateUser.access_token = common.getAccessToken();
                 updateUser.login_expire = common.getLoginExpireDate();
                 updateUser.save(function (err) {
@@ -120,6 +117,10 @@ exports.readAccount = function (req, res, callback) {
                     res.send(result);
                 });
             });
+        } else {
+            result = Code.account.login.no_exist;
+
+            res.send(result);
         }
     })(req, res, callback);
 };
@@ -196,8 +197,6 @@ exports.accountInfo = function (req, res) {
         var accessToken = res.locals.token;
 
         if (existUser && (existUser.access_token == accessToken)) {
-            result = Code.account.haroo_id.reserved;
-
             // expired?
             var now = Date.now();
 
@@ -420,51 +419,57 @@ exports.removeAccount = function (req, res, callback) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
 
-    var errors = req.validationErrors();
-
     var result = {};
+    var errors = req.validationErrors();
 
     if (errors) {
         result = Code.account.remove.validation;
+        result.validation = errors;
 
         res.send(result);
         return;
     }
 
-    passport.authenticate('local', function(err, user, info) {
+    passport.authenticate('local', function(err, validUser, info) {
         if (err) {
-            console.log(info);
-
-            return callback(err);
-        }
-        if (!user) {
-            result = Code.account.remove.no_exist;
-
+            result = Code.account.remove.database;
+            result.db_info = err;
             res.send(result);
-        } else {
+
+            return callback();
+        }
+
+        var accessToken = res.locals.token;
+
+        if (validUser && validUser.access_token == accessToken) {
+            // expired?
             var now = Date.now();
-            if (user.readAccessToken == req.param('access_token') && user.login_expire > now) {
-                Account.remove({ _id: user._id }, function(err, countAffected) {
+
+            if (validUser.login_expire > now) {
+                Account.remove({_id: validUser._id}, function (err, countAffected) {
                     if (err) {
                         result = Code.account.remove.database;
 
                         res.send(result);
                     } else {
+                        common.saveAccountRemoveLog(req.param('email'));
+
                         result = Code.account.remove.done;
 
                         res.send(result);
-
-                        common.saveAccountRemoveLog(req.param('email'));
                     }
                 });
             } else {
-                result = Code.account.remove.token_expired;
+                result = Code.account.haroo_id.token_expired;
 
                 res.send(result);
             }
+        } else {
+            result = Code.account.haroo_id.invalid;
+
+            res.send(result);
         }
     })(req, res, callback);
-
 };
 
 
