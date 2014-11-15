@@ -12,7 +12,6 @@ var path = require('path');
 var express = require('express');
 var compress = require('compression');
 var bodyParser = require('body-parser');
-var session = require('express-session');
 var logger = require('morgan');
 var errorHandler = require('errorhandler');
 var swig = require('swig');
@@ -42,12 +41,6 @@ mongoose.connection.on('error', function () {
 });
 
 
-// Constant
-var HOUR = 3600000;
-var DAY = HOUR * 24;
-var WEEK = DAY * 7;
-
-
 // Express configuration.
 app.set('hostEnv', process.env.NODE_ENV);
 app.set('port', process.env.PORT || common['port']);
@@ -61,11 +54,6 @@ app.use(compress());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(session({
-    secret: common['sessionSecret'],
-    resave: true,
-    saveUninitialized: true
-}));
 app.use(expressValidator({
     errorFormatter: function (param, msg, value) {
         var namespace = param.split('.')
