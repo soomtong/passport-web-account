@@ -16,7 +16,6 @@ var logger = require('morgan');
 var errorHandler = require('errorhandler');
 var swig = require('swig');
 
-var mongoose = require('mongoose');
 var passport = require('passport');
 var expressValidator = require('express-validator');
 
@@ -31,15 +30,8 @@ require('./route/passport');
 // Route Controller
 var apiController = require('./route/api');
 
-
 // Start Body
 var app = express();
-
-mongoose.connect(database['mongo'].host);
-mongoose.connection.on('error', function () {
-    console.error('MongoDB Connection Error. Make sure MongoDB is running.');
-});
-
 
 // Express configuration.
 app.set('hostEnv', process.env.NODE_ENV);
@@ -135,10 +127,8 @@ app.get('/api/auth/facebook/callback', apiController.linkExternalAccount);
 app.get('/api/auth/google', passport.authenticate('google', {scope: 'profile email'}));
 app.get('/api/auth/google/callback', apiController.linkExternalAccount);
 
-
 // 500 Error Handler
 app.use(errorHandler());
-
 
 // Start Express server
 app.listen(app.get('port'), function () {

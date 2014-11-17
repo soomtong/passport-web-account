@@ -13,7 +13,8 @@ var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var Account = require('../model/account');
 var AccountInit = require('../model/accountInit');
 
-var common = require('./common');
+var Pipe = require('pipe');
+var common = Pipe.CommonUtil;
 
 var hostEnv = process.env.NODE_ENV || 'development';
 var passportSecretToken = require('../config/passport')[hostEnv];

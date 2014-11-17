@@ -1,13 +1,15 @@
 var _ = require('lodash');
 var passport = require('passport');
 var uuid = require('node-uuid');
+var Pipe = require('pipe');
 
-var Account = require('../model/account');
-var Logging = require('../model/accountLog');
-var AccountInit = require('../model/accountInit');
+var database = require('../config/database');
+var emailToken = require('../config/mailer')['email-token'];
 
-var Code = require('../model/code');
-var common = require('./common');
+var Account = Pipe.Account;
+
+var Code = Pipe.HarooCode;
+var common = Pipe.CommonUtil;
 
 
 // signup
@@ -15,61 +17,26 @@ exports.createAccount = function (req, res) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
 
-    var result = {};
+    var params = {
+        email: req.email,
+        password: req.password,
+        nickname: req.nickname,
+        database: database,
+        result: {}
+    };
+
     var errors = req.validationErrors();
 
     if (errors) {
-        result = Code.account.create.validation;
-        result.validation = errors;
+        params.result = Code.account.create.validation;
+        params.result.validation = errors;
 
-        res.send(result);
+        res.send(params.result);
         return;
     }
 
-    var user = new Account({
-        email: req.param('email'),
-        password: req.param('password'),
-        created_at: new Date(),
-        profile: {
-            name: req.param('nickname')
-        }
-    });
-
-    Account.findOne({ email: req.param('email') }, function(err, existUser) {
-        if (err) {
-            result = Code.account.create.database;
-            result.passport = err;
-            res.send(result);
-
-            return;
-        }
-        if (existUser) {
-            result = Code.account.create.duplication;
-
-            res.send(result);
-        } else {
-            user.haroo_id = AccountInit.initHarooID(req.param('email'));
-            user.access_token = common.getAccessToken();
-            user.login_expire = common.getLoginExpireDate();
-
-            AccountInit.initAccount(user.haroo_id);
-
-            user.save(function(err) {
-                if (err) {
-                    result = Code.account.create.database;
-                    result.db_info = err;
-                    res.send(result);
-
-                    return;
-                }
-
-                common.saveSignUpLog(req.param('email'));
-
-                result = common.setAccountToClient(Code.account.create.done, user);
-
-                res.send(result);
-            });
-        }
+    Account.createByEmail(params, function (result) {
+        res.send(result);
     });
 };
 
@@ -157,7 +124,7 @@ exports.forgotPassword = function (req, res) {
             existAccount.save();
             var host = req.protocol + '://' + req.hostname;
 
-            common.sendPasswordResetMail(existAccount.email, {link: host + '/account/update-password/' + randomToken});
+            common.sendPasswordResetMail(existAccount.email, {link: host + '/account/update-password/' + randomToken}, emailToken);
 
             result = Code.account.password.send_mail;
 
