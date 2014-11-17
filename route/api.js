@@ -1,9 +1,7 @@
 var _ = require('lodash');
-var uuid = require('node-uuid');
 var Pipe = require('pipe');
 
 var database = require('../config/database');
-var emailToken = require('../config/mailer')['email-token'];
 
 var Account = Pipe.Account;
 
@@ -71,44 +69,25 @@ exports.readAccount = function (req, res, callback) {
 exports.forgotPassword = function (req, res) {
     req.assert('email', 'Email is not valid').isEmail();
 
-    var result = {};
+    var params = {
+        email: req.param('email'),
+        protocol: req.protocol,
+        hostname: req.hostname,
+        result: {}
+    };
+
     var errors = req.validationErrors();
 
     if (errors) {
-        result = Code.account.password.validation;
-        result.validation = errors;
+        params.result = Code.account.password.validation;
+        params.result.validation = errors;
 
-        res.send(result);
+        res.send(params.result);
         return;
     }
 
-    Account.findOne({ email: req.param('email') }, function (err, existAccount) {
-        if (err) {
-            result = Code.account.password.database;
-            result.passport = err;
-            res.send(result);
-
-            return;
-        }
-
-        if (existAccount && existAccount.email) {
-            var randomToken = uuid.v4();
-
-            existAccount.reset_password_token = randomToken;
-            existAccount.reset_password_token_expire = Common.getPasswordResetExpire();
-            existAccount.save();
-            var host = req.protocol + '://' + req.hostname;
-
-            Common.sendPasswordResetMail(existAccount.email, {link: host + '/account/update-password/' + randomToken}, emailToken);
-
-            result = Code.account.password.send_mail;
-
-            res.send(result);
-        } else {
-            result = Code.account.password.no_exist;
-
-            res.send(result);
-        }
+    Account.passwordResetByEmail(params, function (result) {
+        res.send(result);
     });
 };
 
