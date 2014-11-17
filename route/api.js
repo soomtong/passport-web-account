@@ -18,9 +18,9 @@ exports.createAccount = function (req, res) {
     req.assert('password', 'Password must be at least 4 characters long').len(4);
 
     var params = {
-        email: req.email,
-        password: req.password,
-        nickname: req.nickname,
+        email: req.param('email'),
+        password: req.param('password'),
+        nickname: req.param('nickname'),
         database: database,
         result: {}
     };
