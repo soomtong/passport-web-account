@@ -15,17 +15,15 @@ var bodyParser = require('body-parser');
 var logger = require('morgan');
 var errorHandler = require('errorhandler');
 var swig = require('swig');
-
-var passport = require('passport');
 var expressValidator = require('express-validator');
-
 
 // Secret Token
 var common = require('./config/common');
 var database = require('./config/database');
 
-// Load passport strategy
-require('./route/passport');
+// Load Pipe
+var Pipe = require('pipe');
+var Passport = Pipe.Passport;
 
 // Route Controller
 var apiController = require('./route/api');
@@ -63,7 +61,7 @@ app.use(expressValidator({
     }
 }));
 
-app.use(passport.initialize());
+app.use(Passport.initialize());
 
 app.use(function (req, res, callback) {
     // Make user object available in templates.
@@ -118,13 +116,13 @@ app.post('/api/account/link', apiController.linkAuth);
 app.post('/api/account/unlink', apiController.unlinkAuth);
 app.post('/api/account/check_link', apiController.checkLinkAuth);
 
-app.get('/api/auth/twitter', passport.authenticate('twitter'));
+app.get('/api/auth/twitter', Passport.authenticate('twitter'));
 app.get('/api/auth/twitter/callback', apiController.linkExternalAccount);
 
-app.get('/api/auth/facebook', passport.authenticate('facebook', {scope: ['email', 'user_location']}));
+app.get('/api/auth/facebook', Passport.authenticate('facebook', {scope: ['email', 'user_location']}));
 app.get('/api/auth/facebook/callback', apiController.linkExternalAccount);
 
-app.get('/api/auth/google', passport.authenticate('google', {scope: 'profile email'}));
+app.get('/api/auth/google', Passport.authenticate('google', {scope: 'profile email'}));
 app.get('/api/auth/google/callback', apiController.linkExternalAccount);
 
 // 500 Error Handler

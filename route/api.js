@@ -1,5 +1,4 @@
 var _ = require('lodash');
-var passport = require('passport');
 var uuid = require('node-uuid');
 var Pipe = require('pipe');
 
@@ -9,7 +8,7 @@ var emailToken = require('../config/mailer')['email-token'];
 var Account = Pipe.Account;
 
 var Code = Pipe.HarooCode;
-var common = Pipe.CommonUtil;
+var Common = Pipe.CommonUtil;
 
 
 // signup
@@ -45,51 +44,27 @@ exports.readAccount = function (req, res, callback) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password cannot be blank').notEmpty();
 
-    var result = {};
+    var params = {
+        email: req.param('email'),
+        password: req.param('password'),
+        req: req,
+        res: res,
+        result: {}
+    };
+
     var errors = req.validationErrors();
 
     if (errors) {
-        result = Code.account.login.validation;
-        result.validation = errors;
+        params.result = Code.account.login.validation;
+        params.result.validation = errors;
 
-        res.send(result);
+        res.send(params.result);
         return;
     }
 
-    passport.authenticate('local', function(err, loginUser, info) {
-        if (err) {
-            result = Code.account.login.database;
-            result.passport = err;
-            res.send(result);
-
-            return callback();
-        }
-        if (loginUser && loginUser._id) {
-            Account.findById(loginUser._id, function (err, updateUser) {
-                // login and save access token
-                updateUser.access_token = common.getAccessToken();
-                updateUser.login_expire = common.getLoginExpireDate();
-                updateUser.save(function (err) {
-                    if (err) {
-                        result = Code.account.login.database;
-                        result.db_info = err;
-                        res.send(result);
-
-                        return;
-                    }
-                    common.saveSignInLog(req.param('email'));
-
-                    result = common.setAccountToClient(Code.account.login.done, updateUser);
-
-                    res.send(result);
-                });
-            });
-        } else {
-            result = Code.account.login.no_exist;
-
-            res.send(result);
-        }
-    })(req, res, callback);
+    Account.loginByPassport(params, function (result) {
+        res.send(result);
+    });
 };
 
 // forget password mailing
@@ -120,11 +95,11 @@ exports.forgotPassword = function (req, res) {
             var randomToken = uuid.v4();
 
             existAccount.reset_password_token = randomToken;
-            existAccount.reset_password_token_expire = common.getPasswordResetExpire();
+            existAccount.reset_password_token_expire = Common.getPasswordResetExpire();
             existAccount.save();
             var host = req.protocol + '://' + req.hostname;
 
-            common.sendPasswordResetMail(existAccount.email, {link: host + '/account/update-password/' + randomToken}, emailToken);
+            Common.sendPasswordResetMail(existAccount.email, {link: host + '/account/update-password/' + randomToken}, emailToken);
 
             result = Code.account.password.send_mail;
 
@@ -164,9 +139,9 @@ exports.validateToken = function (req, res) {
             var now = Date.now();
 
             if (existUser.login_expire > now) {
-                common.saveAccountAccessLog('check_token', existUser.email);
+                Common.saveAccountAccessLog('check_token', existUser.email);
 
-                result = common.setAccountToClient(Code.account.token.allowed, existUser);
+                result = Common.setAccountToClient(Code.account.token.allowed, existUser);
 
                 res.send(result);
             } else {
@@ -213,9 +188,9 @@ exports.accountInfo = function (req, res) {
             var now = Date.now();
 
             if (existUser.login_expire > now) {
-                common.saveAccountAccessLog('signed_in', req.param('email'));
+                Common.saveAccountAccessLog('signed_in', req.param('email'));
 
-                result = common.setAccountToClient(Code.account.haroo_id.success, existUser);
+                result = Common.setAccountToClient(Code.account.haroo_id.success, existUser);
 
                 res.send(result);
             } else {
@@ -266,8 +241,8 @@ exports.updatePassword = function (req, res) {
 
             if (updateUser.login_expire > now) {
                 updateUser.password = req.param('password');
-                updateUser.access_token = common.getAccessToken();
-                updateUser.login_expire = common.getLoginExpireDate();
+                updateUser.access_token = Common.getAccessToken();
+                updateUser.login_expire = Common.getLoginExpireDate();
 
                 updateUser.save(function(err) {
                     if (err) {
@@ -279,9 +254,9 @@ exports.updatePassword = function (req, res) {
                     }
 
                     // good
-                    common.saveAccountAccessLog('change_password', req.param('email'));
+                    Common.saveAccountAccessLog('change_password', req.param('email'));
 
-                    result = common.setAccountToClient(Code.account.update.done, updateUser);
+                    result = Common.setAccountToClient(Code.account.update.done, updateUser);
 
                     res.send(result);
                 });
@@ -332,8 +307,8 @@ exports.updateAccountInfo = function (req, res) {
             if (existUserForUpdate.login_expire > now) {
                 existUserForUpdate.profile.name = req.param('nickname');
                 existUserForUpdate.updated_at = new Date();
-                existUserForUpdate.access_token = common.getAccessToken();
-                existUserForUpdate.login_expire = common.getLoginExpireDate();
+                existUserForUpdate.access_token = Common.getAccessToken();
+                existUserForUpdate.login_expire = Common.getLoginExpireDate();
 
                 existUserForUpdate.save(function (err, affectedUser) {
                     if (err) {
@@ -345,9 +320,9 @@ exports.updateAccountInfo = function (req, res) {
                     }
 
                     // good
-                    common.saveAccountUpdateLog(req.param('email'));
+                    Common.saveAccountUpdateLog(req.param('email'));
 
-                    result = common.setAccountToClient(Code.account.create.done, affectedUser);
+                    result = Common.setAccountToClient(Code.account.create.done, affectedUser);
 
                     res.send(result);
                 });
@@ -408,7 +383,7 @@ exports.dismissAccount = function (req, res) {
                     }
 
                     // good
-                    common.saveSignOutLog(req.param('email'));
+                    Common.saveSignOutLog(req.param('email'));
 
                     result = Code.account.dismiss.done;
 
@@ -464,7 +439,7 @@ exports.removeAccount = function (req, res, callback) {
 
                         res.send(result);
                     } else {
-                        common.saveAccountRemoveLog(req.param('email'));
+                        Common.saveAccountRemoveLog(req.param('email'));
 
                         result = Code.account.remove.done;
 
@@ -516,7 +491,7 @@ exports.linkExternalAccount = function (req, res, next) {
                 return next(err);
             }
 
-            common.saveAccountLinkLog(provider, user.email);
+            Common.saveAccountLinkLog(provider, user.email);
 
             // clear client session
             req.session.clientRoute = null;
@@ -541,7 +516,7 @@ exports.createTwitterAccount = function(req, res) {
         res.redirect(req.session.returnTo || '/');
     }
 
-    common.saveAccountLinkLog('twitter', user.email);
+    Common.saveAccountLinkLog('twitter', user.email);
 
 };
 
@@ -560,7 +535,7 @@ exports.createFacebookAccount = function(req, res) {
         res.redirect(req.session.returnTo || '/');
     }
 
-    common.saveAccountLinkLog('facebook', user.email);
+    Common.saveAccountLinkLog('facebook', user.email);
 
 };
 
@@ -579,7 +554,7 @@ exports.createGoogleAccount = function(req, res) {
         res.redirect(req.session.returnTo || '/');
     }
 
-    common.saveAccountLinkLog('google', user.email);
+    Common.saveAccountLinkLog('google', user.email);
 
 };
 
@@ -602,11 +577,11 @@ exports.checkLinkAuth = function (req, res, callback) {
     Account.findOne({ email: req.param('email') }, function(err, user) {
         if (user) {
             if (_.find(user.tokens, { kind: req.param('provider') })) {
-                result = common.setAccountToClient(Code.account.login.done, user);
+                result = Common.setAccountToClient(Code.account.login.done, user);
 
                 res.send(result);
 
-                common.saveSignInLog(user.email);
+                Common.saveSignInLog(user.email);
             } else {
                 result = Code.account.login.no_exist;
 
@@ -658,7 +633,7 @@ exports.unlinkAuth = function(req, res, callback) {
 
             res.json(result);
 
-            common.saveUnlinkLog(user.email);
+            Common.saveUnlinkLog(user.email);
 
         });
     });
@@ -697,8 +672,8 @@ exports.updateAccount = function (req, res, callback) {
             Account.findById(user._id, function (err, updateUser) {
                 updateUser.updated_at = new Date();
                 updateUser.profile.name = req.param('nickname');
-                updateUser.access_token = common.getAccessToken();
-                updateUser.login_expire = common.getLoginExpireDate();
+                updateUser.access_token = Common.getAccessToken();
+                updateUser.login_expire = Common.getLoginExpireDate();
 
                 updateUser.save(function (err, affectedUser) {
                     if (err) {
@@ -706,11 +681,11 @@ exports.updateAccount = function (req, res, callback) {
 
                         res.send(result);
                     } else {
-                        result = common.setAccountToClient(Code.account.create.done, affectedUser);
+                        result = Common.setAccountToClient(Code.account.create.done, affectedUser);
 
                         res.send(result);
 
-                        common.saveAccountUpdateLog(req.param('email'))
+                        Common.saveAccountUpdateLog(req.param('email'))
                     }
                 });
 
@@ -740,7 +715,7 @@ exports.readAccessToken = function (req, res, callback) {
             var now = Date.now();
 
             if (existUser.login_expire > now) {
-                common.saveAccountAccessLog('signed_in', req.param('email'));
+                Common.saveAccountAccessLog('signed_in', req.param('email'));
 
                 result = Code.account.token.allowed;
 
