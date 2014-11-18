@@ -167,9 +167,11 @@ exports.updatePassword = function (req, res) {
 
 // update user info
 exports.updateAccountInfo = function (req, res) {
+    req.assert('haroo_id', 'Haroo ID is not valid').notEmpty();
     req.assert('email', 'Email is not valid').isEmail();
 
     var params = {
+        haroo_id: req.param('haroo_id'),
         email: req.param('email'),
         nickname: req.param('nickname'),
         accessToken: res.locals.token,
@@ -192,65 +194,28 @@ exports.updateAccountInfo = function (req, res) {
 };
 
 exports.dismissAccount = function (req, res) {
+    req.assert('haroo_id', 'Haroo ID is not valid').notEmpty();
     req.assert('email', 'Email is not valid').isEmail();
 
-    var result = {};
+    var params = {
+        haroo_id: req.param('haroo_id'),
+        email: req.param('email'),
+        accessToken: res.locals.token,
+        result: {}
+    };
+
     var errors = req.validationErrors();
 
     if (errors) {
-        result = Code.account.dismiss.validation;
-        result.validation = errors;
+        params.result = Code.account.dismiss.validation;
+        params.result.validation = errors;
 
-        res.send(result);
+        res.send(params.result);
         return;
     }
 
-    Account.findOne({haroo_id: req.param('haroo_id'), email: req.param('email')}, function (err, logoutUser) {
-        if (err) {
-            result = Code.account.dismiss.database;
-            result.db_info = err;
-            res.send(result);
-
-            return;
-        }
-
-        var accessToken = res.locals.token;
-
-        if (logoutUser && logoutUser.access_token == accessToken) {
-            result = Code.account.dismiss.done;
-
-            var now = Date.now();
-
-            if (logoutUser.login_expire > now) {
-                logoutUser.access_token = undefined;
-                logoutUser.login_expire = undefined;
-
-                logoutUser.save(function (err) {
-                    if (err) {
-                        result = Code.account.dismiss.database;
-                        result.db_info = err;
-                        res.send(result);
-
-                        return;
-                    }
-
-                    // good
-                    Common.saveSignOutLog(req.param('email'));
-
-                    result = Code.account.dismiss.done;
-
-                    res.send(result);
-                });
-            } else {
-                result = Code.account.haroo_id.expired;
-
-                res.send(result);
-            }
-        } else {
-            result = Code.account.haroo_id.invalid;
-
-            res.send(result);
-        }
+    Account.logoutByEmail(params, function (result) {
+        res.send(result);
     });
 };
 
