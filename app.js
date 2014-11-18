@@ -105,16 +105,20 @@ var apiCallCounterForIPs = [];
 
 app.use(function (req, res, next) {
     var ip = req['ip'];
-    console.log(ip);
-    if (apiCallCounterForIPs[ip] && apiCallCounterForIPs[ip].count) {
-        apiCallCounterForIPs[ip].count++;
-    } else {
-        apiCallCounterForIPs[ip] = {
-            count: 1
-        }
-    }
 
-    console.log(apiCallCounterForIPs);
+    if (ip) {
+        var now = Date.now();
+        if (apiCallCounterForIPs[ip] && apiCallCounterForIPs[ip].count) {
+            apiCallCounterForIPs[ip].count++;
+            apiCallCounterForIPs[ip].updateAt = now;
+        } else {
+            apiCallCounterForIPs[ip] = {
+                count: 1,
+                updateAt: now
+            }
+        }
+        console.log(apiCallCounterForIPs);
+    }
     next();
 });
 
@@ -126,21 +130,25 @@ app.post('/api/account/forgot_password', apiController.forgotPassword);
 // should need a header token
 app.use(apiController.accessTokenMiddleware);
 
-// api counter for ip district
+// api counter for token district
 var apiCallCounterForToken = [];
 
 app.use(function (req, res, next) {
     var token = req.header('x-access-token');
-    console.log(token);
-    if (apiCallCounterForToken[token] && apiCallCounterForToken[token].count) {
-        apiCallCounterForToken[token].count++;
-    } else {
-        apiCallCounterForToken[token] = {
-            count: 1
-        }
-    }
 
-    console.log(apiCallCounterForToken);
+    if (token) {
+        var now = Date.now();
+        if (apiCallCounterForToken[token] && apiCallCounterForToken[token].count) {
+            apiCallCounterForToken[token].count++;
+            apiCallCounterForToken[token].updateAt = now;
+        } else {
+            apiCallCounterForToken[token] = {
+                count: 1,
+                updateAt: now
+            }
+        }
+        console.log(apiCallCounterForToken);
+    }
     next();
 });
 
