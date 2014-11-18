@@ -76,6 +76,12 @@ app.use(function (req, res, callback) {
 });
 
 // for nginx proxy
+/*
+ app.set('trust proxy', function (ip) {
+ if (ip === '127.0.0.1' || ip === '123.123.123.123') return true; // trusted IPs
+ else return false;
+ })
+*/
 if (app.get('hostEnv') != 'development') {
     app.enable('trust proxy');  // using Express behind nginx
     app.use(logger('combined'));
@@ -93,6 +99,25 @@ app.get('/api', function (req, res) {
     res.render('index');
 });
 
+
+// api counter for ip district
+var apiCallCounterForIPs = [];
+
+app.use(function (req, res, next) {
+    var ip = req['ip'];
+    console.log(ip);
+    if (apiCallCounterForIPs[ip] && apiCallCounterForIPs[ip].count) {
+        apiCallCounterForIPs[ip].count++;
+    } else {
+        apiCallCounterForIPs[ip] = {
+            count: 1
+        }
+    }
+
+    console.log(apiCallCounterForIPs);
+    next();
+});
+
 // for account
 app.post('/api/account/create', apiController.createAccount);
 app.post('/api/account/login', apiController.readAccount);
@@ -100,6 +125,24 @@ app.post('/api/account/forgot_password', apiController.forgotPassword);
 
 // should need a header token
 app.use(apiController.accessTokenMiddleware);
+
+// api counter for ip district
+var apiCallCounterForToken = [];
+
+app.use(function (req, res, next) {
+    var token = req.header('x-access-token');
+    console.log(token);
+    if (apiCallCounterForToken[token] && apiCallCounterForToken[token].count) {
+        apiCallCounterForToken[token].count++;
+    } else {
+        apiCallCounterForToken[token] = {
+            count: 1
+        }
+    }
+
+    console.log(apiCallCounterForToken);
+    next();
+});
 
 // for token
 app.post('/api/token/validate', apiController.validateToken);
