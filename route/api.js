@@ -113,50 +113,26 @@ exports.validateToken = function (req, res) {
 
 // get user info
 exports.accountInfo = function (req, res) {
-    req.assert('haroo_id', 'haroo_id must be at least 4 characters long').len(4);
+    req.assert('haroo_id', 'haroo_id is not valid').notEmpty();
 
-    var result = {};
+    var params = {
+        haroo_id: req.param('haroo_id'),
+        accessToken: res.locals.token,
+        result: {}
+    };
+
     var errors = req.validationErrors();
 
     if (errors) {
-        result = Code.account.haroo_id.validation;
-        result.validation = errors;
+        params.result = Code.account.haroo_id.validation;
+        params.result.validation = errors;
 
-        res.send(result);
+        res.send(params.result);
         return;
     }
 
-    Account.findOne({haroo_id: req.param('haroo_id')}, function (err, existUser) {
-        if (err) {
-            result = Code.account.haroo_id.database;
-            result.passport = err;
-            res.send(result);
-
-            return;
-        }
-
-        var accessToken = res.locals.token;
-
-        if (existUser && (existUser.access_token == accessToken)) {
-            // expired?
-            var now = Date.now();
-
-            if (existUser.login_expire > now) {
-                Common.saveAccountAccessLog('signed_in', req.param('email'));
-
-                result = Common.setAccountToClient(Code.account.haroo_id.success, existUser);
-
-                res.send(result);
-            } else {
-                result = Code.account.haroo_id.expired;
-
-                res.send(result);
-            }
-        } else {
-            result = Code.account.haroo_id.invalid;
-
-            res.send(result);
-        }
+    Account.findByHarooID(params, function (result) {
+        res.send(result);
     });
 };
 
