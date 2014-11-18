@@ -93,46 +93,21 @@ exports.forgotPassword = function (req, res) {
 
 // token check
 exports.validateToken = function (req, res) {
-    var accessToken = res.locals.token;
+    var params = {
+        email: req.param('email'),
+        accessToken: res.locals.token,
+        result: {}
+    };
 
-    var result = {};
+    if (!params.accessToken) {
+        params.result = Code.account.token.validation;
 
-    if (!accessToken) {
-        result = Code.account.token.validation;
-
-        res.send(result);
+        res.send(params.result);
         return;
     }
 
-    Account.findOne({access_token: accessToken}, function (err, existUser) {
-        if (err) {
-            result = Code.account.token.no_exist;
-            result.passport = err;
-            res.send(result);
-
-            return;
-        }
-
-        if (existUser) {
-            // expired?
-            var now = Date.now();
-
-            if (existUser.login_expire > now) {
-                Common.saveAccountAccessLog('check_token', existUser.email);
-
-                result = Common.setAccountToClient(Code.account.token.allowed, existUser);
-
-                res.send(result);
-            } else {
-                result = Code.account.token.denied;
-
-                res.send(result);
-            }
-        } else {
-            result = Code.account.token.no_exist;
-
-            res.send(result);
-        }
+    Account.findByToken(params, function (result) {
+        res.send(result);
     });
 };
 
