@@ -220,60 +220,33 @@ exports.dismissAccount = function (req, res) {
 };
 
 exports.removeAccount = function (req, res, callback) {
+    req.assert('haroo_id', 'Haroo ID is not valid').notEmpty();
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
 
-    var result = {};
+    var params = {
+        haroo_id: req.param('haroo_id'),
+        email: req.param('email'),
+        password: req.param('password'),
+        accessToken: res.locals.token,
+        req: req,
+        res: res,
+        result: {}
+    };
+
     var errors = req.validationErrors();
 
     if (errors) {
-        result = Code.account.remove.validation;
-        result.validation = errors;
+        params.result = Code.account.remove.validation;
+        params.result.validation = errors;
 
-        res.send(result);
+        res.send(params.result);
         return;
     }
 
-    passport.authenticate('local', function(err, validUser, info) {
-        if (err) {
-            result = Code.account.remove.database;
-            result.db_info = err;
-            res.send(result);
-
-            return callback();
-        }
-
-        var accessToken = res.locals.token;
-
-        if (validUser && validUser.access_token == accessToken) {
-            // expired?
-            var now = Date.now();
-
-            if (validUser.login_expire > now) {
-                Account.remove({_id: validUser._id}, function (err, countAffected) {
-                    if (err) {
-                        result = Code.account.remove.database;
-
-                        res.send(result);
-                    } else {
-                        Common.saveAccountRemoveLog(req.param('email'));
-
-                        result = Code.account.remove.done;
-
-                        res.send(result);
-                    }
-                });
-            } else {
-                result = Code.account.haroo_id.token_expired;
-
-                res.send(result);
-            }
-        } else {
-            result = Code.account.haroo_id.invalid;
-
-            res.send(result);
-        }
-    })(req, res, callback);
+    Account.deleteByPassport(params, function (result) {
+        res.send(result);
+    });
 };
 
 
