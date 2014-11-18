@@ -149,6 +149,7 @@ exports.updatePassword = function (req, res) {
         accessToken: res.locals.token,
         result: {}
     };
+
     var errors = req.validationErrors();
 
     if (errors) {
@@ -168,65 +169,25 @@ exports.updatePassword = function (req, res) {
 exports.updateAccountInfo = function (req, res) {
     req.assert('email', 'Email is not valid').isEmail();
 
-    var result = {};
+    var params = {
+        email: req.param('email'),
+        nickname: req.param('nickname'),
+        accessToken: res.locals.token,
+        result: {}
+    };
+
     var errors = req.validationErrors();
 
     if (errors) {
-        result = Code.account.update.validation;
-        result.validation = errors;
+        params.result = Code.account.update.validation;
+        params.result.validation = errors;
 
-        res.send(result);
-        return callback;
+        res.send(params.result);
+        return;
     }
 
-    Account.findOne({ email: req.param('email') }, function(err, existUserForUpdate) {
-        if (err) {
-            result = Code.account.haroo_id.database;
-            result.passport = err;
-            res.send(result);
-
-            return;
-        }
-
-        var accessToken = res.locals.token;
-
-        if (existUserForUpdate && (existUserForUpdate.access_token == accessToken)) {
-            result = Code.account.update.done;
-
-            var now = Date.now();
-
-            if (existUserForUpdate.login_expire > now) {
-                existUserForUpdate.profile.name = req.param('nickname');
-                existUserForUpdate.updated_at = new Date();
-                existUserForUpdate.access_token = Common.getAccessToken();
-                existUserForUpdate.login_expire = Common.getLoginExpireDate();
-
-                existUserForUpdate.save(function (err, affectedUser) {
-                    if (err) {
-                        result = Code.account.update.database;
-                        result.db_info = err;
-                        res.send(result);
-
-                        return;
-                    }
-
-                    // good
-                    Common.saveAccountUpdateLog(req.param('email'));
-
-                    result = Common.setAccountToClient(Code.account.create.done, affectedUser);
-
-                    res.send(result);
-                });
-            } else {
-                result = Code.account.haroo_id.expired;
-
-                res.send(result);
-            }
-        } else {
-            result = Code.account.update.no_exist;
-
-            res.send(result);
-        }
+    Account.updateInfoByEmail(params, function (result) {
+        res.send(result);
     });
 };
 
