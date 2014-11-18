@@ -142,64 +142,25 @@ exports.updatePassword = function (req, res) {
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
 
-    var result = {};
+    var params = {
+        haroo_id: req.param('haroo_id'),
+        email: req.param('email'),
+        password: req.param('password'),
+        accessToken: res.locals.token,
+        result: {}
+    };
     var errors = req.validationErrors();
 
     if (errors) {
-        result = Code.account.update.validation;
-        result.validation = errors;
+        params.result = Code.account.update.validation;
+        params.result.validation = errors;
 
-        res.send(result);
+        res.send(params.result);
         return;
     }
 
-    Account.findOne({haroo_id: req.param('haroo_id'), email: req.param('email')}, function(err, updateUser) {
-        if (err) {
-            result = Code.account.haroo_id.database;
-            result.db_info = err;
-            res.send(result);
-
-            return;
-        }
-
-        var accessToken = res.locals.token;
-
-        if (updateUser && (updateUser.access_token == accessToken)) {
-            result = Code.account.update.done;
-
-            var now = Date.now();
-
-            if (updateUser.login_expire > now) {
-                updateUser.password = req.param('password');
-                updateUser.access_token = Common.getAccessToken();
-                updateUser.login_expire = Common.getLoginExpireDate();
-
-                updateUser.save(function(err) {
-                    if (err) {
-                        result = Code.account.update.database;
-                        result.db_info = err;
-                        res.send(result);
-
-                        return;
-                    }
-
-                    // good
-                    Common.saveAccountAccessLog('change_password', req.param('email'));
-
-                    result = Common.setAccountToClient(Code.account.update.done, updateUser);
-
-                    res.send(result);
-                });
-            } else {
-                result = Code.account.haroo_id.expired;
-
-                res.send(result);
-            }
-        } else {
-            result = Code.account.haroo_id.invalid;
-
-            res.send(result);
-        }
+    Account.updatePasswordByEmail(params, function (result) {
+        res.send(result);
     });
 };
 
