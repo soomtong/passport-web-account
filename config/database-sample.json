@@ -1,8 +1,13 @@
 {
     "mongo": {
-        "host": "mongodb://localhost:27017/test"
+        "host": "mongodb://localhost:27017/test",
+        "id": "hello",
+        "pass": "world"
     },
     "couch": {
-        "host": "http://localhost:5984/test"
+        "host": "couch-db.your-host.com",
+        "port": "80",
+        "id": "hello",
+        "pass": "world"
     }
 }
