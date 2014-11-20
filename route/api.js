@@ -94,7 +94,7 @@ exports.forgotPassword = function (req, res) {
 // token check
 exports.validateToken = function (req, res) {
     var params = {
-        email: req.param('email'),
+        expireToken: !!req.param('keep'),
         accessToken: res.locals.token,
         result: {}
     };
@@ -105,10 +105,16 @@ exports.validateToken = function (req, res) {
         res.send(params.result);
         return;
     }
-
-    Account.findByToken(params, function (result) {
-        res.send(result);
-    });
+    if (params.expireToken) {
+        Account.findByToken(params, function (result) {
+            res.send(result);
+        });
+    } else {
+        // expire access token
+        Account.findByTokenWithExpire(params, function (result) {
+            res.send(result);
+        });
+    }
 };
 
 // get user info
