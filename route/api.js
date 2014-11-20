@@ -21,6 +21,7 @@ exports.createAccount = function (req, res) {
         email: req.param('email'),
         password: req.param('password'),
         nickname: req.param('nickname'),
+        accessHost: res.locals.accessHost,
         database: database,
         result: {}
     };
@@ -48,6 +49,7 @@ exports.readAccount = function (req, res, callback) {
     var params = {
         email: req.param('email'),
         password: req.param('password'),
+        accessHost: res.locals.accessHost,
         req: req,
         res: res,
         result: {}
@@ -98,7 +100,7 @@ exports.forgotPassword = function (req, res) {
 exports.validateToken = function (req, res) {
     var params = {
         expireToken: !!req.param('keep'),
-        accessToken: res.locals.token,
+        accessToken: res.locals.accessToken,
         result: {}
     };
 
@@ -126,7 +128,7 @@ exports.accountInfo = function (req, res) {
 
     var params = {
         haroo_id: req.param('haroo_id'),
-        accessToken: res.locals.token,
+        accessToken: res.locals.accessToken,
         result: {}
     };
 
@@ -155,7 +157,7 @@ exports.updatePassword = function (req, res) {
         haroo_id: req.param('haroo_id'),
         email: req.param('email'),
         password: req.param('password'),
-        accessToken: res.locals.token,
+        accessToken: res.locals.accessToken,
         result: {}
     };
 
@@ -183,7 +185,7 @@ exports.updateAccountInfo = function (req, res) {
         haroo_id: req.param('haroo_id'),
         email: req.param('email'),
         nickname: req.param('nickname'),
-        accessToken: res.locals.token,
+        accessToken: res.locals.accessToken,
         result: {}
     };
 
@@ -209,7 +211,7 @@ exports.dismissAccount = function (req, res) {
     var params = {
         haroo_id: req.param('haroo_id'),
         email: req.param('email'),
-        accessToken: res.locals.token,
+        accessToken: res.locals.accessToken,
         result: {}
     };
 
@@ -237,7 +239,7 @@ exports.removeAccount = function (req, res, callback) {
         haroo_id: req.param('haroo_id'),
         email: req.param('email'),
         password: req.param('password'),
-        accessToken: res.locals.token,
+        accessToken: res.locals.accessToken,
         req: req,
         res: res,
         result: {}
@@ -261,7 +263,7 @@ exports.removeAccount = function (req, res, callback) {
 
 // block unknown
 exports.accessTokenMiddleware = function (req, res, next) {
-    var token = res.locals.token = req.header('x-access-token');
+    var token = res.locals.accessToken = req.header('x-access-token');
     if (!token) return res.send(Code.token.blocked);
 
     next();
@@ -269,7 +271,7 @@ exports.accessTokenMiddleware = function (req, res, next) {
 
 // tracking host name
 exports.accessHostMiddleware = function (req, res, next) {
-    var host = res.locals.host = req.header('x-access-host');
+    var host = res.locals.accessHost = req.header('x-access-host');
 
     next();
 };
