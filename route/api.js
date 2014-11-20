@@ -8,6 +8,9 @@ var Account = Pipe.Account;
 var Code = Pipe.HarooCode;
 var Common = Pipe.CommonUtil;
 
+var apiCallCounterForIPs = [];
+var apiCallCounterForToken = [];
+
 
 // signup
 exports.createAccount = function (req, res) {
@@ -264,7 +267,50 @@ exports.accessTokenMiddleware = function (req, res, next) {
     next();
 };
 
+// tracking host name
+exports.accessHostMiddleware = function (req, res, next) {
+    var host = res.locals.host = req.header('x-access-host');
 
+    next();
+};
+
+exports.callCounterForIPs = function (req, res, next) {
+    var ip = req['ip'];
+
+    if (ip) {
+        var now = Date.now();
+        if (apiCallCounterForIPs[ip] && apiCallCounterForIPs[ip].count) {
+            apiCallCounterForIPs[ip].count++;
+            apiCallCounterForIPs[ip].updateAt = now;
+        } else {
+            apiCallCounterForIPs[ip] = {
+                count: 1,
+                updateAt: now
+            }
+        }
+        //console.log(apiCallCounterForIPs);
+    }
+    next();
+};
+
+exports.callCounterForToken = function (req, res, next) {
+    var token = req.header('x-access-token');
+
+    if (token) {
+        var now = Date.now();
+        if (apiCallCounterForToken[token] && apiCallCounterForToken[token].count) {
+            apiCallCounterForToken[token].count++;
+            apiCallCounterForToken[token].updateAt = now;
+        } else {
+            apiCallCounterForToken[token] = {
+                count: 1,
+                updateAt: now
+            }
+        }
+        //console.log(apiCallCounterForToken);
+    }
+    next();
+};
 
 
 exports.linkExternalAccount = function (req, res, next) {

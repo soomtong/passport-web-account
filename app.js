@@ -90,6 +90,7 @@ if (app.get('hostEnv') != 'development') {
 }
 
 // Route Point prefix hosted in nginx with '/api'
+// Watch Out this order for middleware. caution!
 
 // api list for developers
 app.get('/', function (req, res) {
@@ -101,26 +102,10 @@ app.get('/api', function (req, res) {
 
 
 // api counter for ip district
-var apiCallCounterForIPs = [];
+app.use(apiController.callCounterForIPs);
 
-app.use(function (req, res, next) {
-    var ip = req['ip'];
-
-    if (ip) {
-        var now = Date.now();
-        if (apiCallCounterForIPs[ip] && apiCallCounterForIPs[ip].count) {
-            apiCallCounterForIPs[ip].count++;
-            apiCallCounterForIPs[ip].updateAt = now;
-        } else {
-            apiCallCounterForIPs[ip] = {
-                count: 1,
-                updateAt: now
-            }
-        }
-        console.log(apiCallCounterForIPs);
-    }
-    next();
-});
+// set host name to res.locals for all client
+app.use(apiController.accessHostMiddleware);
 
 // for account
 app.post('/api/account/create', apiController.createAccount);
@@ -131,26 +116,7 @@ app.post('/api/account/forgot_password', apiController.forgotPassword);
 app.use(apiController.accessTokenMiddleware);
 
 // api counter for token district
-var apiCallCounterForToken = [];
-
-app.use(function (req, res, next) {
-    var token = req.header('x-access-token');
-
-    if (token) {
-        var now = Date.now();
-        if (apiCallCounterForToken[token] && apiCallCounterForToken[token].count) {
-            apiCallCounterForToken[token].count++;
-            apiCallCounterForToken[token].updateAt = now;
-        } else {
-            apiCallCounterForToken[token] = {
-                count: 1,
-                updateAt: now
-            }
-        }
-        console.log(apiCallCounterForToken);
-    }
-    next();
-});
+app.use(apiController.callCounterForToken);
 
 // for token
 app.post('/api/token/validate', apiController.validateToken);
