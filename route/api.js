@@ -158,6 +158,7 @@ exports.updatePassword = function (req, res) {
         email: req.param('email'),
         password: req.param('password'),
         accessToken: res.locals.accessToken,
+        accessHost: res.locals.accessHost,
         result: {}
     };
 
@@ -186,6 +187,7 @@ exports.updateAccountInfo = function (req, res) {
         email: req.param('email'),
         nickname: req.param('nickname'),
         accessToken: res.locals.accessToken,
+        accessHost: res.locals.accessHost,
         result: {}
     };
 
@@ -212,6 +214,7 @@ exports.dismissAccount = function (req, res) {
         haroo_id: req.param('haroo_id'),
         email: req.param('email'),
         accessToken: res.locals.accessToken,
+        accessHost: res.locals.accessHost,
         result: {}
     };
 
@@ -230,7 +233,7 @@ exports.dismissAccount = function (req, res) {
     });
 };
 
-exports.removeAccount = function (req, res, callback) {
+exports.removeAccount = function (req, res) {
     req.assert('haroo_id', 'Haroo ID is not valid').notEmpty();
     req.assert('email', 'Email is not valid').isEmail();
     req.assert('password', 'Password must be at least 4 characters long').len(4);
@@ -240,6 +243,7 @@ exports.removeAccount = function (req, res, callback) {
         email: req.param('email'),
         password: req.param('password'),
         accessToken: res.locals.accessToken,
+        accessHost: res.locals.accessHost,
         req: req,
         res: res,
         result: {}
