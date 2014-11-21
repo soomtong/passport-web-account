@@ -8,10 +8,6 @@ var Account = Pipe.Account;
 var Code = Pipe.HarooCode;
 var Common = Pipe.CommonUtil;
 
-var apiCallCounterForIPs = [];
-var apiCallCounterForToken = [];
-
-
 // signup
 exports.createAccount = function (req, res) {
     req.assert('email', 'Email is not valid').isEmail();
@@ -101,6 +97,7 @@ exports.validateToken = function (req, res) {
     var params = {
         expireToken: !!req.param('keep'),
         accessToken: res.locals.accessToken,
+        accessHost: res.locals.accessHost,
         result: {}
     };
 
@@ -260,61 +257,6 @@ exports.removeAccount = function (req, res, callback) {
     });
 };
 
-
-// block unknown
-exports.accessTokenMiddleware = function (req, res, next) {
-    var token = res.locals.accessToken = req.header('x-access-token');
-    if (!token) return res.send(Code.token.blocked);
-
-    next();
-};
-
-// tracking host name
-exports.accessHostMiddleware = function (req, res, next) {
-    var host = res.locals.accessHost = req.header('x-access-host');
-
-    next();
-};
-
-exports.callCounterForIPs = function (req, res, next) {
-    var ip = req['ip'];
-
-    if (ip) {
-        var now = Date.now();
-        if (apiCallCounterForIPs[ip] && apiCallCounterForIPs[ip].count) {
-            apiCallCounterForIPs[ip].count++;
-            apiCallCounterForIPs[ip].updateAt = now;
-        } else {
-            apiCallCounterForIPs[ip] = {
-                count: 1,
-                updateAt: now
-            }
-        }
-        //console.log(apiCallCounterForIPs);
-    }
-    next();
-};
-
-exports.callCounterForToken = function (req, res, next) {
-    var token = req.header('x-access-token');
-
-    if (token) {
-        var now = Date.now();
-        if (apiCallCounterForToken[token] && apiCallCounterForToken[token].count) {
-            apiCallCounterForToken[token].count++;
-            apiCallCounterForToken[token].updateAt = now;
-        } else {
-            apiCallCounterForToken[token] = {
-                count: 1,
-                updateAt: now
-            }
-        }
-        //console.log(apiCallCounterForToken);
-    }
-    next();
-};
-
-
 exports.linkExternalAccount = function (req, res, next) {
     var provider = req.path.split('/')[2];
 
@@ -342,7 +284,6 @@ exports.linkExternalAccount = function (req, res, next) {
             return res.redirect(redirect.success);
         });
     })(req, res, next);
-
 };
 
 exports.createTwitterAccount = function(req, res) {

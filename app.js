@@ -27,6 +27,7 @@ var Passport = Pipe.Passport;
 
 // Route Controller
 var apiController = require('./route/api');
+var middleware = require('./route/middleware');
 
 // Start Body
 var app = express();
@@ -102,10 +103,10 @@ app.get('/api', function (req, res) {
 
 
 // api counter for ip district
-app.use(apiController.callCounterForIPs);
+app.use(middleware.callCounterForIPs);
 
 // set host name to res.locals for all client
-app.use(apiController.accessHostMiddleware);
+app.use(middleware.accessHost);
 
 // for account
 app.post('/api/account/create', apiController.createAccount);
@@ -113,10 +114,10 @@ app.post('/api/account/login', apiController.readAccount);
 app.post('/api/account/forgot_password', apiController.forgotPassword);
 
 // should need a header token
-app.use(apiController.accessTokenMiddleware);
+app.use(middleware.accessToken);
 
 // api counter for token district
-app.use(apiController.callCounterForToken);
+app.use(middleware.callCounterForToken);
 
 // for token
 app.post('/api/token/validate', apiController.validateToken);
