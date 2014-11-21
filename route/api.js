@@ -4,6 +4,7 @@ var Pipe = require('pipe');
 var database = require('../config/database');
 
 var Account = Pipe.Account;
+var AccountToken = Pipe.AccountToken;
 
 var Code = Pipe.HarooCode;
 var Common = Pipe.CommonUtil;
@@ -95,27 +96,28 @@ exports.forgotPassword = function (req, res) {
 // token check
 exports.validateToken = function (req, res) {
     var params = {
-        expireToken: !!req.param('keep'),
+        keepToken: req.param('keep'),
         accessToken: res.locals.accessToken,
         accessHost: res.locals.accessHost,
         result: {}
     };
 
-    if (!params.accessToken) {
-        params.result = Code.account.token.validation;
-
-        res.send(params.result);
-        return;
-    }
-    if (params.expireToken) {
-        Account.findByToken(params, function (result) {
-            res.send(result);
-        });
-    } else {
-        // expire access token
-        Account.findByTokenWithExpire(params, function (result) {
-            res.send(result);
-        });
+    // remove or keep or validate only
+    switch (params.keepToken) {
+        case '1':
+            AccountToken.findByTokenWithKeep(params, function (result) {
+                res.send(result);
+            });
+            break;
+        case '0':
+            AccountToken.findByTokenWithExpire(params, function (result) {
+                res.send(result);
+            });
+            break;
+        default :
+            AccountToken.findByToken(params, function (result) {
+                res.send(result);
+            });
     }
 };
 
@@ -126,6 +128,7 @@ exports.accountInfo = function (req, res) {
     var params = {
         haroo_id: req.param('haroo_id'),
         accessToken: res.locals.accessToken,
+        accessHost: res.locals.accessHost,
         result: {}
     };
 
