@@ -19,9 +19,11 @@ exports.createAccount = function (req, res) {
         password: req.param('password'),
         nickname: req.param('nickname'),
         accessHost: res.locals.accessHost,
+        accessIP: res.locals.accessIP,
         database: database,
         result: {}
     };
+    console.log(params);
 
     var errors = req.validationErrors();
 
@@ -47,6 +49,7 @@ exports.readAccount = function (req, res, callback) {
         email: req.param('email'),
         password: req.param('password'),
         accessHost: res.locals.accessHost,
+        accessIP: res.locals.accessIP,
         req: req,
         res: res,
         result: {}
@@ -99,6 +102,7 @@ exports.validateToken = function (req, res) {
         keepToken: req.param('keep'),
         accessToken: res.locals.accessToken,
         accessHost: res.locals.accessHost,
+        accessIP: res.locals.accessIP,
         result: {}
     };
 
@@ -129,6 +133,7 @@ exports.accountInfo = function (req, res) {
         haroo_id: req.param('haroo_id'),
         accessToken: res.locals.accessToken,
         accessHost: res.locals.accessHost,
+        accessIP: res.locals.accessIP,
         result: {}
     };
 
@@ -159,6 +164,7 @@ exports.updatePassword = function (req, res) {
         password: req.param('password'),
         accessToken: res.locals.accessToken,
         accessHost: res.locals.accessHost,
+        accessIP: res.locals.accessIP,
         result: {}
     };
 
@@ -188,6 +194,7 @@ exports.updateAccountInfo = function (req, res) {
         nickname: req.param('nickname'),
         accessToken: res.locals.accessToken,
         accessHost: res.locals.accessHost,
+        accessIP: res.locals.accessIP,
         result: {}
     };
 
@@ -215,6 +222,7 @@ exports.dismissAccount = function (req, res) {
         email: req.param('email'),
         accessToken: res.locals.accessToken,
         accessHost: res.locals.accessHost,
+        accessIP: res.locals.accessIP,
         result: {}
     };
 
@@ -244,6 +252,7 @@ exports.removeAccount = function (req, res) {
         password: req.param('password'),
         accessToken: res.locals.accessToken,
         accessHost: res.locals.accessHost,
+        accessIP: res.locals.accessIP,
         req: req,
         res: res,
         result: {}

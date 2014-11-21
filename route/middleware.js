@@ -52,6 +52,7 @@ exports.accessToken = function (req, res, next) {
 // tracking host name
 exports.accessHost = function (req, res, next) {
     var host = res.locals.accessHost = req.header('x-access-host');
+    var ip = res.locals.accessIP = req['ip'];
 
     next();
 };
