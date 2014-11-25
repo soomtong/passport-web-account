@@ -20,10 +20,14 @@ var expressValidator = require('express-validator');
 // Secret Token
 var common = require('./config/common');
 var database = require('./config/database');
+var passport = require('./config/passport');
 
-// Load Pipe
+// Load Pipe and Setup
 var Pipe = require('pipe');
 var Passport = Pipe.Passport;
+
+Pipe.MongoInit(database);
+Pipe.PassportConfig(passport);
 
 // Route Controller
 var apiController = require('./route/api');

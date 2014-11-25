@@ -1,0 +1,42 @@
+{
+    "development": {
+        "twitter": {
+            "consumerKey": "your key",
+            "consumerSecret": "your secret",
+            "callbackURL": "/auth/twitter/callback",
+            "passReqToCallback": true
+        },
+        "facebook": {
+            "clientID": "your id",
+            "clientSecret": "your secret",
+            "callbackURL": "/auth/facebook/callback",
+            "passReqToCallback": true
+        },
+        "google": {
+            "clientID": "your id",
+            "clientSecret": "your secret",
+            "callbackURL": "/auth/google/callback",
+            "passReqToCallback": true
+        }
+    },
+    "production": {
+        "twitter": {
+            "consumerKey": "your key",
+            "consumerSecret": "your secret",
+            "callbackURL": "/auth/twitter/callback",
+            "passReqToCallback": true
+        },
+        "facebook": {
+            "clientID": "your id",
+            "clientSecret": "your secret",
+            "callbackURL": "/auth/facebook/callback",
+            "passReqToCallback": true
+        },
+        "google": {
+            "clientID": "your id",
+            "clientSecret": "your secret",
+            "callbackURL": "/auth/google/callback",
+            "passReqToCallback": true
+        }
+    }
+}

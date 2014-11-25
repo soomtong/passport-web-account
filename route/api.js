@@ -2,6 +2,7 @@ var _ = require('lodash');
 var Pipe = require('pipe');
 
 var database = require('../config/database');
+var mailer = require('../config/mailer');
 
 var Account = Pipe.Account;
 var AccountToken = Pipe.AccountToken;
@@ -78,6 +79,7 @@ exports.forgotPassword = function (req, res) {
         email: req.param('email'),
         protocol: req.protocol,
         hostname: req.hostname,
+        email_token: mailer['email-token'],
         result: {}
     };
 
