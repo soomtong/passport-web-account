@@ -5,6 +5,7 @@ var database = require('../config/database');
 var mailer = require('../config/mailer');
 
 var Account = Pipe.Account;
+var AccountLog = Pipe.AccountLog;
 var AccountToken = Pipe.AccountToken;
 
 var Code = Pipe.HarooCode;
@@ -24,7 +25,6 @@ exports.createAccount = function (req, res) {
         database: database,
         result: {}
     };
-    console.log(params);
 
     var errors = req.validationErrors();
 
@@ -295,7 +295,7 @@ exports.linkExternalAccount = function (req, res, next) {
                 return next(err);
             }
 
-            Common.saveAccountLinkLog(provider, user.email);
+            AccountLog.externalLink(provider, user.email);
 
             // clear client session
             req.session.clientRoute = null;
@@ -319,7 +319,7 @@ exports.createTwitterAccount = function(req, res) {
         res.redirect(req.session.returnTo || '/');
     }
 
-    Common.saveAccountLinkLog('twitter', user.email);
+    AccountLog.externalLink('twitter', user.email);
 
 };
 
@@ -338,7 +338,7 @@ exports.createFacebookAccount = function(req, res) {
         res.redirect(req.session.returnTo || '/');
     }
 
-    Common.saveAccountLinkLog('facebook', user.email);
+    AccountLog.externalLink('facebook', user.email);
 
 };
 
@@ -357,7 +357,7 @@ exports.createGoogleAccount = function(req, res) {
         res.redirect(req.session.returnTo || '/');
     }
 
-    Common.saveAccountLinkLog('google', user.email);
+    AccountLog.externalLink('google', user.email);
 
 };
 
@@ -384,7 +384,7 @@ exports.checkLinkAuth = function (req, res, callback) {
 
                 res.send(result);
 
-                Common.saveSignInLog(user.email);
+                AccountLog.signIn({email: user.email});
             } else {
                 result = Code.account.login.no_exist;
 
@@ -436,12 +436,11 @@ exports.unlinkAuth = function(req, res, callback) {
 
             res.json(result);
 
-            Common.saveUnlinkLog(user.email);
+            AccountLog.externalUnlink({email: user.email});
 
         });
     });
 };
-
 
 exports.updateAccount = function (req, res, callback) {
     req.assert('email', 'Email is not valid').isEmail();
@@ -488,14 +487,12 @@ exports.updateAccount = function (req, res, callback) {
 
                         res.send(result);
 
-                        Common.saveAccountUpdateLog(req.param('email'))
+                        AccountLog.update({email: req.param('email')});
                     }
                 });
-
             });
         }
     })(req, res, callback);
-
 };
 
 exports.readAccessToken = function (req, res, callback) {
@@ -518,7 +515,7 @@ exports.readAccessToken = function (req, res, callback) {
             var now = Date.now();
 
             if (existUser.login_expire > now) {
-                Common.saveAccountAccessLog('signed_in', req.param('email'));
+                AccountLog.signIn({email: req.param('email')});
 
                 result = Code.account.token.allowed;
 
