@@ -4,6 +4,7 @@ var Pipe = require('pipe');
 var database = require('../config/database');
 var mailer = require('../config/mailer');
 
+var Document = Pipe.Document;
 var Account = Pipe.Account;
 var AccountLog = Pipe.AccountLog;
 var AccountToken = Pipe.AccountToken;
@@ -215,6 +216,7 @@ exports.updateAccountInfo = function (req, res) {
     });
 };
 
+// logout
 exports.dismissAccount = function (req, res) {
     req.assert('haroo_id', 'Haroo ID is not valid').notEmpty();
     req.assert('email', 'Email is not valid').isEmail();
@@ -243,6 +245,7 @@ exports.dismissAccount = function (req, res) {
     });
 };
 
+// delete user account
 exports.removeAccount = function (req, res) {
     req.assert('haroo_id', 'Haroo ID is not valid').notEmpty();
     req.assert('email', 'Email is not valid').isEmail();
@@ -274,6 +277,37 @@ exports.removeAccount = function (req, res) {
         res.send(result);
     });
 };
+
+// public document info
+exports.publicDocument = function (req, res) {
+    req.assert('haroo_id', 'haroo id is not valid').notEmpty();
+    req.assert('document_id', 'document id is not valid').notEmpty();
+
+    var params = {
+        haroo_id: req.param('haroo_id'),
+        document_id: req.param('document_id'),
+        accessHost: res.locals.accessHost,
+        accessIP: res.locals.accessIP,
+        result: {}
+    };
+
+    var errors = req.validationErrors();
+
+    if (errors) {
+        params.result = Code.document.public.validation;
+        params.result.validation = errors;
+
+        res.send(params.result);
+        return;
+    }
+
+    Pipe.CouchConnect(database, function (nano) {
+        Document.togglePublic(nano, params, function (result) {
+            res.send(result);
+        });
+    });
+};
+
 
 exports.linkExternalAccount = function (req, res, next) {
     var provider = req.path.split('/')[2];

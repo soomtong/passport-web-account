@@ -133,6 +133,9 @@ app.post('/api/user/:haroo_id/update_info', apiController.updateAccountInfo);
 app.post('/api/user/:haroo_id/logout', apiController.dismissAccount);
 app.post('/api/user/:haroo_id/delete', apiController.removeAccount);
 
+// for document
+app.post('/api/document/:document_id/public', apiController.publicDocument);
+
 // for external service
 app.post('/api/account/link', apiController.linkAuth);
 app.post('/api/account/unlink', apiController.unlinkAuth);
