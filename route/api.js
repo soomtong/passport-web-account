@@ -3,6 +3,7 @@ var Pipe = require('pipe');
 
 var database = require('../config/database');
 var mailer = require('../config/mailer');
+var nano = Pipe.CouchConnect(database);
 
 var Document = Pipe.Document;
 var Account = Pipe.Account;
@@ -301,10 +302,10 @@ exports.publicDocument = function (req, res) {
         return;
     }
 
-    Pipe.CouchConnect(database, function (nano) {
-        Document.togglePublic(nano, params, function (result) {
-            res.send(result);
-        });
+    var couch = nano.db.use(params['haroo_id']);
+
+    Document.togglePublic(couch, params, function (result) {
+        res.send(result);
     });
 };
 
