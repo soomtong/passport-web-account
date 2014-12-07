@@ -126,6 +126,17 @@ app.use(middleware.callCounterForToken);
 // for token
 app.post('/api/token/validate', apiController.validateToken);
 
+// for application
+app.post('/api/application/haroonote/version', function (req, res) {
+    var version = {
+        ver: "0.1.0",
+        released_at: "1417984175033",   // 2014-12-8 morning
+        reference_site: "cloud.haroopress.com/haroonote"
+    };
+
+    res.send(version);
+});
+
 // for user
 app.post('/api/user/:haroo_id/info', apiController.accountInfo);
 app.post('/api/user/:haroo_id/change_password', apiController.updatePassword);
